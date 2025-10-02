@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Partner - Razón Social',
-    'version': '13.0.1.0.0',
+    'version': '14.0.1.0.0',
     'category': 'Contact',
     'summary': 'Agrega campo Razón Social al partner',
     'description': """
