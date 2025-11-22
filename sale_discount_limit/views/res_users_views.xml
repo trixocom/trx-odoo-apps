@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vista de formulario de usuario con campo de descuento máximo -->
+    <record id="view_users_form_discount_limit" model="ir.ui.view">
+        <field name="name">res.users.form.discount.limit</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='preferences']" position="inside">
+                <group string="Control de Descuentos en Ventas">
+                    <field name="max_discount"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Vista de lista de usuarios con campo de descuento máximo -->
+    <record id="view_users_tree_discount_limit" model="ir.ui.view">
+        <field name="name">res.users.tree.discount.limit</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_tree"/>
+        <field name="arch" type="xml">
+            <field name="login" position="after">
+                <field name="max_discount" optional="show"/>
+            </field>
+        </field>
+    </record>
+</odoo>

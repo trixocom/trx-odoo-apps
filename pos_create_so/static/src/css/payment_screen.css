@@ -1,0 +1,109 @@
+/* Estilos para el botón de crear orden de venta */
+.pos .payment-screen .create-sale-order-button {
+    background-color: #28a745;
+    border-color: #28a745;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 15px 30px;
+    border-radius: 8px;
+    width: 100%;
+    margin-top: 10px;
+    transition: all 0.3s ease;
+}
+
+.pos .payment-screen .create-sale-order-button:hover:not(:disabled) {
+    background-color: #218838;
+    border-color: #1e7e34;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.pos .payment-screen .create-sale-order-button:disabled {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.pos .payment-screen .create-sale-order-button i {
+    margin-right: 10px;
+    font-size: 20px;
+}
+
+/* Ocultar el botón de validar pago original */
+.pos .payment-screen .button-validate {
+    display: none !important;
+}
+
+/* Estilos para el mensaje de advertencia */
+.pos .payment-screen .customer-warning {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    max-width: 400px;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #fff3cd;
+    border: 1px solid #ffc107;
+    color: #856404;
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.pos .payment-screen .customer-warning i {
+    margin-right: 8px;
+}
+
+/* Ajustes para el contenedor del botón */
+.pos .payment-screen .next-button-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Estilos adicionales para el botón alternativo */
+.create-so-button-container {
+    width: 100%;
+    padding: 10px;
+}
+
+.create-sale-order-btn {
+    width: 100%;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 600;
+    gap: 10px;
+}
+
+.create-sale-order-btn i {
+    font-size: 24px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .pos .payment-screen .create-sale-order-button {
+        font-size: 16px;
+        padding: 12px 20px;
+    }
+    
+    .pos .payment-screen .customer-warning {
+        max-width: 90%;
+        right: 5%;
+        left: 5%;
+    }
+}

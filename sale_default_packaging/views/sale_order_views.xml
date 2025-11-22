@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vista de formulario de sale.order con campos de packaging -->
+    <record id="view_order_form_inherit_default_packaging" model="ir.ui.view">
+        <field name="name">sale.order.form.inherit.default.packaging</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <!-- Agregar campos de packaging en el tree view de las líneas de pedido -->
+            <xpath expr="//field[@name='order_line']//field[@name='product_uom_qty']" position="before">
+                <field name="product_packaging_id" 
+                       string="Embalaje"
+                       optional="show"
+                       column_invisible="parent.state in ['cancel']"
+                       domain="[('product_id', '=', product_id)]"
+                       context="{'default_product_id': product_id}"/>
+                <field name="product_packaging_qty" 
+                       string="Cant. Embalajes"
+                       optional="show"
+                       column_invisible="parent.state in ['cancel']"/>
+            </xpath>
+            
+            <!-- Agregar campos de packaging en el form view inline de las líneas de pedido -->
+            <xpath expr="//field[@name='order_line']//form//field[@name='product_uom_qty']" position="before">
+                <field name="product_packaging_id" 
+                       domain="[('product_id', '=', product_id)]"
+                       context="{'default_product_id': product_id}"/>
+                <field name="product_packaging_qty"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

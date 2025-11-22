@@ -1,0 +1,94 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# * wt_create_so_from_pos
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-11-06 12:00:00\n"
+"PO-Revision-Date: 2024-11-06 12:00:00\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#. module: wt_create_so_from_pos
+#: model:ir.model.fields,field_description:wt_create_so_from_pos.field_pos_config__create_so
+#: model:ir.model.fields,field_description:wt_create_so_from_pos.field_res_config_settings__pos_create_so
+msgid "Create Sales Order"
+msgstr "Crear Orden de Venta"
+
+#. module: wt_create_so_from_pos
+#: model:ir.model.fields,help:wt_create_so_from_pos.field_pos_config__create_so
+msgid "Allow to create Sales Order in POS"
+msgstr "Permitir crear Órdenes de Venta en PdV"
+
+#. module: wt_create_so_from_pos
+#: code:addons/wt_create_so_from_pos/static/src/app/control_buttons/control_buttons.xml:0
+#: code:addons/wt_create_so_from_pos/static/src/app/control_buttons/control_buttons.js:0
+msgid "Create Sale Order"
+msgstr "Crear Orden de Venta"
+
+#. module: wt_create_so_from_pos
+#: code:addons/wt_create_so_from_pos/static/src/app/control_buttons/control_buttons.js:0
+msgid "Select Customer."
+msgstr "Seleccionar Cliente."
+
+#. module: wt_create_so_from_pos
+#: code:addons/wt_create_so_from_pos/static/src/app/control_buttons/control_buttons.js:0
+msgid "Missing Customer"
+msgstr "Falta Cliente"
+
+#. module: wt_create_so_from_pos
+#: code:addons/wt_create_so_from_pos/static/src/app/control_buttons/control_buttons.js:0
+msgid "Close"
+msgstr "Cerrar"
+
+#. module: wt_create_so_from_pos
+#: code:addons/wt_create_so_from_pos/static/src/app/control_buttons/control_buttons.js:0
+msgid "There are no Product for SaleOrder."
+msgstr "No hay productos para la Orden de Venta."
+
+#. module: wt_create_so_from_pos
+#: code:addons/wt_create_so_from_pos/static/src/app/control_buttons/control_buttons.js:0
+msgid "Missing File"
+msgstr "Archivo Faltante"
+
+#. module: wt_create_so_from_pos
+#: code:addons/wt_create_so_from_pos/static/src/app/control_buttons/control_buttons.js:0
+msgid "Successfully!"
+msgstr "¡Exitoso!"
+
+#. module: wt_create_so_from_pos
+#: code:addons/wt_create_so_from_pos/static/src/app/control_buttons/control_buttons.js:0
+msgid "Sales Order %s Created Successfully!!!!"
+msgstr "¡Orden de Venta %s creada exitosamente!"
+
+#. module: wt_create_so_from_pos
+#: code:addons/wt_create_so_from_pos/static/src/app/control_buttons/control_buttons.js:0
+msgid "Confirm Order"
+msgstr "Confirmar Orden"
+
+#. module: wt_create_so_from_pos
+#: code:addons/wt_create_so_from_pos/static/src/app/control_buttons/control_buttons.js:0
+msgid "Ok"
+msgstr "Aceptar"
+
+#. module: wt_create_so_from_pos
+#: model_terms:ir.ui.view,arch_db:wt_create_so_from_pos.res_config_settings_view_form
+msgid "Allow to Create, Confirm and Cancel sale order from pos"
+msgstr "Permitir Crear, Confirmar y Cancelar órdenes de venta desde el PdV"
+
+#. module: wt_create_so_from_pos
+#: model:ir.model,name:wt_create_so_from_pos.model_pos_config
+msgid "Point of Sale Configuration"
+msgstr "Configuración del Punto de Venta"
+
+#. module: wt_create_so_from_pos
+#: model:ir.model,name:wt_create_so_from_pos.model_res_config_settings
+msgid "Config Settings"
+msgstr "Configuración"

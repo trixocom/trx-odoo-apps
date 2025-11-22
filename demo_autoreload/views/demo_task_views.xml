@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vista de Lista (Tree) -->
+    <record id="view_demo_task_tree" model="ir.ui.view">
+        <field name="name">demo.task.tree</field>
+        <field name="model">demo.task</field>
+        <field name="arch" type="xml">
+            <tree string="Tareas de Demostración" 
+                  decoration-danger="priority == '3'" 
+                  decoration-warning="priority == '2'"
+                  decoration-muted="state in ['done', 'cancelled']">
+                <field name="priority" widget="priority"/>
+                <field name="name"/>
+                <field name="user_id" widget="many2one_avatar_user"/>
+                <field name="date_start"/>
+                <field name="date_end"/>
+                <field name="state" 
+                       decoration-success="state == 'done'"
+                       decoration-info="state == 'in_progress'"
+                       decoration-muted="state == 'cancelled'"
+                       widget="badge"/>
+                <field name="progress" widget="progressbar"/>
+                <field name="is_urgent" invisible="1"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Vista de Formulario -->
+    <record id="view_demo_task_form" model="ir.ui.view">
+        <field name="name">demo.task.form</field>
+        <field name="model">demo.task</field>
+        <field name="arch" type="xml">
+            <form string="Tarea de Demostración">
+                <header>
+                    <button name="action_start" 
+                            string="Iniciar" 
+                            type="object" 
+                            class="oe_highlight"
+                            invisible="state != 'draft'"/>
+                    <button name="action_complete" 
+                            string="Completar" 
+                            type="object" 
+                            class="oe_highlight"
+                            invisible="state != 'in_progress'"/>
+                    <button name="action_cancel" 
+                            string="Cancelar" 
+                            type="object"
+                            invisible="state in ['done', 'cancelled']"/>
+                    <button name="action_reset_to_draft" 
+                            string="Resetear" 
+                            type="object"
+                            invisible="state == 'draft'"/>
+                    <field name="state" widget="statusbar" 
+                           statusbar_visible="draft,in_progress,done"/>
+                </header>
+                
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="toggle_active" 
+                                type="object" 
+                                class="oe_stat_button" 
+                                icon="fa-archive">
+                            <field name="active" widget="boolean_button"
+                                   options='{"terminology": "archive"}'/>
+                        </button>
+                    </div>
+                    
+                    <widget name="web_ribbon" title="Urgente" 
+                            bg_color="text-bg-danger"
+                            invisible="not is_urgent"/>
+                    
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Título de la tarea..."/>
+                        </h1>
+                    </div>
+                    
+                    <group>
+                        <group name="left_group" string="Información General">
+                            <field name="user_id" widget="many2one_avatar_user"/>
+                            <field name="priority" widget="priority"/>
+                            <field name="is_urgent" readonly="1"/>
+                            <field name="progress" widget="percentpie"/>
+                        </group>
+                        
+                        <group name="right_group" string="Fechas">
+                            <field name="date_start"/>
+                            <field name="date_end"/>
+                            <field name="days_remaining" 
+                                   decoration-danger="days_remaining &lt; 0"
+                                   decoration-warning="days_remaining &lt; 3"
+                                   decoration-success="days_remaining &gt;= 3"/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Descripción" name="description">
+                            <field name="description" 
+                                   placeholder="Describe la tarea en detalle..."/>
+                        </page>
+                        
+                        <page string="Notas" name="notes">
+                            <field name="notes" 
+                                   placeholder="Agrega notas adicionales..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vista de Búsqueda -->
+    <record id="view_demo_task_search" model="ir.ui.view">
+        <field name="name">demo.task.search</field>
+        <field name="model">demo.task</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Tareas">
+                <field name="name" string="Tarea" 
+                       filter_domain="[('name','ilike',self)]"/>
+                <field name="user_id"/>
+                <field name="state"/>
+                
+                <separator/>
+                
+                <filter string="Mis Tareas" name="my_tasks"
+                        domain="[('user_id', '=', uid)]"/>
+                <filter string="Urgentes" name="urgent"
+                        domain="[('is_urgent', '=', True)]"/>
+                <filter string="En Progreso" name="in_progress"
+                        domain="[('state', '=', 'in_progress')]"/>
+                <filter string="Completadas" name="done"
+                        domain="[('state', '=', 'done')]"/>
+                
+                <separator/>
+                
+                <filter string="Archivadas" name="inactive"
+                        domain="[('active', '=', False)]"/>
+                
+                <group expand="0" string="Agrupar Por">
+                    <filter string="Estado" name="group_state"
+                            context="{'group_by': 'state'}"/>
+                    <filter string="Prioridad" name="group_priority"
+                            context="{'group_by': 'priority'}"/>
+                    <filter string="Responsable" name="group_user"
+                            context="{'group_by': 'user_id'}"/>
+                    <filter string="Fecha Inicio" name="group_date_start"
+                            context="{'group_by': 'date_start'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Vista de Kanban -->
+    <record id="view_demo_task_kanban" model="ir.ui.view">
+        <field name="name">demo.task.kanban</field>
+        <field name="model">demo.task</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" class="o_kanban_small_column">
+                <field name="name"/>
+                <field name="user_id"/>
+                <field name="priority"/>
+                <field name="state"/>
+                <field name="progress"/>
+                <field name="is_urgent"/>
+                <field name="date_end"/>
+                
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_card oe_kanban_global_click">
+                            <div class="oe_kanban_content">
+                                <div class="o_kanban_record_top">
+                                    <div class="o_kanban_record_headings">
+                                        <strong class="o_kanban_record_title">
+                                            <field name="name"/>
+                                        </strong>
+                                    </div>
+                                    <div class="o_kanban_record_top_right">
+                                        <field name="priority" widget="priority"/>
+                                    </div>
+                                </div>
+                                
+                                <div class="o_kanban_record_body">
+                                    <field name="user_id" widget="many2one_avatar_user"/>
+                                    <t t-if="record.is_urgent.raw_value">
+                                        <span class="badge text-bg-danger">Urgente</span>
+                                    </t>
+                                </div>
+                                
+                                <div class="o_kanban_record_bottom">
+                                    <div class="oe_kanban_bottom_left">
+                                        <field name="progress" widget="progressbar"/>
+                                    </div>
+                                    <div class="oe_kanban_bottom_right">
+                                        <t t-if="record.date_end.raw_value">
+                                            <i class="fa fa-calendar" 
+                                               t-att-title="record.date_end.value"/>
+                                            <field name="date_end"/>
+                                        </t>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Vista de Calendario -->
+    <record id="view_demo_task_calendar" model="ir.ui.view">
+        <field name="name">demo.task.calendar</field>
+        <field name="model">demo.task</field>
+        <field name="arch" type="xml">
+            <calendar string="Calendario de Tareas" 
+                      date_start="date_start" 
+                      date_stop="date_end"
+                      color="priority"
+                      quick_create="True"
+                      event_open_popup="True"
+                      mode="month">
+                <field name="name"/>
+                <field name="user_id" 
+                       filters="1" 
+                       avatar_field="avatar_128"/>
+            </calendar>
+        </field>
+    </record>
+
+    <!-- Vista de Gráfico -->
+    <record id="view_demo_task_graph" model="ir.ui.view">
+        <field name="name">demo.task.graph</field>
+        <field name="model">demo.task</field>
+        <field name="arch" type="xml">
+            <graph string="Análisis de Tareas" type="bar">
+                <field name="state"/>
+                <field name="priority"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Vista de Pivot -->
+    <record id="view_demo_task_pivot" model="ir.ui.view">
+        <field name="name">demo.task.pivot</field>
+        <field name="model">demo.task</field>
+        <field name="arch" type="xml">
+            <pivot string="Tabla Dinámica de Tareas">
+                <field name="state" type="col"/>
+                <field name="priority" type="row"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Acción de Ventana -->
+    <record id="action_demo_task" model="ir.actions.act_window">
+        <field name="name">Tareas de Demostración</field>
+        <field name="res_model">demo.task</field>
+        <field name="view_mode">kanban,tree,form,calendar,graph,pivot</field>
+        <field name="context">{
+            'search_default_my_tasks': 1,
+        }</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                ¡Crea tu primera tarea de demostración!
+            </p>
+            <p>
+                Este es un módulo de ejemplo para probar el auto-reload de Odoo.
+                Prueba modificando el código mientras el servidor está corriendo.
+            </p>
+        </field>
+    </record>
+
+</odoo>

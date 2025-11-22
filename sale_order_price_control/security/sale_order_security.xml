@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Categoría para el grupo -->
+        <record id="module_category_sale_price_control" model="ir.module.category">
+            <field name="name">Control de Precios en Ventas</field>
+            <field name="description">Gestión de permisos para modificar precios y cantidades en órdenes de venta</field>
+            <field name="sequence">10</field>
+        </record>
+
+        <!-- Grupo para modificar precios y cantidades -->
+        <record id="group_sale_order_price_modifier" model="res.groups">
+            <field name="name">Modificar Precios en Ventas</field>
+            <field name="category_id" ref="module_category_sale_price_control"/>
+            <field name="comment">Los usuarios de este grupo pueden modificar precios unitarios y cantidades en las líneas de órdenes de venta.</field>
+        </record>
+
+    </data>
+</odoo>

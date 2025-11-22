@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Modificar los smart buttons de stock para mostrar embalajes -->
+    <record id="product_template_form_view_modify_stock_buttons" model="ir.ui.view">
+        <field name="name">product.template.form.modify.stock.buttons</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="stock.product_template_form_view_procurement_button"/>
+        <field name="arch" type="xml">
+            
+            <!-- Modificar el botón "On Hand" (Disponible) -->
+            <xpath expr="//button[@name='action_update_quantity_on_hand']" position="attributes">
+                <attribute name="style">min-width: 180px;</attribute>
+            </xpath>
+            <xpath expr="//button[@name='action_update_quantity_on_hand']/div[hasclass('o_stat_info')]" position="replace">
+                <div class="o_field_widget o_stat_info">
+                    <span class="o_stat_value d-flex gap-1">
+                        <field name="packaging_quantity_available" nolabel="1" class="oe_inline"/>
+                        <field name="packaging_name_display" nolabel="1" class="oe_inline"/>
+                    </span>
+                    <span class="o_stat_text">Disponible</span>
+                </div>
+            </xpath>
+            
+            <!-- Modificar el botón "Forecasted" (Pronosticado) -->
+            <xpath expr="//button[@name='action_product_tmpl_forecast_report']" position="attributes">
+                <attribute name="style">min-width: 180px;</attribute>
+            </xpath>
+            <xpath expr="//button[@name='action_product_tmpl_forecast_report']/div[hasclass('o_stat_info')]" position="replace">
+                <div class="o_field_widget o_stat_info">
+                    <span class="o_stat_value d-flex gap-1">
+                        <field name="packaging_virtual_available" nolabel="1" class="oe_inline"/>
+                        <field name="packaging_name_display" nolabel="1" class="oe_inline"/>
+                    </span>
+                    <span class="o_stat_text">Pronosticado</span>
+                </div>
+            </xpath>
+            
+        </field>
+    </record>
+</odoo>
