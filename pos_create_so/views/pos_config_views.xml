@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- Vista de formulario de POS Order para mostrar la SO vinculada -->
+    <record id="view_pos_order_form_inherit" model="ir.ui.view">
+        <field name="name">pos.order.form.inherit.create.so</field>
+        <field name="model">pos.order</field>
+        <field name="inherit_id" ref="point_of_sale.view_pos_pos_form"/>
+        <field name="arch" type="xml">
+            <field name="partner_id" position="after">
+                <field name="sale_order_id" readonly="1"/>
+            </field>
+            
+            <!-- Agregar botón en el header para crear SO manualmente si es necesario -->
+            <header position="inside">
+                <button name="create_sale_order_from_pos" 
+                        type="object" 
+                        string="Crear Orden de Venta"
+                        class="btn-primary"
+                        invisible="sale_order_id or state != 'draft'"
+                        help="Crea una orden de venta desde esta orden de POS"/>
+            </header>
+        </field>
+    </record>
+
+    <!-- Vista tree de POS Order -->
+    <record id="view_pos_order_tree_inherit" model="ir.ui.view">
+        <field name="name">pos.order.tree.inherit.create.so</field>
+        <field name="model">pos.order</field>
+        <field name="inherit_id" ref="point_of_sale.view_pos_order_tree"/>
+        <field name="arch" type="xml">
+            <field name="partner_id" position="after">
+                <field name="sale_order_id" optional="show"/>
+            </field>
+        </field>
+    </record>
+
+    <!-- Vista de búsqueda de POS Order -->
+    <record id="view_pos_order_search_inherit" model="ir.ui.view">
+        <field name="name">pos.order.search.inherit.create.so</field>
+        <field name="model">pos.order</field>
+        <field name="inherit_id" ref="point_of_sale.view_pos_order_search"/>
+        <field name="arch" type="xml">
+            <!-- Agregar filtros al final de los filtros existentes -->
+            <search position="inside">
+                <filter string="Con Orden de Venta" 
+                        name="with_sale_order" 
+                        domain="[('sale_order_id', '!=', False)]"/>
+                <filter string="Sin Orden de Venta" 
+                        name="without_sale_order" 
+                        domain="[('sale_order_id', '=', False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Menú para acceso rápido -->
+    <record id="action_pos_orders_with_sale" model="ir.actions.act_window">
+        <field name="name">POS con Órdenes de Venta</field>
+        <field name="res_model">pos.order</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('sale_order_id', '!=', False)]</field>
+        <field name="context">{'search_default_with_sale_order': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No hay órdenes de POS con órdenes de venta vinculadas
+            </p>
+            <p>
+                Las órdenes del POS que tengan órdenes de venta creadas aparecerán aquí.
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_pos_orders_with_sale"
+              name="POS con Órdenes de Venta"
+              parent="point_of_sale.menu_point_root"
+              action="action_pos_orders_with_sale"
+              sequence="20"/>
+
+</odoo>

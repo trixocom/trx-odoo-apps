@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- Menú Principal -->
+    <menuitem id="menu_demo_autoreload_root"
+              name="Demo Tasks"
+              sequence="100"
+              web_icon="demo_autoreload,static/description/icon.png"/>
+    
+    <!-- Submenú: Tareas -->
+    <menuitem id="menu_demo_task"
+              name="Tareas"
+              parent="menu_demo_autoreload_root"
+              action="action_demo_task"
+              sequence="10"/>
+    
+    <!-- Submenú: Configuración -->
+    <menuitem id="menu_demo_config"
+              name="Configuración"
+              parent="menu_demo_autoreload_root"
+              sequence="100"/>
+    
+</odoo>

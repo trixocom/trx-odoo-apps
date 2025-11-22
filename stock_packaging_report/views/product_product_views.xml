@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- 
+        Heredar de stock.product_product_stock_tree que es la vista BASE
+        que usa la acción del menú "Inventario > Reportes > Existencias" (ID: 663)
+        
+        Esta es la vista correcta para Odoo 18 EE.
+    -->
+    <record id="view_product_product_tree_inherit_packaging" model="ir.ui.view">
+        <field name="name">product.product.tree.inherit.packaging</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="stock.product_product_stock_tree"/>
+        <field name="arch" type="xml">
+            <!-- Añadir después de qty_available (On Hand / Disponible) -->
+            <field name="qty_available" position="after">
+                <field name="packaging_quantity_available" 
+                       string="Bultos Disponibles" 
+                       widget="float"
+                       optional="show"
+                       sum="Total Bultos Disponibles"
+                       decoration-info="packaging_quantity_available &gt; 0"/>
+            </field>
+        </field>
+    </record>
+</odoo>

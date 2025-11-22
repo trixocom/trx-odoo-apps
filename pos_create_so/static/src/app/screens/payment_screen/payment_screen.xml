@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <!-- Heredar el template del payment screen para agregar nuestro botón -->
+    <t t-name="pos_create_so.PaymentScreen" t-inherit="point_of_sale.PaymentScreen" t-inherit-mode="extension">
+        
+        <!-- Ocultar el botón de validar pago -->
+        <xpath expr="//div[hasclass('next-button-section')]//button[hasclass('button-validate')]" position="replace">
+            <!-- Botón reemplazado por el de crear orden de venta -->
+        </xpath>
+        
+        <!-- Agregar el botón de crear orden de venta -->
+        <xpath expr="//div[hasclass('next-button-section')]" position="inside">
+            <button 
+                class="button btn btn-primary btn-lg create-sale-order-button"
+                t-on-click="createSaleOrder"
+                t-att-disabled="!currentOrder or currentOrder.get_orderlines().length === 0 or !currentOrder.get_partner()">
+                <i class="fa fa-shopping-cart"/> Crear Orden de Venta
+            </button>
+        </xpath>
+
+        <!-- Agregar mensaje informativo si no hay cliente seleccionado -->
+        <xpath expr="//div[hasclass('payment-screen')]" position="inside">
+            <div class="alert alert-warning customer-warning" 
+                 t-if="!currentOrder or !currentOrder.get_partner()">
+                <i class="fa fa-exclamation-triangle"/> 
+                <strong>Atención:</strong> Debe seleccionar un cliente para crear la orden de venta.
+            </div>
+        </xpath>
+
+    </t>
+
+    <!-- Template alternativo para el botón si el anterior no funciona -->
+    <t t-name="pos_create_so.CreateSaleOrderButton">
+        <div class="create-so-button-container">
+            <button 
+                class="button highlight btn-primary create-sale-order-btn"
+                t-on-click="createSaleOrder">
+                <i class="fa fa-file-text-o"/> 
+                <span>Crear Orden de Venta</span>
+            </button>
+        </div>
+    </t>
+
+</templates>

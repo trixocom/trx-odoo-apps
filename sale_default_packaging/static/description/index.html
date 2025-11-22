@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+        .tagline {
+            font-size: 1.2em;
+            opacity: 0.9;
+            margin-top: 10px;
+        }
+        .feature-box {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .feature-box h3 {
+            margin-top: 0;
+            color: #667eea;
+        }
+        .example-box {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .icon {
+            font-size: 2em;
+            margin-right: 10px;
+        }
+        ul {
+            padding-left: 20px;
+        }
+        li {
+            margin: 10px 0;
+        }
+        .badge {
+            display: inline-block;
+            padding: 5px 10px;
+            background: #667eea;
+            color: white;
+            border-radius: 15px;
+            font-size: 0.9em;
+            margin-right: 5px;
+        }
+        .formula {
+            background: #e9ecef;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📦 Sale Default Packaging</h1>
+        <p class="tagline">Embalajes automáticos en líneas de venta</p>
+        <p><span class="badge">v1.1.0</span> <span class="badge">Odoo 18</span></p>
+    </div>
+
+    <div class="feature-box">
+        <h3>🎯 ¿Qué hace este módulo?</h3>
+        <p>Establece automáticamente el embalaje por defecto en las líneas de venta, basándose en la configuración de <strong>Stock Packaging Report</strong>.</p>
+        <p>Cuando agregas un producto a una orden de venta, el sistema:</p>
+        <ul>
+            <li>🔍 Busca el embalaje configurado para ese producto</li>
+            <li>✅ Lo establece automáticamente</li>
+            <li>🧮 Calcula las unidades basándose en la cantidad de embalajes</li>
+            <li>🔄 Sincroniza los cambios bidireccionalmente</li>
+        </ul>
+    </div>
+
+    <div class="feature-box">
+        <h3>✨ Características Principales</h3>
+        <ul>
+            <li><strong>Embalaje automático</strong>: Se establece al seleccionar un producto</li>
+            <li><strong>Cantidad por defecto</strong>: 1 embalaje de forma predeterminada</li>
+            <li><strong>Cálculo inteligente</strong>: Unidades = Embalajes × Unidades por Embalaje</li>
+            <li><strong>Sincronización bidireccional</strong>: Cambia embalajes o unidades, todo se actualiza</li>
+            <li><strong>Interfaz mejorada</strong>: Campos claros y fáciles de usar</li>
+        </ul>
+    </div>
+
+    <div class="example-box">
+        <h3>📊 Ejemplo de Uso</h3>
+        <p><strong>Configuración:</strong></p>
+        <ul>
+            <li>Producto: Azúcar Ledesma X 1 KG</li>
+            <li>Embalaje: "Caja" con 10 unidades</li>
+        </ul>
+        
+        <p><strong>Comportamiento:</strong></p>
+        <div class="formula">
+            1. Seleccionas el producto<br>
+            &nbsp;&nbsp;&nbsp;→ Embalaje: Caja<br>
+            &nbsp;&nbsp;&nbsp;→ Cant. Embalajes: 1.0<br>
+            &nbsp;&nbsp;&nbsp;→ Cantidad: 10.0 unidades<br>
+            <br>
+            2. Cambias Cant. Embalajes a 5.0<br>
+            &nbsp;&nbsp;&nbsp;→ Cantidad: 50.0 unidades<br>
+            <br>
+            3. Cambias Cantidad a 25.0<br>
+            &nbsp;&nbsp;&nbsp;→ Cant. Embalajes: 2.5
+        </div>
+    </div>
+
+    <div class="feature-box">
+        <h3>⚙️ Configuración Necesaria</h3>
+        <ol>
+            <li>Instalar <strong>odoo_stock_packaging_report</strong></li>
+            <li>Ir a <em>Inventario > Configuración > Ajustes</em></li>
+            <li>Configurar el <strong>Nombre del Embalaje</strong> (ej: "Caja")</li>
+            <li>En cada producto, agregar un embalaje con ese nombre exacto</li>
+        </ol>
+        <p><strong>⚠️ Importante:</strong> El nombre debe coincidir exactamente (case-sensitive)</p>
+    </div>
+
+    <div class="feature-box">
+        <h3>📐 Fórmulas</h3>
+        <div class="formula">
+            Unidades = Cant. Embalajes × Unidades por Embalaje<br>
+            <br>
+            Cant. Embalajes = Unidades ÷ Unidades por Embalaje
+        </div>
+    </div>
+
+    <div class="feature-box">
+        <h3>🔗 Dependencias</h3>
+        <ul>
+            <li><code>sale</code> - Módulo de ventas</li>
+            <li><code>stock</code> - Módulo de inventario</li>
+            <li><code>product</code> - Módulo de productos</li>
+            <li><code>stock_packaging_report</code> - <a href="https://github.com/trixocom/odoo_stock_packaging_report" target="_blank">Ver en GitHub</a></li>
+        </ul>
+    </div>
+
+    <div class="feature-box">
+        <h3>📝 Changelog</h3>
+        <p><strong>v1.1.2:</strong> Corrección de nombre de dependencia</p>
+        <p><strong>v1.1.1:</strong> Corrección de xpath en vistas XML</p>
+        <p><strong>v1.1.0:</strong></p>
+        <ul>
+            <li>✨ Refactorización completa del modelo</li>
+            <li>🔧 Mejora en el cálculo de cantidades</li>
+            <li>🔄 Sincronización bidireccional</li>
+            <li>🎨 Vista mejorada</li>
+            <li>📚 Documentación completa</li>
+        </ul>
+    </div>
+
+    <div style="text-align: center; margin-top: 40px; padding: 20px; background: #f8f9fa; border-radius: 10px;">
+        <h3>👥 Desarrollado por Trixocom</h3>
+        <p>🌐 <a href="https://trixocom.com" target="_blank">https://trixocom.com</a></p>
+        <p>📧 Soporte y consultas a través de GitHub</p>
+    </div>
+</body>
+</html>

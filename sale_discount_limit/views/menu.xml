@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Menú para gestionar descuentos máximos de usuarios -->
+    <menuitem
+        id="menu_sale_discount_limit_users"
+        name="Descuentos por Usuario"
+        parent="sale.menu_sale_config"
+        action="base.action_res_users"
+        sequence="50"/>
+</odoo>
