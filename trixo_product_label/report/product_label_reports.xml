@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Other reports removed as per user request -->
+
+    <record id="report_product_label_4xa4" model="ir.actions.report">
+        <field name="name">Product Label 1/4 A4</field>
+        <field name="model">product.product</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">trixo_product_label.report_producttemplatelabel4xa4</field>
+        <field name="report_file">trixo_product_label.report_producttemplatelabel4xa4</field>
+        <field name="paperformat_id" ref="trixo_product_label.paperformat_trixo_label_landscape_v2"/>
+        <field name="binding_model_id" ref="product.model_product_product"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_producttemplatelabel4xa4">
+        <t t-call="web.basic_layout">
+            <div class="page">
+                <style>
+                    .label-4xa4 {
+                        border: 2px solid black;
+                        width: 138mm;
+                        height: 98mm;
+                        float: left;
+                        margin: 2mm;
+                        padding: 15px;
+                        box-sizing: border-box;
+                        page-break-inside: avoid;
+                        position: relative;
+                    }
+                    .label-header {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        border-bottom: 2px solid black;
+                        padding-bottom: 5px;
+                        margin-bottom: 5px;
+                    }
+                    .product-code {
+                        border: 1px solid black;
+                        border-radius: 10px;
+                        padding: 5px 10px;
+                        font-weight: bold;
+                    }
+                    .price-large {
+                        font-size: 24px;
+                        font-weight: bold;
+                    }
+                    .price-section {
+                        display: flex;
+                        justify-content: space-between;
+                    }
+                </style>
+                <div style="width: 100%;">
+                    <t t-foreach="docs" t-as="product">
+                        <div class="label-4xa4">
+                            <!-- Header -->
+                            <div class="label-header">
+                                <h2 t-field="product.name" style="margin: 0; font-size: 20px; max-width: 65%;"/>
+                                <div class="product-code">
+                                    <span t-field="product.default_code"/>
+                                </div>
+                            </div>
+
+                            <!-- Body -->
+                            <div class="price-section">
+                                <div>
+                                    <div class="price-large">
+                                        <span t-field="product.list_price" t-options='{"widget": "monetary", "display_currency": product.currency_id}'/>
+                                    </div>
+                                    <small>Precio Unidad</small>
+                                </div>
+                                <div class="text-end">
+                                    <t t-set="packaging" t-value="product.packaging_ids and product.packaging_ids[0] or False"/>
+                                    <t t-set="qty_per_package" t-value="packaging and packaging.qty or 1.0"/>
+
+                                    <div style="font-size: 16px;">
+                                        <t t-esc="qty_per_package"/>
+ un/bulto
+                                    </div>
+                                    <div class="price-large">
+                                        <span t-esc="product.list_price * qty_per_package" t-options='{"widget": "monetary", "display_currency": product.currency_id}'/>
+                                    </div>
+                                    <small>Precio Bulto</small>
+                                </div>
+                            </div>
+
+                            <!-- Footer -->
+                            <div style="position: absolute; bottom: 15px; width: 90%;">
+                                <div class="row align-items-end">
+                                    <div class="col-8">
+                                        <span t-field="product.barcode" t-options="{'widget': 'barcode', 'symbology': 'auto', 'width': 600, 'height': 100, 'img_style': 'width:100%; height:60px;'}"/>
+                                        <div t-if="product.barcode" t-esc="product.barcode" class="text-center"/>
+                                    </div>
+                                    <div class="col-4 text-end" style="border-left: 1px solid black; padding-left: 10px;">
+                                        <small style="display: block; line-height: 1;">Fecha cambio de precio</small>
+                                        <strong t-esc="context_timestamp(datetime.datetime.now()).strftime('%d/%m/%Y')"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

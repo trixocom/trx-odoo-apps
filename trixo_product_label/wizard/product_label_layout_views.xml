@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="product_label_layout_form_trixo" model="ir.ui.view">
+        <field name="name">product.label.layout.form.trixo</field>
+        <field name="model">product.label.layout</field>
+        <field name="inherit_id" ref="product.product_label_layout_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='print_format']" position="attributes">
+                <!-- No specific attributes needed, selection merge handles the options -->
+            </xpath>
+        </field>
+    </record>
+</odoo>
