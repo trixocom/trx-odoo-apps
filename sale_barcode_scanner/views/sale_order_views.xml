@@ -6,24 +6,21 @@
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
-            
+
             <!-- Agregar campo de escaneo antes de las líneas de orden -->
             <xpath expr="//field[@name='order_line']" position="before">
-                <group>
+                <group groups="sale_barcode_scanner.group_barcode_scanner_user">
                     <group>
-                        <field name="barcode_scan" 
-                               placeholder="Escanea el código de barras aquí..."
-                               attrs="{'invisible': [('state', 'in', ['done', 'cancel'])]}"
-                               class="oe_inline"
-                               widget="char"/>
+                        <field name="barcode_scan" placeholder="Escanea el código de barras aquí..." invisible="state in ['done', 'cancel']" class="oe_inline" widget="char"/>
                     </group>
                     <group>
-                        <label string="💡 Tip: Escanea el código de barras con tu lector USB y el producto se agregará automáticamente"
-                               attrs="{'invisible': [('state', 'in', ['done', 'cancel'])]}"/>
+                        <div class="o_form_label" invisible="state in ['done', 'cancel']">
+                            💡 Tip: Escanea el código de barras con tu lector USB y el producto se agregará automáticamente
+                        </div>
                     </group>
                 </group>
             </xpath>
-            
+
         </field>
     </record>
 
