@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Sale Barcode Scanner',
-    'version': '18.0.1.0.0',
+    'version': '18.0.1.0.1',
     'category': 'Sales',
     'summary': 'Escanear códigos de barras para agregar productos en órdenes de venta',
     'description': """
@@ -39,11 +39,12 @@ Notas:
 * El campo de escaneo se limpia automáticamente después de procesar
 * Muestra notificaciones cuando se agregan productos o hay errores
     """,
-    'author': 'Hector',
-    'website': 'https://www.odoo.com',
+    'author': 'Trixocom',
+    'website': 'www.trixocom.com',
     'license': 'LGPL-3',
     'depends': ['sale', 'product'],
     'data': [
+        'security/sale_barcode_scanner_groups.xml',
         'security/ir.model.access.csv',
         'views/sale_order_views.xml',
     ],

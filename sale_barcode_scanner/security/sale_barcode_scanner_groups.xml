@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="module_category_barcode_scanner" model="ir.module.category">
+            <field name="name">Barcode Scanner</field>
+            <field name="description">Access levels for Barcode Scanner.</field>
+            <field name="sequence">10</field>
+        </record>
+
+        <record id="group_barcode_scanner_user" model="res.groups">
+            <field name="name">Barcode Scanner User</field>
+            <field name="category_id" ref="module_category_barcode_scanner"/>
+        </record>
+    </data>
+</odoo>
