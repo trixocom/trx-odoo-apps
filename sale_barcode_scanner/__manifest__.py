@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Sale Barcode Scanner',
-    'version': '18.0.1.0.2',
+    'version': '18.0.1.0.3',
     'category': 'Sales',
     'summary': 'Escanear códigos de barras para agregar productos en órdenes de venta',
     'description': """
@@ -42,7 +42,7 @@ Notas:
     'author': 'Trixocom',
     'website': 'www.trixocom.com',
     'license': 'LGPL-3',
-    'depends': ['sale', 'product'],
+    'depends': ['sale', 'product', 'sale_default_packaging'],
     'data': [
         'security/sale_barcode_scanner_groups.xml',
         'security/ir.model.access.csv',
