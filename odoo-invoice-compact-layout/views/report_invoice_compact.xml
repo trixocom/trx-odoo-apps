@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- ========================================================================
+         SOLUCIÓN NUCLEAR v1.5.0 - INLINE STYLES
+         
+         Modifica directamente los elementos HTML con estilos inline
+         ======================================================================== -->
+    
+    <!-- Template: report_invoice_document -->
+    <record id="report_invoice_document_compact" model="ir.ui.view">
+        <field name="name">Invoice Compact - Document</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.report_invoice_document"/>
+        <field name="priority">999</field>
+        <field name="arch" type="xml">
+            
+            <!-- Modificar el div.page directamente -->
+            <xpath expr="//div[hasclass('page')]" position="attributes">
+                <attribute name="style">padding-top: 1mm !important; margin-top: 0mm !important;</attribute>
+            </xpath>
+            
+            <!-- Agregar CSS mega-específico -->
+            <xpath expr="//div[hasclass('page')]" position="before">
+                <style type="text/css">
+                    /* ================================================================
+                       CSS NUCLEAR v1.5.0 - Selectores ultra-específicos
+                       ================================================================ */
+                    
+                    /* Targets específicos del DOM de Odoo */
+                    body div.page div.row,
+                    div.page div.row,
+                    div.row {
+                        margin: 0mm !important;
+                        margin-top: 0mm !important;
+                        margin-bottom: 0mm !important;
+                        padding: 0mm !important;
+                        padding-top: 0mm !important;
+                        padding-bottom: 0mm !important;
+                    }
+                    
+                    /* Header ultra-específico */
+                    body div.page div.row div.col-6,
+                    div.page div.row div.col-6,
+                    body header,
+                    header {
+                        margin-top: 0mm !important;
+                        margin-bottom: 0mm !important;
+                        padding-top: 0mm !important;
+                        padding-bottom: 0mm !important;
+                    }
+                    
+                    /* Info de la empresa */
+                    body div.page div.row div.col-6 div,
+                    div.page div.row div.col-6 div {
+                        margin: 0mm !important;
+                        padding: 0mm !important;
+                        line-height: 1.0 !important;
+                    }
+                    
+                    /* Todos los párrafos */
+                    body div.page p,
+                    div.page p,
+                    p {
+                        margin: 0mm !important;
+                        margin-top: 0mm !important;
+                        margin-bottom: 0mm !important;
+                        padding: 0mm !important;
+                    }
+                    
+                    /* Todos los divs en general */
+                    body div.page div,
+                    div.page div {
+                        line-height: 1.1 !important;
+                    }
+                    
+                    /* Bootstrap específico */
+                    body div.page .mt-0, body div.page .mt-1, body div.page .mt-2, body div.page .mt-3,
+                    body div.page .mb-0, body div.page .mb-1, body div.page .mb-2, body div.page .mb-3,
+                    body div.page .my-0, body div.page .my-1, body div.page .my-2, body div.page .my-3,
+                    div.page .mt-0, div.page .mt-1, div.page .mt-2, div.page .mt-3,
+                    div.page .mb-0, div.page .mb-1, div.page .mb-2, div.page .mb-3,
+                    div.page .my-0, div.page .my-1, div.page .my-2, div.page .my-3 {
+                        margin-top: 0mm !important;
+                        margin-bottom: 0mm !important;
+                    }
+                    
+                    body div.page .pt-0, body div.page .pt-1, body div.page .pt-2, body div.page .pt-3,
+                    body div.page .pb-0, body div.page .pb-1, body div.page .pb-2, body div.page .pb-3,
+                    body div.page .py-0, body div.page .py-1, body div.page .py-2, body div.page .py-3,
+                    div.page .pt-0, div.page .pt-1, div.page .pt-2, div.page .pt-3,
+                    div.page .pb-0, div.page .pb-1, div.page .pb-2, div.page .pb-3,
+                    div.page .py-0, div.page .py-1, div.page .py-2, div.page .py-3 {
+                        padding-top: 0mm !important;
+                        padding-bottom: 0mm !important;
+                    }
+                    
+                    /* Clases específicas del header de factura */
+                    body div.page div.row.mt-3,
+                    div.page div.row.mt-3 {
+                        margin-top: 0mm !important;
+                    }
+                    
+                    body div.page div.row.mb-3,
+                    div.page div.row.mb-3 {
+                        margin-bottom: 0mm !important;
+                    }
+                    
+                    /* Tablas compactas */
+                    body div.page table,
+                    div.page table {
+                        margin-top: 1mm !important;
+                        margin-bottom: 1mm !important;
+                    }
+                    
+                    body div.page table thead th,
+                    body div.page table tbody td,
+                    div.page table thead th,
+                    div.page table tbody td {
+                        padding: 1mm 2mm !important;
+                        line-height: 1.1 !important;
+                    }
+                    
+                    /* Forzar line-height en todo */
+                    body div.page *,
+                    div.page * {
+                        line-height: 1.1 !important;
+                    }
+                    
+                    /* Divs vacíos */
+                    body div.page div:empty,
+                    div.page div:empty {
+                        display: none !important;
+                        height: 0 !important;
+                    }
+                    
+                    /* Headers y títulos */
+                    body div.page h1, body div.page h2, body div.page h3,
+                    body div.page h4, body div.page h5, body div.page h6,
+                    div.page h1, div.page h2, div.page h3,
+                    div.page h4, div.page h5, div.page h6 {
+                        margin: 0mm !important;
+                        padding: 0mm !important;
+                        line-height: 1.1 !important;
+                    }
+                </style>
+            </xpath>
+            
+        </field>
+    </record>
+    
+</odoo>

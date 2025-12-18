@@ -1,0 +1,114 @@
+/* ============================================ */
+/* Invoice Compact Layout - SCSS               */
+/* Optimización de espaciado en reportes      */
+/* ============================================ */
+
+// Variables para control de espaciado
+$compact-padding: 1mm;
+$compact-margin: 2mm;
+$minimal-gap: 0mm;
+$compact-line-height: 1.2;
+
+// Clase principal para layout compacto
+.invoice-compact-layout {
+    
+    // Resetear márgenes del header
+    .header {
+        margin-bottom: $minimal-gap !important;
+        padding-bottom: $minimal-gap !important;
+        
+        .company_address {
+            margin-bottom: $compact-margin !important;
+        }
+    }
+    
+    // Reducir espacio del artículo principal
+    .article {
+        margin-top: $minimal-gap !important;
+        padding-top: $minimal-gap !important;
+    }
+    
+    // Optimizar información del documento
+    #informations {
+        margin-top: $compact-margin !important;
+        margin-bottom: $compact-margin !important;
+        padding: 0 !important;
+        
+        .row {
+            margin-bottom: $compact-padding !important;
+        }
+        
+        h2 {
+            margin-top: $compact-padding !important;
+            margin-bottom: $compact-padding !important;
+        }
+    }
+    
+    // Tablas compactas
+    .table-compact {
+        margin-top: $compact-margin !important;
+        margin-bottom: $compact-margin !important;
+        
+        thead th {
+            padding: $compact-padding $compact-padding !important;
+            line-height: $compact-line-height !important;
+            font-size: 9pt !important;
+        }
+        
+        tbody {
+            td {
+                padding: $compact-padding $compact-padding !important;
+                line-height: $compact-line-height !important;
+                font-size: 9.5pt !important;
+                vertical-align: middle !important;
+            }
+            
+            // Alinear primera columna a la izquierda
+            td:first-child {
+                text-align: left !important;
+            }
+            
+            // Alinear números a la derecha
+            td:not(:first-child) {
+                text-align: right !important;
+            }
+        }
+        
+        tfoot {
+            td {
+                padding: $compact-padding $compact-padding !important;
+                font-weight: bold !important;
+            }
+        }
+    }
+    
+    // Reducir espacio en secciones de totales
+    .oe_structure {
+        margin: $compact-margin 0 !important;
+        padding: 0 !important;
+    }
+    
+    // Optimizar información de pago
+    .payment_term {
+        margin-top: $compact-margin !important;
+        margin-bottom: $compact-margin !important;
+    }
+    
+    // Reducir espacos en divs generales
+    .row {
+        &:not(:last-child) {
+            margin-bottom: $compact-margin !important;
+        }
+    }
+    
+    // Optimizar pie de página
+    .footer {
+        margin-top: $compact-margin !important;
+        padding-top: $compact-margin !important;
+    }
+}
+
+// Reglas globales para todos los reportes
+div.page {
+    padding-top: 10mm !important;
+}

@@ -1,0 +1,52 @@
+# Translation of Odoo Module.
+# This file contains the translation of the following modules:
+# 	* stock_packaging_invoice_report
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Module 18.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-11-11 12:00:00\n"
+"PO-Revision-Date: 2025-11-11 12:00:00\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: stock_packaging_invoice_report
+#: model:ir.model.fields,field_description:stock_packaging_invoice_report.field_account_move_line__packaging_quantity_invoice
+#: model_terms:ir.ui.view,arch_db:stock_packaging_invoice_report.view_move_form_inherit_packaging
+#: model_terms:ir.ui.view,arch_db:stock_packaging_invoice_report.view_account_move_line_tree_inherit_packaging
+#: model_terms:ir.ui.view,arch_db:stock_packaging_invoice_report.report_invoice_document_inherit_packaging
+#: model_terms:ir.ui.view,arch_db:stock_packaging_invoice_report.report_invoice_with_payments_document_inherit_packaging
+msgid "Cantidad de Embalaje"
+msgstr "Bultos"
+
+#. module: stock_packaging_invoice_report
+#: model:ir.model.fields,field_description:stock_packaging_invoice_report.field_account_move_line__packaging_name
+msgid "Nombre del Embalaje"
+msgstr "Nombre del Embalaje"
+
+#. module: stock_packaging_invoice_report
+#: model:ir.model.fields,help:stock_packaging_invoice_report.field_account_move_line__packaging_quantity_invoice
+msgid "Cantidad de embalajes calculada según el tipo de embalaje configurado en el sistema."
+msgstr "Cantidad de embalajes calculada según el tipo de embalaje configurado en el sistema."
+
+#. module: stock_packaging_invoice_report
+#: model:ir.model.fields,help:stock_packaging_invoice_report.field_account_move_line__packaging_name
+msgid "Nombre del tipo de embalaje configurado en el sistema."
+msgstr "Nombre del tipo de embalaje configurado en el sistema."
+
+#. module: stock_packaging_invoice_report
+#: model_terms:ir.ui.view,arch_db:stock_packaging_invoice_report.report_invoice_document_inherit_packaging
+#: model_terms:ir.ui.view,arch_db:stock_packaging_invoice_report.report_invoice_with_payments_document_inherit_packaging
+msgid "Total Embalajes"
+msgstr "Total Bultos"
+
+#. module: stock_packaging_invoice_report
+#: model_terms:ir.ui.view,arch_db:stock_packaging_invoice_report.view_account_move_line_search_inherit_packaging
+msgid "Embalaje"
+msgstr "Embalaje"
