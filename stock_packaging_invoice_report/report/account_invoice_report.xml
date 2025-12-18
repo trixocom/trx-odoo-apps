@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_invoice_document_inherit_packaging" inherit_id="account.report_invoice_document">
+        
+        <!-- Agregar header "Cantidad de Embalaje" después de columna Cantidad -->
+        <xpath expr="//table[@name='invoice_line_table']/thead/tr/th[@name='th_quantity']" position="after">
+            <th name="th_packaging_quantity" class="text-end">Cantidad de Embalaje</th>
+        </xpath>
+        
+        <!-- Agregar dato de cantidad de embalaje después de cantidad -->
+        <xpath expr="//table[@name='invoice_line_table']/tbody//tr//td[@name='td_quantity']" position="after">
+            <td name="td_packaging_quantity" class="text-end">
+                <span t-field="line.packaging_quantity_invoice"/>
+            </td>
+        </xpath>
+        
+    </template>
+</odoo>
