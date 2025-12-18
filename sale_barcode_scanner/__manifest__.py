@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Sale Barcode Scanner',
-    'version': '18.0.1.0.1',
+    'version': '18.0.1.0.2',
     'category': 'Sales',
     'summary': 'Escanear códigos de barras para agregar productos en órdenes de venta',
     'description': """

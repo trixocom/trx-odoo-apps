@@ -24,13 +24,12 @@ class SaleOrder(models.Model):
     def _onchange_barcode_scan(self):
         """
         Procesa el código de barras escaneado y agrega el producto a las líneas.
+        Soporta:
+        1. Código de barras de Producto
+        2. Código de barras de Embalaje (Packaging)
         
-        Flujo:
-        1. Busca el producto por código de barras
-        2. Si existe, verifica si ya está en las líneas
-        3. Si ya existe, incrementa la cantidad en 1
-        4. Si no existe, crea una nueva línea con cantidad 1
-        5. Limpia el campo de escaneo
+        Si encuentra un producto, intenta aplicar el embalaje por defecto
+        si el módulo sale_default_packaging está disponible.
         """
         if not self.barcode_scan:
             return
@@ -41,18 +40,55 @@ class SaleOrder(models.Model):
             self.barcode_scan = False
             return
 
-        # Buscar el producto por código de barras
-        product = self.env['product.product'].search([
+        product = False
+        packaging = False
+        qty_to_add = 1.0
+        packaging_qty = 0.0
+
+        # 1. Buscar primero en Embalajes (Product Packaging)
+        packaging = self.env['product.packaging'].search([
             ('barcode', '=', barcode)
         ], limit=1)
 
+        if packaging:
+            product = packaging.product_id
+            # Si escaneamos un packaging, asumimos que queremos 1 unidad de ese packaging
+            packaging_qty = 1.0
+            if packaging.qty:
+                qty_to_add = packaging.qty
+        else:
+            # 2. Buscar en Productos
+            product = self.env['product.product'].search([
+                ('barcode', '=', barcode)
+            ], limit=1)
+
+            if not product:
+                # Fallback: buscar por Referencia Interna
+                product = self.env['product.product'].search([
+                    ('default_code', '=', barcode)
+                ], limit=1)
+            
+            # Si encontramos producto, verificar si tiene packaging por defecto
+            # (Integración con sale_default_packaging)
+            if product:
+                if hasattr(self.env['sale.order.line'], '_get_default_packaging_for_product'):
+                    try:
+                        def_pack = self.env['sale.order.line']._get_default_packaging_for_product(product.id)
+                        if def_pack:
+                            packaging = def_pack
+                            packaging_qty = 1.0
+                            if packaging.qty:
+                                qty_to_add = packaging.qty
+                    except Exception as e:
+                        _logger.warning(f'Error buscando packaging por defecto: {e}')
+
         if not product:
-            # No se encontró el producto
+            # No se encontró el producto ni packaging
             _logger.warning(f'Producto no encontrado con código de barras: {barcode}')
             return {
                 'warning': {
                     'title': 'Producto no encontrado',
-                    'message': f'No se encontró ningún producto con el código de barras: {barcode}'
+                    'message': f'No se encontró ningún producto ni embalaje con el código: {barcode}'
                 }
             }
 
@@ -68,28 +104,51 @@ class SaleOrder(models.Model):
             }
 
         # Buscar si el producto ya existe en las líneas de orden
-        existing_line = self.order_line.filtered(
-            lambda line: line.product_id.id == product.id
-        )
+        # Si estamos usando packaging, buscamos una línea con el mismo packaging
+        domain = [('product_id', '=', product.id)]
+        if packaging:
+             domain.append(('product_packaging_id', '=', packaging.id))
+        
+        existing_line = self.order_line.filtered_domain(domain)
 
         if existing_line:
             # Si existe, incrementar la cantidad
-            existing_line[0].product_uom_qty += 1
+            # Si tiene packaging, incrementamos en unidades del packaging (ej: 1 caja más)
+            
+            # Nota: Si sale_default_packaging está instalado, tiene lógica para sync cantidades.
+            # Aquí incrementamos la cantidad total del producto (uom_qty)
+            
+            existing_line[0].product_uom_qty += qty_to_add
+            
+            # Si tenemos el campo de cantidad de packaging (del otro módulo), intentamos actualizarlo
+            if packaging and hasattr(existing_line[0], 'product_packaging_qty'):
+                 # Asumiendo que added qty corresponde a 1 (o más) packagings
+                 existing_line[0].product_packaging_qty += packaging_qty
+
             _logger.info(
                 f'Incrementada cantidad de {product.name} '
                 f'en orden {self.name}. Nueva cantidad: {existing_line[0].product_uom_qty}'
             )
         else:
             # Si no existe, crear una nueva línea
-            self.order_line = [(0, 0, {
+            vals = {
                 'product_id': product.id,
                 'name': product.display_name,
-                'product_uom_qty': 1,
+                'product_uom_qty': qty_to_add,
                 'product_uom': product.uom_id.id,
                 'price_unit': product.list_price,
-            })]
+            }
+            
+            if packaging:
+                vals['product_packaging_id'] = packaging.id
+                # Soporte para campo de cantidad de packaging si existe
+                vals['product_packaging_qty'] = packaging_qty
+
+            self.order_line = [(0, 0, vals)]
+            
             _logger.info(
-                f'Agregado producto {product.name} a orden {self.name}'
+                f'Agregado producto {product.name} a orden {self.name} '
+                f'(Packaging: {packaging.name if packaging else "Ninguno"})'
             )
 
         # Limpiar el campo de escaneo
