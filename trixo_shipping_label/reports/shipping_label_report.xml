@@ -107,7 +107,7 @@
                                                     <span t-field="o.shipping_weight"/>
  kgs.<br/>
                                                 <strong>Bultos: </strong>
-                                                <span t-esc="len(o.package_level_ids) or 0"/>
+                                                <span t-esc="o.number_of_packages or 0"/>
                                             </td>
                                         </tr>
                                     </table>
