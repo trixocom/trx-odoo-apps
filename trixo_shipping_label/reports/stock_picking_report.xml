@@ -1,11 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <template id="report_picking_inherit_trixo_carrier" inherit_id="stock.report_picking">
-        <xpath expr="//div[@name='div_origin']" position="after">
-            <div class="col-auto" name="div_carrier" t-if="o.carrier_id">
+    <!-- Inherit stock.report_delivery_document which is modified by l10n_ar_stock -->
+    <!-- Priority 50 ensures we apply after l10n_ar_stock (priority 20) -->
+    <template id="report_delivery_document_inherit_carrier" inherit_id="stock.report_delivery_document" priority="50">
+        <!-- Target the Order field added by l10n_ar_stock inside the new 'informations' div -->
+        <!-- The structure in l10n_ar_stock is: -->
+        <!-- <div id="informations"> ... <div class="col-6"> ... <t><strong>Order:</strong><span t-field="o.origin"/></t> ... -->
+
+        <!-- We target the span for origin, and append our block after its parent <t> (or siblings) -->
+        <!-- Using xpath with checking specific field presence to be safe -->
+        <xpath expr="//div[@id='informations']//span[@t-field='o.origin']/.." position="after">
+            <t t-if="o.carrier_id">
+                <br/>
                 <strong>Transportista:</strong>
-                <p t-field="o.carrier_id.name"/>
-            </div>
+                <span t-field="o.carrier_id.name"/>
+            </t>
         </xpath>
     </template>
 </odoo>
