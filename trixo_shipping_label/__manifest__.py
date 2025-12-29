@@ -1,0 +1,24 @@
+{
+    'name': 'Trixo Shipping Label',
+    'version': '18.0.1.0.0',
+    'summary': 'Generates a custom shipping label for Stock Picking',
+    'description': """
+        This module adds a custom Shipping Label report for Stock Pickings.
+        It uses a specific layout with:
+        - Recipient Address
+        - Sender Address
+        - Transport Information
+        - Weight and Package Count
+    """,
+    'author': 'Antigravity',
+    'category': 'Stock',
+    'depends': ['stock', 'delivery'],
+    'data': [
+        'views/res_partner_views.xml',
+        'data/paper_format.xml',
+        'reports/shipping_label_report.xml',
+    ],
+    'installable': True,
+    'application': False,
+    'license': 'LGPL-3',
+}

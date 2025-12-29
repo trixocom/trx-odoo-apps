@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_report_shipping_label" model="ir.actions.report">
+        <field name="name">Etiqueta de Envio</field>
+        <field name="model">stock.picking</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">trixo_shipping_label.report_shipping_label_document</field>
+        <field name="report_file">trixo_shipping_label.report_shipping_label_document</field>
+        <field name="print_report_name">'Shipping Label - %s' % (object.name)</field>
+        <field name="binding_model_id" ref="stock.model_stock_picking"/>
+        <field name="binding_type">report</field>
+        <field name="paperformat_id" ref="paperformat_shipping_label_trixo"/>
+    </record>
+
+    <template id="report_shipping_label_document">
+        <t t-call="web.basic_layout">
+            <t t-foreach="docs" t-as="o">
+                <div class="page" style="font-family: Arial, sans-serif; font-size: 16px;">
+                    <!-- Repeat 3 times for the 3 copies on the page -->
+                    <t t-foreach="range(3)" t-as="i">
+                        <div style="border: 2px solid black; margin-bottom: 40px; page-break-inside: avoid;">
+
+                            <!-- Main Table for the Label Strip -->
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <!-- ROW 1: RECIPIENT -->
+                                <tr>
+                                    <!-- Left Column -->
+                                    <td style="width: 50%; border-right: 1px solid black; border-bottom: 1px solid black; padding: 14px; vertical-align: top;">
+                                        <strong>Envio Para: </strong>
+                                        <span style="font-weight: bold;" t-field="o.partner_id.name"/>
+                                        <br/>
+                                        <strong>Dirección: </strong>
+                                        <span t-field="o.partner_id.street"/>
+                                        <span t-if="o.partner_id.street2">
+                                            <span t-field="o.partner_id.street2"/>
+                                        </span>,
+                                        <span t-field="o.partner_id.city"/>
+                                        <span t-if="o.partner_id.state_id"> -                                            <span t-field="o.partner_id.state_id.name"/>
+                                        </span>
+                                    </td>
+                                    <!-- Right Column (Duplicate) -->
+                                    <td style="width: 50%; border-bottom: 1px solid black; padding: 14px; vertical-align: top;">
+                                        <strong>Envio Para: </strong>
+                                        <span style="font-weight: bold;" t-field="o.partner_id.name"/>
+                                        <br/>
+                                        <strong>Dirección: </strong>
+                                        <span t-field="o.partner_id.street"/>
+                                        <span t-if="o.partner_id.street2">
+                                            <span t-field="o.partner_id.street2"/>
+                                        </span>,
+                                        <span t-field="o.partner_id.city"/>
+                                        <span t-if="o.partner_id.state_id"> -                                            <span t-field="o.partner_id.state_id.name"/>
+                                        </span>
+                                    </td>
+                                </tr>
+
+                                <!-- ROW 2: SENDER -->
+                                <tr>
+                                    <!-- Left Column -->
+                                    <td style="width: 50%; border-right: 1px solid black; border-bottom: 1px solid black; padding: 14px; vertical-align: top;">
+                                        <strong>REMITENTE:</strong>
+                                        <br/>
+                                        <span style="font-weight: bold;" t-field="o.picking_type_id.warehouse_id.partner_id.name"/>
+                                        <br/>
+                                        <span t-field="o.picking_type_id.warehouse_id.partner_id.street"/>
+                                        <span t-if="o.picking_type_id.warehouse_id.partner_id.street2"> -                                            <span t-field="o.picking_type_id.warehouse_id.partner_id.street2"/>
+                                        </span>
+                                        <br/>
+                                        <span t-field="o.picking_type_id.warehouse_id.partner_id.city"/>
+                                        <span t-if="o.picking_type_id.warehouse_id.partner_id.phone"> - Te: <span t-field="o.picking_type_id.warehouse_id.partner_id.phone"/>
+                                        </span>
+                                    </td>
+                                    <!-- Right Column (Duplicate) -->
+                                    <td style="width: 50%; border-bottom: 1px solid black; padding: 14px; vertical-align: top;">
+                                        <strong>REMITENTE:</strong>
+                                        <br/>
+                                        <span style="font-weight: bold;" t-field="o.picking_type_id.warehouse_id.partner_id.name"/>
+                                        <br/>
+                                        <span t-field="o.picking_type_id.warehouse_id.partner_id.street"/>
+                                        <span t-if="o.picking_type_id.warehouse_id.partner_id.street2"> -                                            <span t-field="o.picking_type_id.warehouse_id.partner_id.street2"/>
+                                        </span>
+                                        <br/>
+                                        <span t-field="o.picking_type_id.warehouse_id.partner_id.city"/>
+                                        <span t-if="o.picking_type_id.warehouse_id.partner_id.phone"> - Te: <span t-field="o.picking_type_id.warehouse_id.partner_id.phone"/>
+                                        </span>
+                                    </td>
+                                </tr>
+
+                                <!-- ROW 3: TRANSPORT & WEIGHT -->
+                                <tr>
+                                    <!-- Left Side Box -->
+                                    <td style="width: 50%; border-right: 1px solid black; padding: 0; vertical-align: top;">
+                                        <!-- Nested Table for Split -->
+                                        <table style="width: 100%; border-collapse: collapse;">
+                                            <tr>
+                                                <!-- Carrier Info -->
+                                                <td style="width: 60%; padding: 14px; border-right: 1px solid black; vertical-align: top;">
+                                                    <strong>Transporte: </strong>
+                                                    <span style="font-weight: bold;" t-field="o.carrier_id.name"/>
+                                                    <br/>
+                                                    <!-- Placeholder for Address if needed, currently hidden as field is missing -->
+                                                    <!-- <strong>Dirección: </strong> ... -->
+                                                </td>
+                                                <!-- Weight Info -->
+                                                <td style="width: 40%; padding: 14px; vertical-align: top;">
+                                                    <strong>Peso: </strong>
+                                                    <span t-field="o.shipping_weight"/>
+ kgs.<br/>
+                                                <strong>Bultos: </strong>
+                                                <span t-esc="len(o.package_level_ids) or 0"/>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+
+                                <!-- Right Side Box (Duplicate) -->
+                                <td style="width: 50%; padding: 0; vertical-align: top;">
+                                    <!-- Nested Table for Split -->
+                                    <table style="width: 100%; border-collapse: collapse;">
+                                        <tr>
+                                            <!-- Carrier Info -->
+                                            <td style="width: 60%; padding: 14px; border-right: 1px solid black; vertical-align: top;">
+                                                <strong>Transporte: </strong>
+                                                <span style="font-weight: bold;" t-field="o.carrier_id.name"/>
+                                                <br/>
+                                                <!-- Placeholder for Address if needed -->
+                                            </td>
+                                            <!-- Weight Info -->
+                                            <td style="width: 40%; padding: 14px; vertical-align: top;">
+                                                <strong>Peso: </strong>
+                                                <span t-field="o.shipping_weight"/>
+ kgs.<br/>
+                                            <strong>Bultos: </strong>
+                                            <span t-esc="len(o.package_level_ids) or 0"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+            </t>
+        </div>
+    </t>
+</t>
+</template>
+</odoo>

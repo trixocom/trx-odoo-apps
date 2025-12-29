@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_partner_form_inherit_trixo_shipping" model="ir.ui.view">
+        <field name="name">res.partner.form.inherit.trixo.shipping</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <!-- Hide existing instance of the field if present -->
+            <field name="property_delivery_carrier_id" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </field>
+
+            <!-- Hide Website field -->
+            <field name="website" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </field>
+
+            <!-- Insert Transportista after Website (effectively replacing it visually) -->
+            <field name="website" position="after">
+                <field name="property_delivery_carrier_id" string="Transportista" invisible="0"/>
+            </field>
+        </field>
+    </record>
+</odoo>
