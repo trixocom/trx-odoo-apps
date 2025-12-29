@@ -1,14 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <template id="report_delivery_document_inherit_carrier" inherit_id="stock.report_delivery_document" priority="50">
-        <!-- Target the 'Cant. Paquetes' block (which is a <t> element containing the span) -->
-        <xpath expr="//span[@t-field='o.number_of_packages']/.." position="after">
-            <t>
-                <br/>
-                <strong>Transportista:</strong>
-                <span t-if="o.carrier_id" t-field="o.carrier_id.name"/>
-                <span t-else="">(Sin asignar)</span>
-            </t>
+    <template id="report_delivery_document_inherit_carrier" inherit_id="stock.report_delivery_document" priority="99">
+        <!-- Strategy: Inject AFTER the main information block to bypass any internal replacement/hiding issues. -->
+        <!-- Use a new row/col structure to simulate alignment with the right column of the header. -->
+        <xpath expr="//div[@id='informations']" position="after">
+            <div class="row mt-1 mb-2">
+                <div class="col-6">
+                    <!-- Spacer for left column -->
+                </div>
+                <div class="col-6">
+                    <strong>Transportista:</strong>
+                    <t t-if="o.carrier_id">
+                        <span t-field="o.carrier_id.name"/>
+                    </t>
+                    <t t-else="">
+                        <span>(Sin asignar)</span>
+                    </t>
+                </div>
+            </div>
         </xpath>
     </template>
 </odoo>
