@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Inherit stock.report_delivery_document which is modified by l10n_ar_stock -->
-    <!-- Priority 50 ensures we apply after l10n_ar_stock (priority 20) -->
     <template id="report_delivery_document_inherit_carrier" inherit_id="stock.report_delivery_document" priority="50">
-        <!-- Target the Order field added by l10n_ar_stock inside the new 'informations' div -->
-        <!-- The structure in l10n_ar_stock is: -->
-        <!-- <div id="informations"> ... <div class="col-6"> ... <t><strong>Order:</strong><span t-field="o.origin"/></t> ... -->
+        <!-- Add margin to bottom of the header block to prevent overlap with table -->
+        <xpath expr="//div[@id='informations']" position="attributes">
+            <attribute name="style">margin-bottom: 30px;</attribute>
+            <!-- Add a class to force spacing if style is stripped or ignored -->
+            <attribute name="class" add="mb-4" separator=" "/>
+        </xpath>
 
-        <!-- We target the span for origin, and append our block after its parent <t> (or siblings) -->
-        <!-- Using xpath with checking specific field presence to be safe -->
+        <!-- Inject Transportista field -->
         <xpath expr="//div[@id='informations']//span[@t-field='o.origin']/.." position="after">
             <t t-if="o.carrier_id">
                 <br/>
