@@ -1,19 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <template id="report_delivery_document_inherit_carrier" inherit_id="stock.report_delivery_document" priority="50">
-        <!-- Add distinct spacing to fix overlap - simpler and more robust than div with style -->
-        <xpath expr="//div[@id='informations']" position="after">
-            <br/>
-            <br/>
-        </xpath>
-
-        <!-- Inject Transportista field. Removed t-if for debugging visibility. -->
-        <xpath expr="//div[@id='informations']/div[2]" position="inside">
-            <div class="mt-2">                <!-- Add margin top for local spacing -->
+        <!-- Target the 'Cant. Paquetes' block (which is a <t> element containing the span) -->
+        <xpath expr="//span[@t-field='o.number_of_packages']/.." position="after">
+            <t t-if="o.carrier_id">
+                <br/>
                 <strong>Transportista:</strong>
-                <span t-if="o.carrier_id" t-field="o.carrier_id.name"/>
-                <span t-else="">(Sin asignar)</span>
-            </div>
+                <span t-field="o.carrier_id.name"/>
+            </t>
         </xpath>
     </template>
 </odoo>
