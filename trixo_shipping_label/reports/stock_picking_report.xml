@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <template id="report_delivery_document_inherit_carrier" inherit_id="stock.report_delivery_document" priority="50">
-        <!-- Add margin to bottom of the header block to prevent overlap with table -->
-        <xpath expr="//div[@id='informations']" position="attributes">
-            <attribute name="style">margin-bottom: 30px;</attribute>
-            <!-- Add a class to force spacing if style is stripped or ignored -->
-            <attribute name="class" add="mb-4" separator=" "/>
+        <!-- Fix overlap by adding a spacer after the informations block -->
+        <xpath expr="//div[@id='informations']" position="after">
+            <div style="height: 30px; clear: both;"/>
         </xpath>
 
-        <!-- Inject Transportista field -->
-        <xpath expr="//div[@id='informations']//span[@t-field='o.origin']/.." position="after">
+        <!-- Inject Transportista field into the right column of the informations block -->
+        <!-- Targeting the second col-6 which contains Order, PO, etc. -->
+        <xpath expr="//div[@id='informations']/div[2]" position="inside">
             <t t-if="o.carrier_id">
                 <br/>
                 <strong>Transportista:</strong>
