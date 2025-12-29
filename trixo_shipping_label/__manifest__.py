@@ -12,7 +12,7 @@
     """,
     'author': 'Antigravity',
     'category': 'Stock',
-    'depends': ['stock', 'delivery'],
+    'depends': ['stock', 'delivery', 'l10n_ar_stock'],
     'data': [
         'views/res_partner_views.xml',
         'data/paper_format.xml',
