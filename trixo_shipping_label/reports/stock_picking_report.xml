@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_picking_inherit_trixo_carrier" inherit_id="stock.report_picking">
+        <xpath expr="//div[@name='div_origin']" position="after">
+            <div class="col-auto" name="div_carrier" t-if="o.carrier_id">
+                <strong>Transportista:</strong>
+                <p t-field="o.carrier_id.name"/>
+            </div>
+        </xpath>
+    </template>
+</odoo>

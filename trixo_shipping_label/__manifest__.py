@@ -17,6 +17,7 @@
         'views/res_partner_views.xml',
         'data/paper_format.xml',
         'reports/shipping_label_report.xml',
+        'reports/stock_picking_report.xml',
     ],
     'installable': True,
     'application': False,
