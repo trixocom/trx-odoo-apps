@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <template id="report_delivery_document_inherit_carrier" inherit_id="stock.report_delivery_document" priority="50">
-        <!-- Target the 'Cant. Paquetes' block (which is a <t> element containing the span) -->
-        <xpath expr="//span[@t-field='o.number_of_packages']/.." position="after">
-            <t t-if="o.carrier_id">
+        <!-- Using explicit path to the right column div -->
+        <xpath expr="//div[@id='informations']/div[2]" position="inside">
+            <div class="mt-1">
                 <br/>
                 <strong>Transportista:</strong>
-                <span t-field="o.carrier_id.name"/>
-            </t>
+                <t t-if="o.carrier_id">
+                    <span t-field="o.carrier_id.name"/>
+                </t>
+                <t t-else="">
+                    <span>(Sin asignar)</span>
+                </t>
+            </div>
         </xpath>
     </template>
 </odoo>
