@@ -1,14 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <template id="report_delivery_document_inherit_carrier" inherit_id="stock.report_delivery_document" priority="99">
-        <!-- Inject AFTER the information block, but pull it up visually to merge with the header -->
-        <xpath expr="//div[@id='informations']" position="after">
-            <div class="row" style="margin-top: -20px;">
-                <div class="col-6">
-                    <!-- Spacer for left column -->
-                </div>
-                <!-- Right column aligned with the header's right column -->
-                <div class="col-6">
+    <!-- 1. Fix Table Spacing in Delivery Document -->
+    <template id="report_delivery_document_inherit_spacing" inherit_id="stock.report_delivery_document" priority="99">
+        <xpath expr="//div[@class='page']" position="before">
+            <style>
+                /* Compact table rows for product details */
+                table.table-borderless td, table.table-borderless th { 
+                    padding-top: 0px !important; 
+                    padding-bottom: 0px !important; 
+                    line-height: 1.2 !important;
+                }
+                /* Ensure strictly no extra top margin on the table itself if needed */ table[name='stock_move_line_table'] { margin-top: 5px !important; }
+            </style>
+        </xpath>
+
+        <!-- REMOVED previous header replacements/hacks targetting div#informations -->
+    </template>
+
+    <!-- 2. Add Transportista to Custom Header (used by Delivery Slip via web.external_layout) -->
+    <!-- Inheriting l10n_ar.custom_header which renders the actual visible header -->
+    <template id="custom_header_inherit_carrier" inherit_id="l10n_ar.custom_header" priority="50">
+        <xpath expr="//div[@id='informations']/div[2]" position="inside">
+            <!-- Only display for Stock Pickings (Delivery Slips) -->
+            <t t-if="o._name == 'stock.picking'">
+                <div class="mt-1">
                     <strong>Transportista:</strong>
                     <t t-if="o.carrier_id">
                         <span t-field="o.carrier_id.name"/>
@@ -17,7 +32,7 @@
                         <span>(Sin asignar)</span>
                     </t>
                 </div>
-            </div>
+            </t>
         </xpath>
     </template>
 </odoo>
