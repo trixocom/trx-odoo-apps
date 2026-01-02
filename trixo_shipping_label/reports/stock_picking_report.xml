@@ -1,38 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- 1. Fix Table Spacing in Delivery Document -->
-    <template id="report_delivery_document_inherit_spacing" inherit_id="stock.report_delivery_document" priority="99">
+    <!-- Combined Fix: Table Spacing + Transportista Field -->
+    <template id="report_delivery_document_inherit_final" inherit_id="stock.report_delivery_document" priority="100">
+
+        <!-- CSS to fix table overlap and compactness -->
+        <!-- CSS to fix table overlap and compactness -->
         <xpath expr="//div[@class='page']" position="before">
             <style>
+                /* Force Table to be clear of floats and add margin */ table[name='stock_move_line_table'], table[name='stock_move_table'] {
+                    margin-top: 50px !important;
+                    clear: both !important;
+                }
                 /* Compact table rows for product details */
-                table.table-borderless td, table.table-borderless th { 
-                    padding-top: 0px !important; 
-                    padding-bottom: 0px !important; 
+                table.table td, table.table th { 
+                    padding-top: 2px !important; 
+                    padding-bottom: 2px !important; 
                     line-height: 1.2 !important;
                 }
-                /* Ensure strictly no extra top margin on the table itself if needed */ table[name='stock_move_line_table'] { margin-top: 5px !important; }
             </style>
         </xpath>
 
-        <!-- REMOVED previous header replacements/hacks targetting div#informations -->
-    </template>
-
-    <!-- 2. Add Transportista to Custom Header (used by Delivery Slip via web.external_layout) -->
-    <!-- Inheriting l10n_ar.custom_header which renders the actual visible header -->
-    <template id="custom_header_inherit_carrier" inherit_id="l10n_ar.custom_header" priority="50">
-        <xpath expr="//div[@id='informations']/div[2]" position="inside">
-            <!-- Only display for Stock Pickings (Delivery Slips) -->
-            <t t-if="o._name == 'stock.picking'">
-                <div class="mt-1">
-                    <strong>Transportista:</strong>
-                    <t t-if="o.carrier_id">
-                        <span t-field="o.carrier_id.name"/>
-                    </t>
-                    <t t-else="">
-                        <span>(Sin asignar)</span>
-                    </t>
+        <!-- "Transportista" Field: Injected BEFORE the FIRST table (stock_move_table).
+             This avoids breaking the t-if/t-elif chain between stock_move_table and stock_move_line_table.
+        -->
+        <xpath expr="//table[@name='stock_move_table']" position="before">
+            <div class="row" style="margin-bottom: 20px; padding-left: 15px;">
+                <div class="col-12">
+                    <strong>Transportista: </strong>
+                    <span t-if="o.carrier_id" t-field="o.carrier_id.name"/>
+                    <span t-else="">(Sin asignar)</span>
                 </div>
-            </t>
+            </div>
         </xpath>
+
     </template>
 </odoo>
