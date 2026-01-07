@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- 
+        Override the Kanban View used in Barcode App (stock_barcode)
+        to force sorting by Creation Date Descending.
+    -->
+    <record id="stock_picking_view_kanban_inherit_barcode_sort" model="ir.ui.view">
+        <field name="name">stock.picking.view.kanban.inherit.barcode.sort</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock_barcode.stock_picking_view_kanban"/>
+        <field name="arch" type="xml">
+            <xpath expr="//kanban" position="attributes">
+                <attribute name="default_order">create_date desc</attribute>
+            </xpath>
+        </field>
+    </record>
+</odoo>
