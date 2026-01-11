@@ -21,6 +21,6 @@ Select Mistral embedding model in knowledge base settings.
 
 ## Requirements
 
-- Odoo 18.0+
+- Odoo 19.0+
 - llm_knowledge module
 - llm_mistral module

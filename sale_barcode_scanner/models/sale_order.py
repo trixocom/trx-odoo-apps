@@ -205,7 +205,7 @@ class SaleOrderLine(models.Model):
 #
 # COMPATIBILIDAD:
 # ---------------
-# * Odoo 18 EE/CE
+# * Odoo 19 EE/CE
 # * Requiere módulo 'sale' instalado
 # * Compatible con cualquier lector USB
 # * No requiere módulo 'barcodes' de Odoo

@@ -1,6 +1,6 @@
 {
     'name': 'Trixo Shipping Label',
-    'version': '18.0.1.0.8',
+    'version': '19.0.1.0.8',
     'summary': 'Generates a custom shipping label for Stock Picking',
     'description': """
         This module adds a custom Shipping Label report for Stock Pickings.

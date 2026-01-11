@@ -25,7 +25,7 @@ Control de permisos para editar precios y cantidades en órdenes de venta.
 
 ## Compatibilidad
 
-- Odoo 18.0
+- Odoo 19.0
 - sale_default_packaging ✅
 - Procesos automáticos ✅
 

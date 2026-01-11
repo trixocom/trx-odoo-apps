@@ -2,7 +2,7 @@
 
 ## Descripción
 
-Este módulo modifica el comportamiento del Punto de Venta (POS) de Odoo 18 para reemplazar el botón de "Pago" con un botón de "Crear Orden de Venta". 
+Este módulo modifica el comportamiento del Punto de Venta (POS) de Odoo 19 para reemplazar el botón de "Pago" con un botón de "Crear Orden de Venta". 
 
 **Caso de uso:** Cuando no se desea realizar el cobro en el POS, sino simplemente generar una orden de venta que será facturada posteriormente.
 
@@ -17,7 +17,7 @@ Este módulo modifica el comportamiento del Punto de Venta (POS) de Odoo 18 para
 
 ## Requisitos
 
-- Odoo 18.0 Community Edition
+- Odoo 19.0 Community Edition
 - Módulo `point_of_sale` (base)
 - Módulo `sale` (base)
 
@@ -157,16 +157,16 @@ def _prepare_sale_order_values(self):
 
 ## Compatibilidad
 
-- ✅ Odoo 18.0 Community Edition
-- ✅ Odoo 18.0 Enterprise Edition
+- ✅ Odoo 19.0 Community Edition
+- ✅ Odoo 19.0 Enterprise Edition
 - ❌ Versiones anteriores de Odoo (requiere adaptación)
 
 ## Soporte y Contribuciones
 
 Si encuentras algún bug o tienes sugerencias de mejora:
 
-1. Revisa la documentación de Odoo 18 para POS
-2. Verifica el código fuente en GitHub: https://github.com/odoo/odoo/tree/18.0/addons/point_of_sale
+1. Revisa la documentación de Odoo 19 para POS
+2. Verifica el código fuente en GitHub: https://github.com/odoo/odoo/tree/19.0/addons/point_of_sale
 3. Contacta al desarrollador del módulo
 
 ## Licencia

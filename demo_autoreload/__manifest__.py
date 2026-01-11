@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Demo Auto-Reload',
-    'version': '18.0.1.0.0',
+    'version': '19.0.1.0.0',
     'category': 'Tools',
     'summary': 'Módulo de demostración para probar auto-reload en desarrollo',
     'description': """

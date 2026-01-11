@@ -128,7 +128,7 @@ The new `llm_role` field provides dramatic performance improvements:
 ### Module Information
 
 - **Name**: LLM Integration Base
-- **Version**: 18.0.1.4.0
+- **Version**: 19.0.1.4.0
 - **Category**: Technical
 - **License**: LGPL-3
 - **Dependencies**: `mail`, `web`

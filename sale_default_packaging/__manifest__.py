@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Sale Default Packaging',
-    'version': '18.0.1.1.2',
+    'version': '19.0.1.1.2',
     'category': 'Sales',
     'summary': 'Establece embalaje por defecto en líneas de venta basándose en Stock Packaging Report',
     'description': """

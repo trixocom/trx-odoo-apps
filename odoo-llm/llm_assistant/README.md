@@ -382,7 +382,7 @@ class ProjectTask(models.Model):
 ### Module Information
 
 - **Name**: LLM Assistant
-- **Version**: 18.0.1.5.0
+- **Version**: 19.0.1.5.0
 - **Category**: Productivity
 - **License**: LGPL-3
 - **Dependencies**: `llm`, `mail`

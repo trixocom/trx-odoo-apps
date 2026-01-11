@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Sale Order Price Control',
-    'version': '18.0.1.0.0',
+    'version': '19.0.1.0.0',
     'category': 'Sales',
     'summary': 'Control de cambios de precio y cantidad en órdenes de venta',
     'description': """

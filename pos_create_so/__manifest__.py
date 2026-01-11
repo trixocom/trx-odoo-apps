@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'POS - Crear Orden de Venta en lugar de Pago',
-    'version': '18.0.1.0.2',
+    'version': '19.0.1.0.2',
     'category': 'Point of Sale',
     'summary': 'Reemplaza el botón de pago con la funcionalidad de crear orden de venta',
     'description': """

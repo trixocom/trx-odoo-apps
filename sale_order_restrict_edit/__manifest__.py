@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Sale Order Restrict Edit',
-    'version': '18.0.2.0.0',
+    'version': '19.0.2.0.0',
     'category': 'Sales',
     'summary': 'Restringe la edición de precios y cantidades en órdenes de venta por grupo',
     'description': """

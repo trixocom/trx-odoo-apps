@@ -27,7 +27,7 @@ Set up Qdrant server connection in knowledge base settings:
 
 ## Requirements
 
-- Odoo 18.0+
+- Odoo 19.0+
 - llm_knowledge module
 - qdrant-client Python package
 - Qdrant server instance

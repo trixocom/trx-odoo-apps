@@ -21,6 +21,6 @@ Create automation rules to automatically index records as knowledge chunks for A
 
 ## Requirements
 
-- Odoo 18.0+
+- Odoo 19.0+
 - llm_knowledge module
 - base_automation module

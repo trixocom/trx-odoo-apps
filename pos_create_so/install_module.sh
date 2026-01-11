@@ -2,7 +2,7 @@
 
 # Script de instalación automática del módulo pos_create_so
 # Autor: Trixocom
-# Versión: 18.0.1.0.2
+# Versión: 19.0.1.0.2
 
 set -e
 
@@ -13,7 +13,7 @@ YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
 echo -e "${GREEN}========================================${NC}"
-echo -e "${GREEN}  Instalador pos_create_so v18.0.1.0.2${NC}"
+echo -e "${GREEN}  Instalador pos_create_so v19.0.1.0.2${NC}"
 echo -e "${GREEN}  Trixocom - www.trixocom.com${NC}"
 echo -e "${GREEN}========================================${NC}"
 echo ""
@@ -21,7 +21,7 @@ echo ""
 # Verificar que estamos en el directorio correcto
 if [ ! -f "__manifest__.py" ]; then
     echo -e "${RED}Error: Este script debe ejecutarse desde el directorio del módulo${NC}"
-    echo -e "${YELLOW}Ubicación esperada: /Users/hector/claudecode/odoo18-dev/addons/pos_create_so${NC}"
+    echo -e "${YELLOW}Ubicación esperada: /Users/hector/claudecode/odoo19-dev/addons/pos_create_so${NC}"
     exit 1
 fi
 

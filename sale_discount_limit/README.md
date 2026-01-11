@@ -2,7 +2,7 @@
 
 ## Descripción
 
-Módulo para Odoo 18 que permite controlar los descuentos máximos que cada usuario puede aplicar en órdenes de venta.
+Módulo para Odoo 19 que permite controlar los descuentos máximos que cada usuario puede aplicar en órdenes de venta.
 
 ## Características
 

@@ -64,7 +64,7 @@ users_model = env['res.users']
 result = users_model.get_system_info()
 # Returns: {
 #     "database_name": "production",
-#     "odoo_version": "18.0",
+#     "odoo_version": "19.0",
 #     "company_name": "My Company",
 #     ...
 # }

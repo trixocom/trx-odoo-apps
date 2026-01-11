@@ -21,7 +21,7 @@ Configure LlamaIndex-specific settings in knowledge base configuration.
 
 ## Requirements
 
-- Odoo 18.0+
+- Odoo 19.0+
 - llm_knowledge module
 - llama_index Python package
 - nltk Python package

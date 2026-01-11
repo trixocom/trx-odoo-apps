@@ -1,6 +1,6 @@
 {
     'name': 'Crear Orden de Venta desde PdV',
-    'version': '18.0.0.2',
+    'version': '19.0.0.2',
     'category': 'Sales/Point of Sale',
     'summary': 'Crear orden de venta desde la pantalla de PdV y ver las órdenes creadas desde el PdV',
     'author': 'Warlock Technologies Pvt Ltd.',

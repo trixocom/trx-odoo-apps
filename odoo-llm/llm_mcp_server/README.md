@@ -9,8 +9,8 @@ HTTP-based MCP server that exposes Odoo tools to any MCP-compatible AI client.
 ## Requirements
 
 - **Python**: 3.10+
-- **Odoo**: 18.0
-- **Dependencies**: See [requirements.txt](https://github.com/apexive/odoo-llm/blob/18.0/requirements.txt)
+- **Odoo**: 19.0
+- **Dependencies**: See [requirements.txt](https://github.com/apexive/odoo-llm/blob/19.0/requirements.txt)
 
 ## Quick Start
 
@@ -139,7 +139,7 @@ Restart your client → Ask "What tools do you have?"
 
 ## Creating Tools
 
-Tools are auto-discovered from the `llm.tool` model. See [llm_tool module](https://github.com/apexive/odoo-llm/tree/18.0/llm_tool) for creating custom tools.
+Tools are auto-discovered from the `llm.tool` model. See [llm_tool module](https://github.com/apexive/odoo-llm/tree/19.0/llm_tool) for creating custom tools.
 
 ## Testing & Debugging
 
@@ -199,7 +199,7 @@ Contributions and feature requests welcome!
 
 ## Changelog
 
-### 18.0.1.1.0 (2025-11-03)
+### 19.0.1.1.0 (2025-11-03)
 
 **Documentation**
 - Updated Odoo App Store description page (`static/description/index.html`)
@@ -208,7 +208,7 @@ Contributions and feature requests welcome!
 - Added comprehensive MCP feature descriptions and use cases
 - Optimized for Odoo App Store HTML sanitization requirements
 
-### 18.0.1.0.0
+### 19.0.1.0.0
 
 **Initial Release**
 - MCP 2025-06-18 protocol implementation

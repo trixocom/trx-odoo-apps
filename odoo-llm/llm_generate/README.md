@@ -579,7 +579,7 @@ def _get_cached_schema(self, model_id, prompt_id, assistant_id):
 ### Module Information
 
 - **Name**: LLM Generate
-- **Version**: 18.0.2.0.0
+- **Version**: 19.0.2.0.0
 - **Category**: Productivity
 - **License**: LGPL-3
 - **Dependencies**: `llm`, `llm_assistant`, `mail`

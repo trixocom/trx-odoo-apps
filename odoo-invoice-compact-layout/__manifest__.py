@@ -1,6 +1,6 @@
 {
     'name': 'Invoice Compact Layout',
-    'version': '18.0.1.1.0',
+    'version': '19.0.1.1.0',
     'category': 'Accounting/Accounting',
     'summary': 'FIXED - Using record format for Odoo 18 compatibility',
     'description': """

@@ -4,7 +4,7 @@
 
 This repository provides a comprehensive framework for integrating Large Language Models (LLMs) into Odoo. It allows seamless interaction with various AI providers including OpenAI, Anthropic, Ollama, and Replicate, enabling chat completions, text embeddings, and more within your Odoo environment.
 
-## 🚀 Latest Updates (Version 18.0)
+## 🚀 Latest Updates (Version 19.0)
 
 ### **Major Architecture Improvements**
 - **Consolidated Architecture**: Merged `llm_resource` into `llm_knowledge` and `llm_prompt` into `llm_assistant` for streamlined management
@@ -18,9 +18,9 @@ This repository provides a comprehensive framework for integrating Large Languag
 - **Better Debugging**: Enhanced logging, error messages, and comprehensive test coverage throughout the system
 - **Reduced Dependencies**: Eliminated separate modules by consolidating related functionality
 
-### **Odoo 18.0 Migration Status**
+### **Odoo 19.0 Migration Status**
 
-**✅ Available in 18.0:**
+**✅ Available in 19.0:**
 - Core: llm, llm_thread, llm_tool, llm_assistant
 - Text/Chat Providers: llm_openai, llm_ollama, llm_mistral
 - Image Providers: llm_replicate, llm_fal_ai, llm_comfyui, llm_comfy_icu
@@ -37,7 +37,7 @@ This repository provides a comprehensive framework for integrating Large Languag
 **Migration Highlights:**
 - Updated UI components with modern mail.store architecture
 - Related Record component for linking threads to any Odoo record
-- All views, models, and frontend aligned with Odoo 18.0 standards
+- All views, models, and frontend aligned with Odoo 19.0 standards
 
 ## 🚀 Features
 
@@ -59,54 +59,54 @@ The architecture centers around five core modules that provide the foundation fo
 
 | Module | Version | Purpose |
 |--------|---------|---------|
-| **`llm`** | 18.0.1.4.0 | **Foundation** - Base infrastructure, providers, models, and enhanced messaging system |
-| **`llm_assistant`** | 18.0.1.5.0 | **Intelligence** - AI assistants with integrated prompt templates and testing |
-| **`llm_generate`** | 18.0.2.0.0 | **Generation** - Unified content generation API for text, images, and more |
-| **`llm_tool`** | 18.0.3.0.0 | **Actions** - Tool framework for LLM-Odoo interactions and function calling |
-| **`llm_store`** | 18.0.1.0.0 | **Storage** - Vector store abstraction for embeddings and similarity search |
+| **`llm`** | 19.0.1.4.0 | **Foundation** - Base infrastructure, providers, models, and enhanced messaging system |
+| **`llm_assistant`** | 19.0.1.5.0 | **Intelligence** - AI assistants with integrated prompt templates and testing |
+| **`llm_generate`** | 19.0.2.0.0 | **Generation** - Unified content generation API for text, images, and more |
+| **`llm_tool`** | 19.0.3.0.0 | **Actions** - Tool framework for LLM-Odoo interactions and function calling |
+| **`llm_store`** | 19.0.1.0.0 | **Storage** - Vector store abstraction for embeddings and similarity search |
 
 ## 📦 All Available Modules
 
 | Module | Version | Description |
 |--------|---------|-------------|
 | **Core Infrastructure** | | |
-| `llm` | 18.0.1.4.0 | Base module with providers, models, and enhanced messaging |
-| `llm_assistant` | 18.0.1.5.0 | AI assistants with integrated prompt templates |
-| `llm_generate` | 18.0.2.0.0 | Unified content generation with dynamic forms |
-| `llm_tool` | 18.0.3.0.0 | Enhanced tool framework with structured data storage |
-| `llm_store` | 18.0.1.0.0 | Vector store abstraction layer |
+| `llm` | 19.0.1.4.0 | Base module with providers, models, and enhanced messaging |
+| `llm_assistant` | 19.0.1.5.0 | AI assistants with integrated prompt templates |
+| `llm_generate` | 19.0.2.0.0 | Unified content generation with dynamic forms |
+| `llm_tool` | 19.0.3.0.0 | Enhanced tool framework with structured data storage |
+| `llm_store` | 19.0.1.0.0 | Vector store abstraction layer |
 | **Chat & Threading** | | |
-| `llm_thread` | 18.0.1.4.0 | Chat threads with PostgreSQL locking and related record linking |
+| `llm_thread` | 19.0.1.4.0 | Chat threads with PostgreSQL locking and related record linking |
 | **AI Providers - Text/Chat** | | |
-| `llm_openai` | 18.0.1.1.3 | OpenAI (GPT) provider integration with enhanced tool support |
-| `llm_ollama` | 18.0.1.1.0 | Ollama provider for local model deployment |
-| `llm_mistral` | 18.0.1.0.0 | Mistral AI provider integration |
+| `llm_openai` | 19.0.1.1.3 | OpenAI (GPT) provider integration with enhanced tool support |
+| `llm_ollama` | 19.0.1.1.0 | Ollama provider for local model deployment |
+| `llm_mistral` | 19.0.1.0.0 | Mistral AI provider integration |
 | **AI Providers - Image Generation** | | |
-| `llm_replicate` | 18.0.1.1.1 | Replicate.com provider integration |
-| `llm_fal_ai` | 18.0.2.0.0 | FAL.ai provider with unified generate endpoint |
-| `llm_comfyui` | 18.0.1.0.1 | ComfyUI integration for advanced image workflows |
-| `llm_comfy_icu` | 18.0.1.0.0 | ComfyICU integration for image generation |
+| `llm_replicate` | 19.0.1.1.1 | Replicate.com provider integration |
+| `llm_fal_ai` | 19.0.2.0.0 | FAL.ai provider with unified generate endpoint |
+| `llm_comfyui` | 19.0.1.0.1 | ComfyUI integration for advanced image workflows |
+| `llm_comfy_icu` | 19.0.1.0.0 | ComfyICU integration for image generation |
 | **Knowledge & RAG** | | |
-| `llm_knowledge` | 18.0.1.1.0 | **Consolidated** - RAG functionality with document management |
-| `llm_knowledge_automation` | 18.0.1.0.0 | Automation rules for knowledge processing |
-| `llm_knowledge_llama` | 18.0.1.0.0 | LlamaIndex integration for advanced knowledge processing |
-| `llm_knowledge_mistral` | 18.0.1.0.0 | Mistral AI embeddings and processing for knowledge base |
-| `llm_tool_knowledge` | 18.0.1.0.1 | Tool for LLMs to query the knowledge base |
+| `llm_knowledge` | 19.0.1.1.0 | **Consolidated** - RAG functionality with document management |
+| `llm_knowledge_automation` | 19.0.1.0.0 | Automation rules for knowledge processing |
+| `llm_knowledge_llama` | 19.0.1.0.0 | LlamaIndex integration for advanced knowledge processing |
+| `llm_knowledge_mistral` | 19.0.1.0.0 | Mistral AI embeddings and processing for knowledge base |
+| `llm_tool_knowledge` | 19.0.1.0.1 | Tool for LLMs to query the knowledge base |
 | **Vector Stores** | | |
-| `llm_chroma` | 18.0.1.0.0 | ChromaDB vector store integration |
-| `llm_pgvector` | 18.0.1.0.0 | pgvector (PostgreSQL) vector store integration |
-| `llm_qdrant` | 18.0.1.0.0 | Qdrant vector store integration |
+| `llm_chroma` | 19.0.1.0.0 | ChromaDB vector store integration |
+| `llm_pgvector` | 19.0.1.0.0 | pgvector (PostgreSQL) vector store integration |
+| `llm_qdrant` | 19.0.1.0.0 | Qdrant vector store integration |
 | **Specialized Features** | | |
-| `llm_mcp_server` | 18.0.1.0.0 | Model Context Protocol server support |
-| `llm_letta` | 18.0.1.0.0 | Letta SDK integration for memory management |
-| `llm_training` | 18.0.1.0.0 | Fine-tuning and model training capabilities |
-| `llm_generate_job` | 18.0.1.0.0 | Job queue management for content generation |
-| `llm_document_page` | 18.0.1.0.0 | Integration with document pages and knowledge articles |
+| `llm_mcp_server` | 19.0.1.0.0 | Model Context Protocol server support |
+| `llm_letta` | 19.0.1.0.0 | Letta SDK integration for memory management |
+| `llm_training` | 19.0.1.0.0 | Fine-tuning and model training capabilities |
+| `llm_generate_job` | 19.0.1.0.0 | Job queue management for content generation |
+| `llm_document_page` | 19.0.1.0.0 | Integration with document pages and knowledge articles |
 
 ## 🛠️ Installation
 
 **Requirements:**
-- Odoo 18.0+ (for 16.0 version, see `16.0` branch)
+- Odoo 19.0+ (for 16.0 version, see `16.0` branch)
 - Python 3.11+
 - PostgreSQL 14+ (recommended for pgvector support)
 
@@ -261,7 +261,7 @@ We're committed to building an open AI layer for Odoo that benefits everyone. Ar
 - [x] **Content generation** ✅ *Unified API implemented*
 - [x] **Module consolidation** ✅ *Architecture simplified*
 - [x] **Multi-modal content** ✅ *Image + text generation fully working*
-- [x] **Odoo 18.0 migration** ✅ *Core modules and integrations migrated*
+- [x] **Odoo 19.0 migration** ✅ *Core modules and integrations migrated*
 - [ ] **Advanced workflow automation** 🔄 *Business process AI*
 - [ ] **Integration with CRM/HR/Manufacturing** 🔄 *Domain-specific assistants*
 - [ ] **Model fine-tuning workflows** 🔄 *Custom model training*

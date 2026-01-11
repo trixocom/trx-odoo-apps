@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Sale Discount Limit',
-    'version': '18.0.1.0.2',
+    'version': '19.0.1.0.2',
     'category': 'Sales',
     'summary': 'Control de descuentos máximos por usuario en órdenes de venta',
     'description': """

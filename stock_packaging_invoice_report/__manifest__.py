@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Stock Packaging Invoice Report',
-    'version': '18.0.1.0.3',
+    'version': '19.0.1.0.3',
     'category': 'Accounting/Accounting',
     'summary': 'Agrega columna de cantidad de embalaje al reporte de factura',
     'description': """

@@ -22,5 +22,5 @@ Set your Mistral API key in the provider configuration.
 
 ## Requirements
 
-- Odoo 18.0+
+- Odoo 19.0+
 - llm module

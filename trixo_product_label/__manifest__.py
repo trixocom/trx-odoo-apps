@@ -1,6 +1,6 @@
 {
     'name': 'Trixo Product Label',
-    'version': '18.0.1.0.10',
+    'version': '19.0.1.0.10',
     'summary': 'Custom Product Labels for Trixocom',
     'description': """
         This module adds custom product label formats:

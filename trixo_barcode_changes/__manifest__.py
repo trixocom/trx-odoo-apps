@@ -1,6 +1,6 @@
 {
     'name': 'Trixo Barcode Adjustments',
-    'version': '18.0.1.0.0',
+    'version': '19.0.1.0.0',
     'summary': 'Small adjustments to Barcode App behavior for Trixo',
     'description': """
         This module overrides the default sorting of Stock Pickings in the Barcode App.

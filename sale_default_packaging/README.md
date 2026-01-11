@@ -1,6 +1,6 @@
 # Sale Default Packaging
 
-Módulo para Odoo 18 que establece automáticamente el embalaje por defecto en las líneas de venta, basándose en la configuración de Stock Packaging Report.
+Módulo para Odoo 19 que establece automáticamente el embalaje por defecto en las líneas de venta, basándose en la configuración de Stock Packaging Report.
 
 ## 🎯 Características
 
@@ -146,7 +146,7 @@ Cantidad de Embalajes = Unidades de Producto ÷ Unidades por Embalaje
 - 🔧 Corrección de nombre de dependencia: stock_packaging_report
 
 ### v1.1.1 (2025-11-08)
-- 🔧 Corrección de xpath en vistas XML para Odoo 18
+- 🔧 Corrección de xpath en vistas XML para Odoo 19
 
 ### v1.1.0 (2025-11-08)
 - ✨ Refactorización completa del modelo

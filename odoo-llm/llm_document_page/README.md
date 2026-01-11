@@ -20,6 +20,6 @@ Access LLM features directly from document pages for intelligent content assista
 
 ## Requirements
 
-- Odoo 18.0+
+- Odoo 19.0+
 - llm module
 - knowledge_document_page module

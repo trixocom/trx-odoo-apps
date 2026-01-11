@@ -1,12 +1,12 @@
-# 📦 Invoice Compact Layout - Odoo 18
+# 📦 Invoice Compact Layout - Odoo 19
 
-[![Version](https://img.shields.io/badge/version-18.0.1.1.0-blue.svg)](https://github.com/trixocom/odoo-invoice-compact-layout)
+[![Version](https://img.shields.io/badge/version-19.0.1.1.0-blue.svg)](https://github.com/trixocom/odoo-invoice-compact-layout)
 [![License: LGPL-3](https://img.shields.io/badge/license-LGPL--3-green.svg)](https://www.gnu.org/licenses/lgpl-3.0)
-[![Odoo](https://img.shields.io/badge/Odoo-18.0-purple.svg)](https://www.odoo.com)
+[![Odoo](https://img.shields.io/badge/Odoo-19.0-purple.svg)](https://www.odoo.com)
 
 ## 🎯 ¿Qué hace este módulo?
 
-Reduce **drásticamente** el espacio entre el encabezado de la empresa y la información del cliente en los reportes de factura de Odoo 18, optimizando el uso del papel sin perder legibilidad.
+Reduce **drásticamente** el espacio entre el encabezado de la empresa y la información del cliente en los reportes de factura de Odoo 19, optimizando el uso del papel sin perder legibilidad.
 
 ### ✅ Versión 1.1.0 - SOLUCIÓN DEFINITIVA
 
@@ -14,7 +14,7 @@ Reduce **drásticamente** el espacio entre el encabezado de la empresa y la info
 
 **Cambio v1.1.0:**
 - 🔧 **Usando formato `<record>`** en lugar del shortcut `<template>`
-- ✅ Odoo 18 requiere el formato estándar `<record>` para herencia de vistas
+- ✅ Odoo 19 requiere el formato estándar `<record>` para herencia de vistas
 - ✅ Estructura XML 100% compatible
 - ✅ **ESTE FORMATO SÍ FUNCIONA** ✓
 
@@ -60,7 +60,7 @@ systemctl restart odoo
 - ✅ Tablas optimizadas
 
 ### Ventajas
-- **Compatible** con Odoo 18 ✓
+- **Compatible** con Odoo 19 ✓
 - **Formato estándar** `<record>` de Odoo
 - **No afecta** otros reportes
 - **Herencia limpia** mediante XPath
@@ -114,13 +114,13 @@ odoo-invoice-compact-layout/
 
 ### v1.1.0 (2025-10-17) - SOLUCIÓN DEFINITIVA ✅
 - 🔧 **FIXED:** Usando formato `<record>` en lugar de `<template>`
-- ✅ Odoo 18 requiere este formato estándar
+- ✅ Odoo 19 requiere este formato estándar
 - ✅ Sin errores XML
 - ✅ Instalación exitosa
 
 ### v1.0.9 (2025-10-17)
 - 🔧 Removido tag `<data>` (causó conflicto)
-- ❌ Formato `<template>` no compatible con Odoo 18
+- ❌ Formato `<template>` no compatible con Odoo 19
 
 ### v1.0.8 (2025-10-17)
 - 🔧 Agregado tag `<data>` (causó error)
@@ -135,7 +135,7 @@ odoo-invoice-compact-layout/
 
 - [Repositorio GitHub](https://github.com/trixocom/odoo-invoice-compact-layout)
 - [Reportar Bug](https://github.com/trixocom/odoo-invoice-compact-layout/issues)
-- [Documentación Odoo 18](https://www.odoo.com/documentation/18.0/)
+- [Documentación Odoo 19](https://www.odoo.com/documentation/19.0/)
 
 ## 👨‍💻 Autor
 
