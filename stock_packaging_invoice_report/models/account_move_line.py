@@ -46,19 +46,18 @@ class AccountMoveLine(models.Model):
             if not packaging_name:
                 continue
             
-            # Buscar el packaging con el nombre configurado para este producto
-            packaging = self.env['product.packaging'].search([
-                ('product_id', '=', line.product_id.id),
+            # Odoo 19: Unification - Search UoM by name
+            packaging_uom = self.env['uom.uom'].search([
                 ('name', '=', packaging_name)
             ], limit=1)
             
-            # Si no se encuentra el packaging o no tiene qty válido, no calcular
-            if not packaging or packaging.qty <= 0:
+            # Si no se encuentra el packaging o no tiene factor_inv válido, no calcular
+            if not packaging_uom or packaging_uom.factor_inv <= 0:
                 continue
             
             # Calcular cantidad de embalajes: Cantidad en línea / Unidades por Embalaje
             quantity = line.quantity
-            packaging_qty = packaging.qty
+            packaging_qty = packaging_uom.factor_inv
             
             line.packaging_quantity_invoice = float_round(
                 quantity / packaging_qty,

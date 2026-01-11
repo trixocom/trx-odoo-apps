@@ -72,7 +72,8 @@
                                 </div>
                                 <div class="text-end">
                                     <t t-set="packaging" t-value="product.packaging_ids and product.packaging_ids[0] or False"/>
-                                    <t t-set="qty_per_package" t-value="packaging and packaging.qty or 1.0"/>
+                                    <!-- Odoo 19: Use factor_inv (UoM) instead of qty -->
+                                    <t t-set="qty_per_package" t-value="packaging and packaging.factor_inv or 1.0"/>
 
                                     <div style="font-size: 16px;">
                                         <t t-esc="qty_per_package"/>

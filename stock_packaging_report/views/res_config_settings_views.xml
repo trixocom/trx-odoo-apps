@@ -10,24 +10,28 @@
             <xpath expr="//app[@name='stock']" position="inside">
                 <block title="Reporte de Embalajes en Stock">
                     <setting help="Configure el nombre del tipo de embalaje que se usará para calcular la cantidad de embalajes en el reporte de stock.">
-                        <field name="packaging_name_for_stock" 
-                               placeholder="Ej: Caja, Pallet, Bulto, etc."/>
+                        <field name="packaging_name_for_stock" placeholder="Ej: Caja, Pallet, Bulto, etc."/>
                         <div class="mt8 text-muted">
-                            <strong>¿Cómo funciona?</strong><br/>
-                            1. El sistema buscará en cada producto un embalaje (product.packaging) 
-                               cuyo campo "Nombre" coincida exactamente con este valor.<br/>
-                            2. Usará el campo "Cantidad" de ese embalaje (unidades por embalaje).<br/>
-                            3. Calculará: <em>Stock Disponible ÷ Unidades por Embalaje = Cantidad de Embalajes</em><br/><br/>
-                            
-                            <strong>Ejemplo:</strong><br/>
-                            • Nombre del embalaje configurado: <code>Caja</code><br/>
-                            • Producto tiene packaging con name="Caja" y qty=12<br/>
+                            <strong>¿Cómo funciona?</strong>
+                            <br/>
+                            1. El sistema buscará una Unidad de Medida (UoM/Embalaje) 
+                               cuya "Categoría" o "Nombre" coincida con este valor.<br/>
+                            2. Usará el campo "Factor Inverso" (Unidades por Embalaje).<br/>
+                            3. Calculará: <em>Stock Disponible ÷ Unidades por Embalaje = Cantidad de Embalajes</em>
+                    <br/>
+                    <br/>
+
+                    <strong>Ejemplo:</strong>
+                    <br/>
+                            • Nombre configurado: <code>Caja</code>
+                    <br/>
+                            • UoM con name="Caja" y ratio=12 (12 un = 1 caja)<br/>
                             • Stock disponible: 144 unidades<br/>
                             • Resultado: 144 ÷ 12 = <strong>12 cajas</strong>
-                        </div>
-                    </setting>
-                </block>
-            </xpath>
-        </field>
-    </record>
+        </div>
+    </setting>
+</block>
+</xpath>
+</field>
+</record>
 </odoo>
