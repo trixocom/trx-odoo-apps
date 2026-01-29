@@ -18,10 +18,23 @@
             <xpath expr="//field[@name='property_product_pricelist']" position="replace">
                 <!-- Removing from original location -->
             </xpath>
+            <xpath expr="//field[@name='user_id']" position="replace">
+                <!-- Removing from original location (Salesperson) -->
+            </xpath>
 
-            <!-- Add it below Tags (category_id) -->
+            <!-- Hide Website and Lang -->
+            <xpath expr="//field[@name='website']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='lang']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
+            <!-- Add Fields below Tags (category_id) -->
+            <!-- We want Pricelist then Salesperson -->
             <field name="category_id" position="after">
                 <field name="property_product_pricelist" options="{'no_open': True, 'no_create': True}"/>
+                <field name="user_id" widget="many2one_avatar_user"/>
             </field>
         </field>
     </record>
