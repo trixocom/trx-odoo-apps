@@ -3,7 +3,7 @@
     <record id="view_partner_form_inherit_pricelist" model="ir.ui.view">
         <field name="name">res.partner.form.inherit.pricelist</field>
         <field name="model">res.partner</field>
-        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="inherit_id" ref="product.view_partner_property_form"/>
         <field name="arch" type="xml">
             <!-- 1. Remove it from its original location (usually in Sales & Purchase tab) to avoid duplication error if we just added it -->
             <!-- We assume it's in the standard location added by product/sale module. 
