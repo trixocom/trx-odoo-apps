@@ -1,10 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
+        <record id="group_partner_creator" model="res.groups">
+            <field name="name">Permisos / Crear Contactos</field>
+            <field name="comment">Usuarios en este grupo pueden crear nuevos contactos, pero no editar existentes.</field>
+            <field name="category_id" ref="base.module_category_hidden"/>
+        </record>
+
         <record id="group_partner_editor" model="res.groups">
             <field name="name">Permisos / Editar Contactos</field>
-            <field name="comment">Usuarios en este grupo pueden editar fichas de contactos. Los demás solo pueden crear.</field>
+            <field name="comment">Usuarios en este grupo pueden editar fichas de contactos. Implica permisos de creación.</field>
             <field name="category_id" ref="base.module_category_hidden"/>
+            <field name="implied_ids" eval="[(4, ref('group_partner_creator'))]"/>
         </record>
     </data>
 </odoo>

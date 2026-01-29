@@ -6,6 +6,10 @@ class ResPartner(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
+        # Check if user has permission to create
+        if not self.env.user.has_group('trixo_partner_security.group_partner_creator'):
+             raise AccessError(_("No tienes permiso para crear clientes."))
+
         # Add a flag to allow write during creation
         return super(ResPartner, self.with_context(trixo_partner_creation=True)).create(vals_list)
 
