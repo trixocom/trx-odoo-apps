@@ -14,12 +14,12 @@
                  To be safe: make the original invisible if I can find it. 
             -->
 
-            <!-- Standard location in product/sale is often group name='sale' -->
-            <xpath expr="//group[@name='sale']//field[@name='property_product_pricelist']" position="attributes">
-                <attribute name="invisible">1</attribute>
+            <!-- Strategy: Find the field anywhere it exists and replace it with nothing (remove it), then add it where we want. -->
+            <xpath expr="//field[@name='property_product_pricelist']" position="replace">
+                <!-- Removing from original location -->
             </xpath>
 
-            <!-- 2. Add it below Tags (category_id) -->
+            <!-- Add it below Tags (category_id) -->
             <field name="category_id" position="after">
                 <field name="property_product_pricelist" options="{'no_open': True, 'no_create': True}"/>
             </field>
