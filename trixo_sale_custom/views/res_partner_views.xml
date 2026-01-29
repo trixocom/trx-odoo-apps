@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_partner_form_inherit_pricelist" model="ir.ui.view">
+        <field name="name">res.partner.form.inherit.pricelist</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <!-- 1. Remove it from its original location (usually in Sales & Purchase tab) to avoid duplication error if we just added it -->
+            <!-- We assume it's in the standard location added by product/sale module. 
+                 Safest is to look for it anywhere and replace with nothing, then add it where we want. 
+                 But 'replace' might fail if other views modified it or if I don't target the exact parent. 
+                 Let's try to just add it after category_id. Odoo sometimes allows duplicates if they are in different places, 
+                 but often the field logic binds to the first one. 
+                 To be safe: make the original invisible if I can find it. 
+            -->
+
+            <!-- Standard location in product/sale is often group name='sale' -->
+            <xpath expr="//group[@name='sale']//field[@name='property_product_pricelist']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
+            <!-- 2. Add it below Tags (category_id) -->
+            <field name="category_id" position="after">
+                <field name="property_product_pricelist" options="{'no_open': True, 'no_create': True}"/>
+            </field>
+        </field>
+    </record>
+</odoo>

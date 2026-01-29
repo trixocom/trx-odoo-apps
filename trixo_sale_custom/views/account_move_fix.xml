@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_move_form_ar_fix_trixo" model="ir.ui.view">
+        <field name="name">account.move.form.ar.fix.trixo</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="l10n_ar_edi.view_move_form_ar"/>
+        <field name="arch" type="xml">
+            <!-- 
+                 Fix OwlError: "Name l10n_ar_latam_document_internal_type is not defined".
+                 The field is used in an 'invisible' modifier but missing from the view.
+                 We add it explicitly.
+            -->
+            <xpath expr="//field[@name='l10n_latam_document_type_id']" position="after">
+                <field name="l10n_ar_latam_document_internal_type" invisible="1"/>
+                <field name="trixo_show_print_button" invisible="1"/>
+            </xpath>
+
+            <!-- Boton de imprimir forzado para cuando desaparece el original -->
+            <xpath expr="//header" position="inside">
+                <button string="Imprimir (Forzado)" type="object" name="action_invoice_print" class="oe_highlight" data-hotkey="p" invisible="not trixo_show_print_button"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
