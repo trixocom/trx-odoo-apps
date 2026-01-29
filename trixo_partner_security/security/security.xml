@@ -5,6 +5,7 @@
             <field name="name">Seguridad Contactos</field>
             <field name="description">Niveles de acceso para crear y editar contactos.</field>
             <field name="sequence">10</field>
+            <field name="parent_id" ref="base.module_category_sales_parent"/>
         </record>
 
         <record id="group_partner_creator" model="res.groups">
