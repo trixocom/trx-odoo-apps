@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vista de configuración para el módulo de reporte de embalajes -->
+    <record id="res_config_settings_view_form" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.stock.packaging</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="stock.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <!-- Añadir después de la última configuración de stock -->
+            <xpath expr="//app[@name='stock']" position="inside">
+                <block title="Reporte de Embalajes en Stock">
+                    <setting help="Configure el nombre del tipo de embalaje que se usará para calcular la cantidad de embalajes en el reporte de stock.">
+                        <field name="packaging_name_for_stock" 
+                               placeholder="Ej: Caja, Pallet, Bulto, etc."/>
+                        <div class="mt8 text-muted">
+                            <strong>¿Cómo funciona?</strong><br/>
+                            1. El sistema buscará en cada producto un embalaje (product.packaging) 
+                               cuyo campo "Nombre" coincida exactamente con este valor.<br/>
+                            2. Usará el campo "Cantidad" de ese embalaje (unidades por embalaje).<br/>
+                            3. Calculará: <em>Stock Disponible ÷ Unidades por Embalaje = Cantidad de Embalajes</em><br/><br/>
+                            
+                            <strong>Ejemplo:</strong><br/>
+                            • Nombre del embalaje configurado: <code>Caja</code><br/>
+                            • Producto tiene packaging con name="Caja" y qty=12<br/>
+                            • Stock disponible: 144 unidades<br/>
+                            • Resultado: 144 ÷ 12 = <strong>12 cajas</strong>
+                        </div>
+                    </setting>
+                </block>
+            </xpath>
+        </field>
+    </record>
+</odoo>
