@@ -1,28 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <record id="product_template_search_view_barcode" model="ir.ui.view">
-        <field name="name">product.template.search.barcode</field>
+    <record id="product_template_search_view_barcode_default" model="ir.ui.view">
+        <field name="name">product.template.search.barcode.default</field>
         <field name="model">product.template</field>
-        <!-- Prioridad alta para asegurar que este filtro prevalezca sobre otros m&oacute;dulos -->
         <field name="priority" eval="99"/>
         <field name="inherit_id" ref="product.product_template_search_view"/>
         <field name="arch" type="xml">
-            <!-- Modifica la busqueda por defecto en Product Template -->
-            <xpath expr="//field[@name='name']" position="attributes">
-                <attribute name="filter_domain">['|', '|', '|', ('default_code', 'ilike', self), ('product_variant_ids.default_code', 'ilike', self), ('name', 'ilike', self), ('barcode', 'ilike', self)]</attribute>
+            <!-- Si otro módulo inyectó campos al principio, forzamos nuestra búsqueda general al inicio para que sea el default absoluto al darle Enter -->
+            <xpath expr="//search/field[1]" position="before">
+                <field name="name" string="Búsqueda (Nombre/Ref/Barras)" filter_domain="['|', '|', '|', ('default_code', 'ilike', self), ('product_variant_ids.default_code', 'ilike', self), ('name', 'ilike', self), ('barcode', 'ilike', self)]"/>
             </xpath>
         </field>
     </record>
 
-    <record id="product_product_search_view_barcode" model="ir.ui.view">
-        <field name="name">product.product.search.barcode</field>
+    <record id="product_product_search_view_barcode_default" model="ir.ui.view">
+        <field name="name">product.product.search.barcode.default</field>
         <field name="model">product.product</field>
         <field name="priority" eval="99"/>
         <field name="inherit_id" ref="product.product_search_form_view"/>
         <field name="arch" type="xml">
-            <!-- Modifica la busqueda por defecto en Product Variant -->
-            <xpath expr="//field[@name='name']" position="attributes">
-                <attribute name="filter_domain">['|', '|', ('default_code', 'ilike', self), ('name', 'ilike', self), ('barcode', 'ilike', self)]</attribute>
+            <xpath expr="//search/field[1]" position="before">
+                <field name="name" string="Búsqueda (Nombre/Ref/Barras)" filter_domain="['|', '|', ('default_code', 'ilike', self), ('name', 'ilike', self), ('barcode', 'ilike', self)]"/>
             </xpath>
         </field>
     </record>
