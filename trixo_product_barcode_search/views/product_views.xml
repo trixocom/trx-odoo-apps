@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="product_template_search_view_barcode" model="ir.ui.view">
+        <field name="name">product.template.search.barcode</field>
+        <field name="model">product.template</field>
+        <!-- Prioridad alta para asegurar que este filtro prevalezca sobre otros m&oacute;dulos -->
+        <field name="priority" eval="99"/>
+        <field name="inherit_id" ref="product.product_template_search_view"/>
+        <field name="arch" type="xml">
+            <!-- Modifica la busqueda por defecto en Product Template -->
+            <xpath expr="//field[@name='name']" position="attributes">
+                <attribute name="filter_domain">['|', '|', '|', ('default_code', 'ilike', self), ('product_variant_ids.default_code', 'ilike', self), ('name', 'ilike', self), ('barcode', 'ilike', self)]</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="product_product_search_view_barcode" model="ir.ui.view">
+        <field name="name">product.product.search.barcode</field>
+        <field name="model">product.product</field>
+        <field name="priority" eval="99"/>
+        <field name="inherit_id" ref="product.product_search_form_view"/>
+        <field name="arch" type="xml">
+            <!-- Modifica la busqueda por defecto en Product Variant -->
+            <xpath expr="//field[@name='name']" position="attributes">
+                <attribute name="filter_domain">['|', '|', ('default_code', 'ilike', self), ('name', 'ilike', self), ('barcode', 'ilike', self)]</attribute>
+            </xpath>
+        </field>
+    </record>
+</odoo>
