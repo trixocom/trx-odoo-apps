@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import logging
 from odoo import models, fields, api, _
-from odoo.exceptions import UserError, ValidationError
+from odoo.exceptions import UserError
 
 _logger = logging.getLogger(__name__)
 
@@ -44,10 +44,9 @@ class PosOrder(models.Model):
         
         # Vincular la orden de venta con la orden del POS
         self.sale_order_id = sale_order.id
-        
-        # Marcar la orden del POS como procesada
-        self.state = 'done'
-        
+
+        # Nota: no forzamos el estado a `done` para evitar saltar validaciones
+        # del flujo contable/caja del POS cuando no hubo pago real.
         return {
             'type': 'ir.actions.act_window',
             'name': _('Orden de Venta'),
