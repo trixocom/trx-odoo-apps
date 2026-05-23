@@ -1,0 +1,20 @@
+// Trixocom — compact "to invoice" toggle for ProductScreen control buttons
+.trx-invoice-toggle {
+    // Square-ish, minimal footprint so it fits next to the partner button.
+    padding-left: 0.55rem;
+    padding-right: 0.55rem;
+
+    // Stack icon + check mark tight together.
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+
+    .trx-invoice-toggle__mark {
+        font-size: 0.95em;
+    }
+
+    // Make the "active" state visually obvious without needing text.
+    &.trx-invoice-toggle--on {
+        font-weight: 600;
+    }
+}

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <!--
+        Inject the compact invoice toggle right after the customer button,
+        only in the always-visible row (not inside the "more actions" popup).
+    -->
+    <t t-name="trx_pos_invoice_toggle.ControlButtons"
+       t-inherit="point_of_sale.ControlButtons"
+       t-inherit-mode="extension">
+        <xpath expr="//SelectPartnerButton" position="after">
+            <InvoiceToggleButton t-if="!props.showRemainingButtons"/>
+        </xpath>
+    </t>
+
+</templates>

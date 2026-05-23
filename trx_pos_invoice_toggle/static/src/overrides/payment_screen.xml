@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <!--
+        Hide the original Invoice toggle from the Payment screen: it's now
+        in the first screen (ProductScreen) via InvoiceToggleButton.
+
+        We don't remove the button entirely with `position="replace"` so any
+        sibling module that inherits this template by xpath keeps working;
+        we just stop rendering it with t-if="false" and let the partner
+        button take the full width.
+    -->
+    <t t-name="trx_pos_invoice_toggle.PaymentScreenButtons"
+       t-inherit="point_of_sale.PaymentScreenButtons"
+       t-inherit-mode="extension">
+
+        <xpath expr="//button[hasclass('js_invoice')]" position="attributes">
+            <attribute name="t-if">false</attribute>
+        </xpath>
+
+        <xpath expr="//button[hasclass('partner-button')]" position="attributes">
+            <attribute name="class">button partner-button btn btn-lg w-100 lh-lg text-truncate</attribute>
+        </xpath>
+
+    </t>
+
+</templates>
