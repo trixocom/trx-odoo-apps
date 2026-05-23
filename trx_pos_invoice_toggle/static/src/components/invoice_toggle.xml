@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-name="trx_pos_invoice_toggle.InvoiceToggleButton">
+        <button class="btn btn-secondary btn-lg flex-shrink-0 trx-invoice-toggle"
+                t-att-class="{
+                    'trx-invoice-toggle--on highlight active text-action': isToInvoice,
+                    'opacity-50': !canInvoice,
+                }"
+                t-att-title="title"
+                t-att-aria-pressed="isToInvoice"
+                t-att-disabled="isLockedByRefund"
+                t-on-click="onClick">
+            <i class="fa fa-file-text-o" role="img" aria-hidden="true"/>
+            <i class="fa trx-invoice-toggle__mark"
+               t-attf-class="{{ isToInvoice ? 'fa-check-square text-action' : 'fa-square-o' }}"
+               aria-hidden="true"/>
+        </button>
+    </t>
+
+</templates>
