@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Stock Packaging Report',
-    'version': '19.0.11.7.1',
+    'version': '19.0.11.7.2',
     'category': 'Inventory/Inventory',
     'summary': 'Muestra cantidad de embalajes en el reporte de Existencias y en los smart buttons del producto',
     'description': """
@@ -48,6 +48,11 @@
         * No requiere duplicar información: usa el qty existente en product.packaging
         * Compatible con Odoo 18 Enterprise Edition
         
+        Changelog v11.7.2:
+        ------------------
+        * No se mantiene para Odoo 19: el rediseno del smart-button On Hand + Forecasted
+          requiere refactor profundo. Marcado installable=False hasta nueva orden.
+
         Changelog v11.7.1:
         ------------------
         * FIX Odoo 19: action_update_quantity_on_hand renombrado a action_open_quants
@@ -95,7 +100,7 @@
         'views/product_product_views.xml',
         'views/product_template_views.xml',
     ],
-    'installable': True,
+    'installable': False,
     'application': False,
     'auto_install': False,
 }
