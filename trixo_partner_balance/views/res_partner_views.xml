@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_partner_form_balance_buttons" model="ir.ui.view">
+        <field name="name">res.partner.form.trixo.balance.buttons</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="priority" eval="20"/>
+        <field name="arch" type="xml">
+            <div name="button_box" position="inside">
+                <button type="object"
+                        name="action_open_partner_aml"
+                        class="oe_stat_button"
+                        icon="fa-money"
+                        invisible="customer_rank == 0 and credit == 0"
+                        groups="account.group_account_invoice">
+                    <field name="credit" widget="monetary"
+                           options="{'currency_field': 'currency_id'}"
+                           string="Adeudado"/>
+                </button>
+                <button type="object"
+                        name="action_open_partner_aml"
+                        class="oe_stat_button"
+                        icon="fa-money"
+                        invisible="supplier_rank == 0 and debit == 0"
+                        groups="account.group_account_invoice">
+                    <field name="debit" widget="monetary"
+                           options="{'currency_field': 'currency_id'}"
+                           string="A Pagar"/>
+                </button>
+            </div>
+        </field>
+    </record>
+</odoo>
