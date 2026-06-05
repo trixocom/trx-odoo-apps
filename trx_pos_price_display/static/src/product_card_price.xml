@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="trx_pos_price_display.ProductCardPrice"
+       t-inherit="point_of_sale.ProductCard" t-inherit-mode="extension">
+
+        <!-- Badge de stock on-hand (deposito del PdV), esquina superior izquierda.
+             Verde si hay stock, rojo si es 0 o negativo. -->
+        <xpath expr="//article" position="inside">
+            <span t-if="trxShowStock"
+                  class="trx-stock-badge position-absolute top-0 start-0 m-1 px-2 rounded fw-bolder"
+                  t-att-class="{ 'bg-success text-white': trxStockQty gt 0, 'bg-danger text-white': trxStockQty le 0 }"
+                  t-esc="trxStockQty"/>
+        </xpath>
+
+        <!-- Precio de venta debajo del nombre del producto. -->
+        <xpath expr="//div[hasclass('product-name')]" position="after">
+            <div t-if="trxPriceLabel"
+                 class="trx-product-price w-100 text-truncate fw-bolder px-2"
+                 t-esc="trxPriceLabel"/>
+        </xpath>
+
+    </t>
+</templates>

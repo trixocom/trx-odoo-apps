@@ -1,0 +1,24 @@
+// Trixocom - trx_pos_price_display
+// Layout de la tarjeta: nombre + precio apilados, y badge de stock visible.
+
+.product {
+    // Apilar nombre y precio verticalmente (el contenido es flex en horizontal
+    // por defecto en Odoo 19).
+    .product-content {
+        flex-direction: column;
+    }
+
+    .trx-product-price {
+        line-height: 1.1;
+        font-size: 0.95rem;
+    }
+
+    .trx-stock-badge {
+        z-index: 2;
+        font-size: 0.9rem;
+        line-height: 1.25;
+        min-width: 1.6rem;
+        text-align: center;
+        opacity: 0.95;
+    }
+}
