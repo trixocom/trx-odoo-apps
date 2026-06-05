@@ -48,4 +48,9 @@ patch(ProductCard.prototype, {
         // Mostrar entero cuando no hay decimales; si los hay, 2 decimales.
         return Number.isInteger(qty) ? qty : Math.round(qty * 100) / 100;
     },
+
+    get trxStockClass() {
+        // Color del badge: verde si hay stock, rojo si es 0 o negativo.
+        return this.trxStockQty > 0 ? "bg-success text-white" : "bg-danger text-white";
+    },
 });

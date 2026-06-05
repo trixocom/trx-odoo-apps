@@ -1,6 +1,6 @@
 {
     'name': 'POS - Precio en tarjeta y unitario por linea',
-    'version': '19.0.1.0.0',
+    'version': '19.0.1.0.1',
     'category': 'Sales/Point of Sale',
     'summary': 'Muestra el precio en la tarjeta de producto del POS y el '
                'precio unitario en cada linea del ticket (paridad con Odoo 16)',
