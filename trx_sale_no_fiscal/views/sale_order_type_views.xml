@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="trx_sale_order_type_form_no_fiscal" model="ir.ui.view">
+        <field name="name">sale.order.type.form.no.fiscal</field>
+        <field name="model">sale.order.type</field>
+        <field name="inherit_id" ref="sale_order_type.sot_sale_order_type_form_view"/>
+        <field name="arch" type="xml">
+            <field name="pricelist_id" position="after">
+                <field name="no_fiscal"/>
+                <field name="no_fiscal_tax_ids"
+                       widget="many2many_tags"
+                       options="{'no_create': True}"
+                       invisible="not no_fiscal"
+                       domain="[('type_tax_use', '=', 'sale')]"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="trx_sale_order_type_list_no_fiscal" model="ir.ui.view">
+        <field name="name">sale.order.type.list.no.fiscal</field>
+        <field name="model">sale.order.type</field>
+        <field name="inherit_id" ref="sale_order_type.sot_sale_order_type_tree_view"/>
+        <field name="arch" type="xml">
+            <field name="pricelist_id" position="after">
+                <field name="no_fiscal" optional="show"/>
+            </field>
+        </field>
+    </record>
+
+</odoo>
