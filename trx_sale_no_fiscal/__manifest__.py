@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Sale Order Type - No Fiscal',
-    'version': '19.0.1.1.0',
+    'version': '19.0.1.2.0',
     'category': 'Sales',
     'summary': 'Tipo de pedido "No fiscal": fuerza impuestos configurables '
                '(IVA 0% / Exento) y lista de precios en la orden de venta',

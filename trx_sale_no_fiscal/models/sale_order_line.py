@@ -22,3 +22,26 @@ class SaleOrderLine(models.Model):
             if order_type and order_type.no_fiscal and not line.display_type:
                 line.tax_ids = order_type.no_fiscal_tax_ids
         return res
+
+    @api.depends(
+        "product_id",
+        "product_uom_id",
+        "product_uom_qty",
+        "order_id.pricelist_id",
+    )
+    def _compute_price_unit(self):
+        """Recalcular el precio automaticamente cuando cambia la lista de
+        precios de la orden (p.ej. al cambiar el tipo de pedido), sin tener
+        que pulsar 'Actualizar precios'."""
+        return super()._compute_price_unit()
+
+    @api.depends(
+        "product_id",
+        "product_uom_id",
+        "product_uom_qty",
+        "order_id.pricelist_id",
+    )
+    def _compute_discount(self):
+        """Idem precio: recalcular el descuento al cambiar la lista de
+        precios de la orden."""
+        return super()._compute_discount()
