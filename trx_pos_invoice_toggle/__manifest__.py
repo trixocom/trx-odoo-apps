@@ -19,13 +19,14 @@ de Cliente.
 * Respeta el caso refund: si la orden refunda una orden ya facturada, queda
   obligatorio facturar (no se puede destildar), igual que el botón original.
 """,
-    "version": "19.0.1.0.0",
+    "version": "19.0.1.1.0",
     "category": "Point of Sale",
     "author": "Trixocom",
     "website": "https://www.trixocom.com",
     "license": "LGPL-3",
     "depends": [
         "point_of_sale",
+        "l10n_ar_pos",
     ],
     "data": [],
     "assets": {
@@ -34,6 +35,7 @@ de Cliente.
             "trx_pos_invoice_toggle/static/src/components/invoice_toggle.xml",
             "trx_pos_invoice_toggle/static/src/components/invoice_toggle.scss",
             "trx_pos_invoice_toggle/static/src/overrides/control_buttons.js",
+            "trx_pos_invoice_toggle/static/src/overrides/payment_screen.js",
             "trx_pos_invoice_toggle/static/src/overrides/control_buttons.xml",
             "trx_pos_invoice_toggle/static/src/overrides/payment_screen.xml",
         ],
