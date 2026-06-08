@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_move_form_inherit_packaging" model="ir.ui.view">
+        <field name="name">account.move.form.inherit.packaging</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <!-- Mostrar Total Bultos grande en el encabezado -->
+            <xpath expr="//div[hasclass('oe_title')]" position="inside">
+                <div class="mt-2 text-primary" style="font-size: 1.6rem; font-weight: bold;">
+                    <span>Total Bultos: </span>
+                    <field name="total_bultos" readonly="1" class="oe_inline"/>
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>

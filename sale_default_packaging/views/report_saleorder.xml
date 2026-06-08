@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Herencia para el reporte estándar -->
+    <template id="report_saleorder_document_inherit_default_packaging" inherit_id="sale.report_saleorder_document" priority="99">
+        <xpath expr="//div[@id='informations']" position="before">
+            <div class="mt-2 mb-3" t-if="doc.total_bultos" style="font-size: 1.5rem; font-weight: bold;">
+                <span>Total Bultos: </span>
+                <span t-field="doc.total_bultos"/>
+            </div>
+        </xpath>
+    </template>
+
+    <!-- Herencia para el reporte personalizado de Studio en Miracca -->
+    <template id="report_saleorder_document_inherit_studio" inherit_id="studio_customization.report_saleorder_doc_e8471eb2-9fb1-4046-9879-c4f05c087c7f" priority="99">
+        <xpath expr="//div[@id='informations']" position="before">
+            <div class="mt-2 mb-3" t-if="doc.total_bultos" style="font-size: 1.5rem; font-weight: bold;">
+                <span>Total Bultos: </span>
+                <span t-field="doc.total_bultos"/>
+            </div>
+        </xpath>
+    </template>
+</odoo>

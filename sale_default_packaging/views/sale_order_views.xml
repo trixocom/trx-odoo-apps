@@ -6,6 +6,14 @@
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
+            <!-- Mostrar Total Bultos grande en el encabezado -->
+            <xpath expr="//div[hasclass('oe_title')]" position="inside">
+                <div class="mt-2 text-primary" style="font-size: 1.6rem; font-weight: bold;">
+                    <span>Total Bultos: </span>
+                    <field name="total_bultos" readonly="1" class="oe_inline"/>
+                </div>
+            </xpath>
+
             <!-- Agregar campos de packaging en el tree view de las líneas de pedido -->
             <xpath expr="//field[@name='order_line']//field[@name='product_uom_qty']" position="before">
                 <field name="product_packaging_id" 
