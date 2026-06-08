@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <template id="report_invoice_document_inherit_packaging" inherit_id="account.report_invoice_document">
-        
         <!-- Agregar header "Cantidad de Embalaje" después de columna Cantidad -->
         <xpath expr="//table[@name='invoice_line_table']/thead/tr/th[@name='th_quantity']" position="after">
             <th name="th_packaging_quantity" class="text-end">Cantidad de Embalaje</th>
@@ -13,6 +12,34 @@
                 <span t-field="line.packaging_quantity_invoice"/>
             </td>
         </xpath>
-        
+    </template>
+
+    <!-- Mostrar Total Bultos grande en el encabezado del reporte de factura estándar -->
+    <template id="report_invoice_document_inherit_total_bultos" inherit_id="account.report_invoice_document" priority="99">
+        <xpath expr="//div[@id='informations']" position="before">
+            <div class="mt-2 mb-3" t-if="o.total_bultos" style="font-size: 1.5rem; font-weight: bold;">
+                <span>Total Bultos: </span>
+                <span t-field="o.total_bultos"/>
+            </div>
+        </xpath>
+    </template>
+
+    <!-- Mostrar Total Bultos en las copias de Studio de la factura -->
+    <template id="report_invoice_document_inherit_studio_1" inherit_id="studio_customization.report_invoice_docum_d0941c06-08ed-45a8-a2e1-283036cb02c8" priority="99">
+        <xpath expr="//div[@id='informations']" position="before">
+            <div class="mt-2 mb-3" t-if="o.total_bultos" style="font-size: 1.5rem; font-weight: bold;">
+                <span>Total Bultos: </span>
+                <span t-field="o.total_bultos"/>
+            </div>
+        </xpath>
+    </template>
+
+    <template id="report_invoice_document_inherit_studio_2" inherit_id="studio_customization.report_invoice_docum_5420c613-1d96-40b6-af1e-01a7e6927fd8" priority="99">
+        <xpath expr="//div[@id='informations']" position="before">
+            <div class="mt-2 mb-3" t-if="o.total_bultos" style="font-size: 1.5rem; font-weight: bold;">
+                <span>Total Bultos: </span>
+                <span t-field="o.total_bultos"/>
+            </div>
+        </xpath>
     </template>
 </odoo>
