@@ -11,17 +11,20 @@ class SaleOrder(models.Model):
     @api.model
     def craete_saleorder_from_pos(self, oderdetails):
         vals = {}
-        saleorder_id = self.env['sale.order'].create({
+        order_vals = {
             'partner_id': oderdetails.get('partner_id'),
             'date_order': datetime.date.today(),
             'is_pos_created': True,
             'state': 'draft',
             'amount_tax': oderdetails.get('tax_amount'),
-            })
+        }
+        if oderdetails.get('pricelist_id'):
+            order_vals['pricelist_id'] = oderdetails.get('pricelist_id')
+        saleorder_id = self.env['sale.order'].create(order_vals)
         vals['name'] = saleorder_id.name
         vals['id'] = saleorder_id.id
         for data in oderdetails:
-            if not data == 'partner_id' and not data == 'tax_amount':
+            if data not in ('partner_id', 'tax_amount', 'pricelist_id'):
                 current_dict = oderdetails.get(data)
                 saleorder_id.order_line = [(0, 0, {
                     'product_id': current_dict.get('product'),

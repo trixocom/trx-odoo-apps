@@ -42,6 +42,7 @@ patch(ControlButtons.prototype, {
             };
         }
         oderdetails['partner_id'] = order.getPartner().id
+        oderdetails['pricelist_id'] = order.pricelist_id ? order.pricelist_id.id : false
         if(0 > 0){
             oderdetails['tax_amount'] = 0
         }
