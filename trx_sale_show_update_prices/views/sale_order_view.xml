@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_order_form_show_update_prices" model="ir.ui.view">
+        <field name="name">sale.order.form.show.update.prices.always</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <!-- El boton "Actualizar precios" de fabrica solo aparece cuando
+                 show_update_pricelist es True (al cambiar la lista de precios).
+                 Lo dejamos siempre visible mientras el pedido sea cotizacion,
+                 manteniendolo oculto en confirmados/cancelados. -->
+            <xpath expr="//button[@name='action_update_prices']" position="attributes">
+                <attribute name="invisible">state in ['sale', 'cancel']</attribute>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
