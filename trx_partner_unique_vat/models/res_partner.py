@@ -2,58 +2,87 @@
 import logging
 
 from odoo import _, api, models
+
 from odoo.exceptions import RedirectWarning
 
 _logger = logging.getLogger(__name__)
+
+# Codigo AFIP del tipo de documento "Sin identificar / venta global diaria"
+# (Consumidor Final). Es el unico documento que se repite legitimamente.
+AFIP_CODE_UNIDENTIFIED = '99'
+# Codigo AFIP del CUIT (para usar el valor compacto canonico de la localizacion).
+AFIP_CODE_CUIT = '80'
 
 
 class ResPartner(models.Model):
     _inherit = 'res.partner'
 
-    def _trx_get_duplicate_vat_partner(self):
-        """Devuelve el primer partner (distinto de self) que comparte el mismo
-        CUIT, o un recordset vacio si no hay duplicado.
+    def _trx_vat_unique_key(self):
+        """Devuelve (tipo_documento, valor_normalizado) cuando el documento del
+        contacto debe ser unico, o (recordset vacio, '') cuando no corresponde
+        controlarlo.
 
-        Solo se controla cuando el tipo de identificacion es CUIT (codigo AFIP
-        '80'); para DNI, CF u otros documentos no se aplica unicidad porque es
-        normal que se repitan (por ejemplo "Consumidor Final").
+        No se controla cuando:
+          * no hay ``vat`` o no hay tipo de identificacion;
+          * el tipo es "Sin identificar / venta global diaria" (codigo AFIP
+            ``99`` = Consumidor Final), que es normal que se repita.
 
-        La comparacion se hace sobre el CUIT compacto (``l10n_ar_vat``), el
-        valor canonico que normaliza la localizacion argentina, de modo que
-        ``20-12345678-9`` y ``20123456789`` se consideran el mismo numero.
+        Para CUIT (codigo ``80``) se usa el valor compacto de la localizacion
+        (``l10n_ar_vat``). Para el resto (DNI, CUIL, Pasaporte, etc.) se
+        normaliza el ``vat`` quitando separadores, de modo que ``12.345.678`` y
+        ``12345678`` se consideran el mismo documento. La comparacion siempre se
+        hace DENTRO del mismo tipo de documento, asi un DNI no colisiona con un
+        CUIT que contenga los mismos digitos.
         """
         self.ensure_one()
-        cuit = self.l10n_ar_vat
-        if not cuit:
-            return self.browse()
+        empty = self.env['l10n_latam.identification.type'].browse()
+        id_type = self.l10n_latam_identification_type_id
+        if not self.vat or not id_type:
+            return empty, ''
+        if id_type.l10n_ar_afip_code == AFIP_CODE_UNIDENTIFIED:
+            return empty, ''
 
-        try:
-            import stdnum.ar.cuit
-            formatted = stdnum.ar.cuit.format(cuit)
-        except Exception:  # pragma: no cover - defensivo
-            formatted = cuit
+        if id_type.l10n_ar_afip_code == AFIP_CODE_CUIT and self.l10n_ar_vat:
+            normalized = self.l10n_ar_vat
+        else:
+            normalized = ''.join(c for c in self.vat.upper() if c.isalnum())
+
+        if not normalized:
+            return empty, ''
+        return id_type, normalized
+
+    def _trx_get_duplicate_vat_partner(self):
+        """Primer partner (distinto de self) con el mismo documento, o un
+        recordset vacio si no hay duplicado."""
+        self.ensure_one()
+        id_type, key = self._trx_vat_unique_key()
+        if not id_type:
+            return self.browse()
 
         domain = [
             ('id', '!=', self.id),
             ('parent_id', '=', False),
             ('company_id', 'in', [False] + self.company_id.ids),
-            '|', ('vat', '=', cuit), ('vat', '=', formatted),
+            ('l10n_latam_identification_type_id', '=', id_type.id),
+            ('vat', '!=', False),
         ]
-        # Incluye partners archivados: un CUIT duplicado en un contacto
+        # Incluye contactos archivados: un documento duplicado en un contacto
         # archivado tambien debe avisarse (se puede desarchivar).
         candidates = self.with_context(active_test=False).search(domain)
-        return candidates.filtered(lambda p: p.l10n_ar_vat == cuit)[:1]
+        return candidates.filtered(
+            lambda p: p._trx_vat_unique_key()[1] == key
+        )[:1]
 
     @api.constrains('vat', 'parent_id', 'l10n_latam_identification_type_id', 'company_id')
     def _trx_check_unique_vat(self):
         # Permite saltear el control en procesos masivos (migraciones,
-        # importaciones) cuando se setea el contexto trx_skip_unique_vat.
+        # importaciones) seteando el contexto trx_skip_unique_vat.
         if self.env.context.get('trx_skip_unique_vat'):
             return
 
         for partner in self:
             # Excepcion pedida: un contacto que cuelga de una empresa
-            # (parent_id seteado) puede compartir el CUIT de su empresa.
+            # (parent_id seteado) puede compartir el documento de su empresa.
             if partner.parent_id:
                 continue
 
@@ -61,14 +90,17 @@ class ResPartner(models.Model):
             if not original:
                 continue
 
+            doc_label = original.l10n_latam_identification_type_id.display_name or _('documento')
+            doc_value = original.l10n_ar_formatted_vat or original.vat
             archived = _(' (archivado)') if not original.active else ''
             message = _(
-                'Ya existe un contacto con el mismo CUIT %(vat)s:\n\n'
+                'Ya existe un contacto con el mismo %(doc)s %(vat)s:\n\n'
                 '    %(name)s%(archived)s\n\n'
-                'No se puede crear ni guardar otro contacto con ese CUIT. '
+                'No se puede crear ni guardar otro contacto con ese %(doc)s. '
                 'Use el contacto existente, o si se trata de una persona de '
                 'esa empresa, carguela como contacto dependiente de la misma.',
-                vat=original.l10n_ar_formatted_vat or original.vat,
+                doc=doc_label,
+                vat=doc_value,
                 name=original.display_name,
                 archived=archived,
             )
