@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Producto - Buscar codigo de barras sin cero a la izquierda (EAN13)',
-    'version': '19.0.1.0.0',
+    'version': '19.0.1.1.0',
     'category': 'Sales',
     'summary': 'Al escanear/tipear un codigo de barras al que le falta el cero '
                'a la izquierda, completa a EAN13 y encuentra igual el producto '
