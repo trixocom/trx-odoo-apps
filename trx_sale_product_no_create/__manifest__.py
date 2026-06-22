@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Venta - No crear productos desde la linea de pedido',
-    'version': '19.0.2.0.0',
+    'version': '19.0.2.0.1',
     'category': 'Sales',
     'summary': 'Restringe por usuario la creacion de productos desde el buscador '
                'de la linea del pedido de venta.',
