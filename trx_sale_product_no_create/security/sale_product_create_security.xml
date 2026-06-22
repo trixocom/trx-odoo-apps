@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Categoria propia para que el permiso aparezca como casilla en el usuario -->
+    <record id="module_category_trx_sale" model="ir.module.category">
+        <field name="name">Ventas Trixocom</field>
+        <field name="sequence">90</field>
+    </record>
+
+    <!-- Miembros de este grupo SI pueden crear productos desde la linea de venta -->
+    <record id="group_sale_product_create" model="res.groups">
+        <field name="name">Crear productos desde la linea de pedido</field>
+        <field name="category_id" ref="module_category_trx_sale"/>
+        <field name="comment">Los usuarios con este permiso pueden crear productos nuevos directamente desde el buscador de la linea del pedido de venta (opciones "Crear" y "Crear y editar"). Los usuarios sin este permiso solo pueden seleccionar productos ya existentes.</field>
+    </record>
+</odoo>
