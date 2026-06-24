@@ -2,36 +2,50 @@
 <!-- Copyright 2026 Trixocom - License LGPL-3.0 or later -->
 <odoo>
 
-    <!-- Formulario de plantilla de producto (caso variante única) -->
+    <!-- Formulario de plantilla de producto (caso variante única).
+         Se reemplaza el campo barcode por una fila (o_row) que contiene el
+         campo y el link "Generar Código" en la MISMA línea. -->
     <record id="view_product_template_form_generate_ean13" model="ir.ui.view">
         <field name="model">product.template</field>
         <field name="inherit_id" ref="product.product_template_only_form_view" />
         <field name="arch" type="xml">
-            <field name="barcode" position="after">
-                <button
-                    name="action_generate_ean13"
-                    type="object"
-                    string="Generar Código"
-                    class="btn-link"
-                    invisible="barcode or product_variant_count &gt; 1"
-                />
+            <field name="barcode" position="replace">
+                <label for="barcode" invisible="product_variant_count &gt; 1" />
+                <div
+                    name="div_barcode_gen"
+                    class="o_row"
+                    invisible="product_variant_count &gt; 1"
+                >
+                    <field name="barcode" nolabel="1" class="oe_inline" />
+                    <button
+                        name="action_generate_ean13"
+                        type="object"
+                        string="Generar Código"
+                        class="btn-link oe_inline"
+                        invisible="barcode"
+                    />
+                </div>
             </field>
         </field>
     </record>
 
-    <!-- Formulario de variante de producto -->
+    <!-- Formulario de variante de producto. -->
     <record id="view_product_product_form_generate_ean13" model="ir.ui.view">
         <field name="model">product.product</field>
         <field name="inherit_id" ref="product.product_normal_form_view" />
         <field name="arch" type="xml">
-            <field name="barcode" position="after">
-                <button
-                    name="action_generate_ean13"
-                    type="object"
-                    string="Generar Código"
-                    class="btn-link"
-                    invisible="barcode"
-                />
+            <field name="barcode" position="replace">
+                <label for="barcode" />
+                <div name="div_barcode_gen" class="o_row">
+                    <field name="barcode" nolabel="1" class="oe_inline" />
+                    <button
+                        name="action_generate_ean13"
+                        type="object"
+                        string="Generar Código"
+                        class="btn-link oe_inline"
+                        invisible="barcode"
+                    />
+                </div>
             </field>
         </field>
     </record>

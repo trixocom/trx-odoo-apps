@@ -3,7 +3,7 @@
 {
     "name": "Generador de Código de Barras EAN13",
     "summary": "Genera un código de barras EAN13 válido para productos que no tienen uno.",
-    "version": "19.0.1.0.0",
+    "version": "19.0.1.0.1",
     "category": "Inventory",
     "author": "Trixocom",
     "website": "https://www.trixocom.com",
