@@ -1,0 +1,21 @@
+// trx_pos_ticket_compact
+// Reduce ~25% el tamano de letra en el panel de armado del pedido y en el ticket.
+// Se usa 0.75em (relativo) para que toda la jerarquia de textos escale en proporcion.
+
+// Panel izquierdo: lineas del pedido mientras se arma.
+// No afecta el numpad ni los botones (estan fuera de .order-container).
+.pos .leftpane .order-container {
+    font-size: 0.75em;
+}
+
+// Ticket en pantalla (vista previa del recibo) y render para impresoras ePOS (raster).
+.pos-receipt {
+    font-size: 0.75em;
+}
+
+// Ticket impreso por el navegador: el core fija 14px; lo bajamos 25% -> 10.5px.
+@media print {
+    .render-container .pos-receipt {
+        font-size: 10.5px !important;
+    }
+}
