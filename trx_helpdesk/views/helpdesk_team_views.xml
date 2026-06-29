@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ====================== DASHBOARD KANBAN ====================== -->
+    <record id="helpdesk_team_view_kanban" model="ir.ui.view">
+        <field name="name">helpdesk.team.kanban</field>
+        <field name="model">helpdesk.team</field>
+        <field name="arch" type="xml">
+            <kanban class="o_helpdesk_team_kanban" create="1">
+                <field name="ticket_count"/>
+                <field name="ticket_count_unassigned"/>
+                <field name="ticket_count_urgent"/>
+                <field name="ticket_count_sla_fail"/>
+                <field name="use_sla"/>
+                <templates>
+                    <t t-name="menu">
+                        <a type="edit" class="dropdown-item">Configure Team</a>
+                        <field name="color" widget="kanban_color_picker"/>
+                    </t>
+                    <t t-name="card">
+                        <main>
+                            <div class="o_kanban_card_header mb-2">
+                                <field name="name" class="fw-bold fs-4"/>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <a type="object" name="action_view_open_tickets">
+                                        <span class="fs-2 fw-bold"><field name="ticket_count"/></span>
+                                        <div class="text-muted">Open Tickets</div>
+                                    </a>
+                                </div>
+                                <div class="col-6 text-end">
+                                    <a type="object" name="action_view_unassigned" class="d-block">
+                                        <field name="ticket_count_unassigned"/> Unassigned
+                                    </a>
+                                    <a type="object" name="action_view_urgent" class="d-block text-warning">
+                                        <field name="ticket_count_urgent"/> Urgent
+                                    </a>
+                                    <a type="object" name="action_view_sla_fail"
+                                       class="d-block text-danger" t-if="record.use_sla.raw_value">
+                                        <field name="ticket_count_sla_fail"/> SLA Failed
+                                    </a>
+                                </div>
+                            </div>
+                            <footer class="pt-2">
+                                <a type="object" name="action_view_all_tickets"
+                                   class="btn btn-sm btn-secondary">All Tickets</a>
+                            </footer>
+                        </main>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- ====================== LIST ====================== -->
+    <record id="helpdesk_team_view_list" model="ir.ui.view">
+        <field name="name">helpdesk.team.list</field>
+        <field name="model">helpdesk.team</field>
+        <field name="arch" type="xml">
+            <list string="Teams">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="assign_method"/>
+                <field name="member_ids" widget="many2many_tags" optional="show"/>
+                <field name="use_sla" optional="show"/>
+                <field name="ticket_count" string="Open"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ====================== FORM ====================== -->
+    <record id="helpdesk_team_view_form" model="ir.ui.view">
+        <field name="name">helpdesk.team.form</field>
+        <field name="model">helpdesk.team</field>
+        <field name="arch" type="xml">
+            <form string="Team">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_all_tickets" type="object"
+                                class="oe_stat_button" icon="fa-life-ring">
+                            <field name="ticket_count" widget="statinfo" string="Open"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="e.g. Customer Care"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="assign_method"/>
+                            <field name="member_ids" widget="many2many_tags"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group>
+                            <field name="use_sla"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Stages" name="stages">
+                            <field name="stage_ids" widget="many2many_tags"/>
+                        </page>
+                        <page string="SLA Policies" name="sla" invisible="not use_sla">
+                            <field name="sla_ids">
+                                <list editable="bottom">
+                                    <field name="name"/>
+                                    <field name="priority" widget="priority"/>
+                                    <field name="stage_id"/>
+                                    <field name="time"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Description" name="description">
+                            <field name="description"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="helpdesk_team_action" model="ir.actions.act_window">
+        <field name="name">Helpdesk Teams</field>
+        <field name="res_model">helpdesk.team</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create a Helpdesk team
+            </p><p>
+                Organize your support staff into teams to handle tickets.
+            </p>
+        </field>
+    </record>
+
+    <record id="helpdesk_team_config_action" model="ir.actions.act_window">
+        <field name="name">Teams</field>
+        <field name="res_model">helpdesk.team</field>
+        <field name="view_mode">list,form,kanban</field>
+    </record>
+
+</odoo>

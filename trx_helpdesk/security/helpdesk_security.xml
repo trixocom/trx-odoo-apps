@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="module_category_helpdesk" model="ir.module.category">
+        <field name="name">Helpdesk</field>
+        <field name="description">Helpdesk / ticket management</field>
+        <field name="sequence">20</field>
+    </record>
+
+    <!-- Odoo 19: groups are grouped under a res.groups.privilege -->
+    <record id="res_groups_privilege_helpdesk" model="res.groups.privilege">
+        <field name="name">Helpdesk</field>
+        <field name="category_id" ref="module_category_helpdesk"/>
+        <field name="sequence">20</field>
+    </record>
+
+    <record id="group_helpdesk_user" model="res.groups">
+        <field name="name">User</field>
+        <field name="sequence">10</field>
+        <field name="privilege_id" ref="res_groups_privilege_helpdesk"/>
+        <field name="comment">Helpdesk users can manage tickets in their teams.</field>
+    </record>
+
+    <record id="group_helpdesk_manager" model="res.groups">
+        <field name="name">Administrator</field>
+        <field name="sequence">20</field>
+        <field name="privilege_id" ref="res_groups_privilege_helpdesk"/>
+        <field name="implied_ids" eval="[(4, ref('group_helpdesk_user'))]"/>
+        <field name="user_ids" eval="[(4, ref('base.user_admin'))]"/>
+        <field name="comment">Helpdesk administrators configure teams, stages, SLA and tags.</field>
+    </record>
+
+    <data noupdate="1">
+        <record id="helpdesk_ticket_company_rule" model="ir.rule">
+            <field name="name">Helpdesk Ticket: multi-company</field>
+            <field name="model_id" ref="model_helpdesk_ticket"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+        </record>
+
+        <record id="helpdesk_team_company_rule" model="ir.rule">
+            <field name="name">Helpdesk Team: multi-company</field>
+            <field name="model_id" ref="model_helpdesk_team"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+        </record>
+    </data>
+
+</odoo>
