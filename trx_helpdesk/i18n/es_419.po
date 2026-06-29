@@ -1,0 +1,974 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* trx_helpdesk
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0-20260409\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-06-29 11:46+0000\n"
+"PO-Revision-Date: 2026-06-29 11:46+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: es_419\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#. module: trx_helpdesk
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_ticket_view_form
+msgid "<span class=\"o_form_label\">Ticket</span>"
+msgstr "<span class=\"o_form_label\">Ticket</span>"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_team__message_needaction
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_ticket__message_needaction
+msgid "Action Needed"
+msgstr "Acción necesaria"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_sla__active
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_stage__active
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_tag__active
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_team__active
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_ticket__active
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_ticket_type__active
+msgid "Active"
+msgstr "Activo"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_ticket__activity_ids
+msgid "Activities"
+msgstr "Actividades"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_ticket__activity_exception_decoration
+msgid "Activity Exception Decoration"
+msgstr "Decoración de excepción de actividad"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_ticket__activity_state
+msgid "Activity State"
+msgstr "Estado de la actividad"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_ticket__activity_type_icon
+msgid "Activity Type Icon"
+msgstr "Icono de tipo de actividad"
+
+#. module: trx_helpdesk
+#: model:res.groups,name:trx_helpdesk.group_helpdesk_manager
+msgid "Administrator"
+msgstr "Administrador"
+
+#. module: trx_helpdesk
+#: model:ir.ui.menu,name:trx_helpdesk.menu_helpdesk_tickets_all
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_team_view_kanban
+msgid "All Tickets"
+msgstr "Todos los tickets"
+
+#. module: trx_helpdesk
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_sla_view_form
+msgid "All types"
+msgstr "Todos los tipos"
+
+#. module: trx_helpdesk
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_sla_view_form
+msgid "Applies to"
+msgstr "Aplica a"
+
+#. module: trx_helpdesk
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_ticket_view_search
+msgid "Archived"
+msgstr "Archivado"
+
+#. module: trx_helpdesk
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_ticket_view_form
+msgid "Assign to me"
+msgstr "Asignármelo"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_ticket__user_id
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_ticket_view_search
+msgid "Assigned to"
+msgstr "Asignado a"
+
+#. module: trx_helpdesk
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_ticket_view_form
+msgid "Assignment"
+msgstr "Asignación"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_ticket__assign_date
+msgid "Assignment Date"
+msgstr "Fecha de asignación"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_team__assign_method
+msgid "Assignment Method"
+msgstr "Método de asignación"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_team__message_attachment_count
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_ticket__message_attachment_count
+msgid "Attachment Count"
+msgstr "Número de adjuntos"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields.selection,name:trx_helpdesk.selection__helpdesk_team__assign_method__balanced
+msgid "Balanced"
+msgstr "Balanceado"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields.selection,name:trx_helpdesk.selection__helpdesk_ticket__kanban_state__blocked
+msgid "Blocked"
+msgstr "Bloqueado"
+
+#. module: trx_helpdesk
+#: model:helpdesk.tag,name:trx_helpdesk.demo_tag_bug
+msgid "Bug"
+msgstr "Error"
+
+#. module: trx_helpdesk
+#: model:helpdesk.stage,name:trx_helpdesk.stage_cancelled
+msgid "Cancelled"
+msgstr "Cancelado"
+
+#. module: trx_helpdesk
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_ticket_view_form
+msgid "Close"
+msgstr "Cerrar"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_ticket__close_date
+msgid "Close Date"
+msgstr "Fecha de cierre"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_ticket__closed
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_ticket_view_form
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_ticket_view_search
+msgid "Closed"
+msgstr "Cerrado"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_stage__is_close
+msgid "Closing Stage"
+msgstr "Etapa de cierre"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_sla_status__color
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_tag__color
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_team__color
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_ticket__color
+msgid "Color"
+msgstr "Color"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_sla__company_id
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_team__company_id
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_ticket__company_id
+msgid "Company"
+msgstr "Compañía"
+
+#. module: trx_helpdesk
+#: model:ir.ui.menu,name:trx_helpdesk.menu_helpdesk_config
+msgid "Configuration"
+msgstr "Configuración"
+
+#. module: trx_helpdesk
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_team_view_kanban
+msgid "Configure Team"
+msgstr "Configurar equipo"
+
+#. module: trx_helpdesk
+#: model:ir.model,name:trx_helpdesk.model_res_partner
+msgid "Contact"
+msgstr "Contacto"
+
+#. module: trx_helpdesk
+#: model:ir.model,website_form_label:trx_helpdesk.model_res_partner
+msgid "Create a Customer"
+msgstr "Crear un cliente"
+
+#. module: trx_helpdesk
+#: model_terms:ir.actions.act_window,help:trx_helpdesk.helpdesk_team_action
+msgid "Create a Helpdesk team"
+msgstr "Cree un equipo de mesa de ayuda"
+
+#. module: trx_helpdesk
+#: model_terms:ir.actions.act_window,help:trx_helpdesk.helpdesk_ticket_action
+msgid "Create your first ticket"
+msgstr "Cree su primer ticket"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_sla__create_uid
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_sla_status__create_uid
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_stage__create_uid
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_tag__create_uid
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_team__create_uid
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_ticket__create_uid
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_ticket_type__create_uid
+msgid "Created by"
+msgstr "Creado por"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_sla__create_date
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_sla_status__create_date
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_stage__create_date
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_tag__create_date
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_team__create_date
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_ticket__create_date
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_ticket_type__create_date
+msgid "Created on"
+msgstr "Creado el"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_ticket__partner_id
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_ticket_view_form
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_ticket_view_search
+msgid "Customer"
+msgstr "Cliente"
+
+#. module: trx_helpdesk
+#: model:helpdesk.team,name:trx_helpdesk.team_support
+msgid "Customer Care"
+msgstr "Atención al Cliente"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_ticket__partner_email
+msgid "Customer Email"
+msgstr "Correo del cliente"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_ticket__partner_name
+msgid "Customer Name"
+msgstr "Nombre del cliente"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_ticket__partner_phone
+msgid "Customer Phone"
+msgstr "Teléfono del cliente"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_sla_status__deadline
+msgid "Deadline"
+msgstr "Fecha límite"
+
+#. module: trx_helpdesk
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_ticket_view_form
+msgid "Describe the issue..."
+msgstr "Describa el problema..."
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_sla__description
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_team__description
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_ticket__description
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_sla_view_form
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_stage_view_form
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_team_view_form
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_ticket_view_form
+msgid "Description"
+msgstr "Descripción"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_sla__display_name
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_sla_status__display_name
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_stage__display_name
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_tag__display_name
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_team__display_name
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_ticket__display_name
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_ticket_type__display_name
+#: model:ir.model.fields,field_description:trx_helpdesk.field_res_partner__display_name
+msgid "Display Name"
+msgstr "Nombre mostrado"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,help:trx_helpdesk.field_helpdesk_ticket__sla_deadline
+msgid "Earliest deadline among the SLA policies not yet reached."
+msgstr "Fecha límite más próxima entre las políticas de SLA aún no cumplidas."
+
+#. module: trx_helpdesk
+#: model:ir.model.fields.selection,name:trx_helpdesk.selection__helpdesk_sla_status__status__failed
+msgid "Failed"
+msgstr "Vencido"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_stage__fold
+msgid "Folded in Kanban"
+msgstr "Plegado en Kanban"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_team__message_follower_ids
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_ticket__message_follower_ids
+msgid "Followers"
+msgstr "Seguidores"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_team__message_partner_ids
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_ticket__message_partner_ids
+msgid "Followers (Partners)"
+msgstr "Seguidores (Contactos)"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,help:trx_helpdesk.field_helpdesk_ticket__activity_type_icon
+msgid "Font awesome icon e.g. fa-tasks"
+msgstr "Icono de Font Awesome, p. ej. fa-tasks"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_team__has_message
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_ticket__has_message
+msgid "Has Message"
+msgstr "Tiene mensaje"
+
+#. module: trx_helpdesk
+#: model:ir.module.category,name:trx_helpdesk.module_category_helpdesk
+#: model:ir.ui.menu,name:trx_helpdesk.menu_helpdesk_root
+#: model:res.groups.privilege,name:trx_helpdesk.res_groups_privilege_helpdesk
+msgid "Helpdesk"
+msgstr "Mesa de Ayuda"
+
+#. module: trx_helpdesk
+#: model:ir.module.category,description:trx_helpdesk.module_category_helpdesk
+msgid "Helpdesk / ticket management"
+msgstr "Mesa de ayuda / gestión de tickets"
+
+#. module: trx_helpdesk
+#: model:ir.model,name:trx_helpdesk.model_helpdesk_sla
+msgid "Helpdesk SLA Policy"
+msgstr "Política de SLA de mesa de ayuda"
+
+#. module: trx_helpdesk
+#: model:ir.model,name:trx_helpdesk.model_helpdesk_sla_status
+msgid "Helpdesk SLA Status"
+msgstr "Estado de SLA de mesa de ayuda"
+
+#. module: trx_helpdesk
+#: model:ir.model,name:trx_helpdesk.model_helpdesk_stage
+msgid "Helpdesk Stage"
+msgstr "Etapa de mesa de ayuda"
+
+#. module: trx_helpdesk
+#: model:ir.model,name:trx_helpdesk.model_helpdesk_tag
+msgid "Helpdesk Tag"
+msgstr "Etiqueta de mesa de ayuda"
+
+#. module: trx_helpdesk
+#: model:ir.model,name:trx_helpdesk.model_helpdesk_team
+msgid "Helpdesk Team"
+msgstr "Equipo de mesa de ayuda"
+
+#. module: trx_helpdesk
+#: model:ir.actions.act_window,name:trx_helpdesk.helpdesk_team_action
+msgid "Helpdesk Teams"
+msgstr "Equipos de mesa de ayuda"
+
+#. module: trx_helpdesk
+#: model:ir.model,name:trx_helpdesk.model_helpdesk_ticket
+msgid "Helpdesk Ticket"
+msgstr "Ticket de mesa de ayuda"
+
+#. module: trx_helpdesk
+#: model:ir.model,name:trx_helpdesk.model_helpdesk_ticket_type
+msgid "Helpdesk Ticket Type"
+msgstr "Tipo de ticket de mesa de ayuda"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_res_partner__helpdesk_ticket_count
+#: model:ir.model.fields,field_description:trx_helpdesk.field_res_users__helpdesk_ticket_count
+msgid "Helpdesk Tickets"
+msgstr "Tickets de mesa de ayuda"
+
+#. module: trx_helpdesk
+#: model:res.groups,comment:trx_helpdesk.group_helpdesk_manager
+msgid "Helpdesk administrators configure teams, stages, SLA and tags."
+msgstr ""
+"Los administradores de la mesa de ayuda configuran equipos, etapas, SLA y "
+"etiquetas."
+
+#. module: trx_helpdesk
+#: model:res.groups,comment:trx_helpdesk.group_helpdesk_user
+msgid "Helpdesk users can manage tickets in their teams."
+msgstr ""
+"Los usuarios de la mesa de ayuda pueden gestionar los tickets de sus "
+"equipos."
+
+#. module: trx_helpdesk
+#: model:ir.actions.server,name:trx_helpdesk.ir_cron_helpdesk_sla_check_ir_actions_server
+msgid "Helpdesk: Check SLA deadlines"
+msgstr "Mesa de ayuda: Verificar fechas límite de SLA"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields.selection,name:trx_helpdesk.selection__helpdesk_sla__priority__2
+#: model:ir.model.fields.selection,name:trx_helpdesk.selection__helpdesk_ticket__priority__2
+msgid "High"
+msgstr "Alta"
+
+#. module: trx_helpdesk
+#: model:helpdesk.sla,name:trx_helpdesk.demo_sla_high_8h
+msgid "High priority answered within 8h"
+msgstr "Prioridad alta respondida en 8h"
+
+#. module: trx_helpdesk
+#: model:helpdesk.tag,name:trx_helpdesk.demo_tag_howto
+msgid "How-to"
+msgstr "Cómo hacerlo"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_sla__id
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_sla_status__id
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_stage__id
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_tag__id
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_team__id
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_ticket__id
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_ticket_type__id
+#: model:ir.model.fields,field_description:trx_helpdesk.field_res_partner__id
+msgid "ID"
+msgstr "ID"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_ticket__activity_exception_icon
+msgid "Icon"
+msgstr "Icono"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,help:trx_helpdesk.field_helpdesk_ticket__activity_exception_icon
+msgid "Icon to indicate an exception activity."
+msgstr "Icono para indicar una actividad de excepción."
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,help:trx_helpdesk.field_helpdesk_team__message_needaction
+#: model:ir.model.fields,help:trx_helpdesk.field_helpdesk_ticket__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr "Si está marcado, los nuevos mensajes requieren su atención."
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,help:trx_helpdesk.field_helpdesk_team__message_has_error
+#: model:ir.model.fields,help:trx_helpdesk.field_helpdesk_ticket__message_has_error
+msgid "If checked, some messages have a delivery error."
+msgstr "Si está marcado, algunos mensajes tienen un error de entrega."
+
+#. module: trx_helpdesk
+#: model:helpdesk.stage,name:trx_helpdesk.stage_in_progress
+#: model:ir.model.fields.selection,name:trx_helpdesk.selection__helpdesk_sla_status__status__ongoing
+#: model:ir.model.fields.selection,name:trx_helpdesk.selection__helpdesk_ticket__kanban_state__normal
+msgid "In Progress"
+msgstr "En progreso"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_team__message_is_follower
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_ticket__message_is_follower
+msgid "Is Follower"
+msgstr "Es seguidor"
+
+#. module: trx_helpdesk
+#: model:helpdesk.ticket.type,name:trx_helpdesk.type_issue
+msgid "Issue"
+msgstr "Incidencia"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_ticket__kanban_state
+msgid "Kanban State"
+msgstr "Estado Kanban"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_ticket__date_last_stage_update
+msgid "Last Stage Update"
+msgstr "Última actualización de etapa"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_sla__write_uid
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_sla_status__write_uid
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_stage__write_uid
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_tag__write_uid
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_team__write_uid
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_ticket__write_uid
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_ticket_type__write_uid
+msgid "Last Updated by"
+msgstr "Última actualización por"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_sla__write_date
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_sla_status__write_date
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_stage__write_date
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_tag__write_date
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_team__write_date
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_ticket__write_date
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_ticket_type__write_date
+msgid "Last Updated on"
+msgstr "Última actualización el"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields.selection,name:trx_helpdesk.selection__helpdesk_sla__priority__0
+#: model:ir.model.fields.selection,name:trx_helpdesk.selection__helpdesk_ticket__priority__0
+msgid "Low"
+msgstr "Baja"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields.selection,name:trx_helpdesk.selection__helpdesk_team__assign_method__manual
+msgid "Manually"
+msgstr "Manualmente"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,help:trx_helpdesk.field_helpdesk_team__assign_method
+msgid ""
+"Manually: tickets are left unassigned.\n"
+"Random: tickets are assigned randomly across members.\n"
+"Balanced: tickets go to the member with the fewest open tickets."
+msgstr ""
+"Manualmente: los tickets quedan sin asignar.\n"
+"Aleatorio: los tickets se asignan al azar entre los miembros.\n"
+"Balanceado: los tickets van al miembro con menos tickets abiertos."
+
+#. module: trx_helpdesk
+#: model:ir.model.fields.selection,name:trx_helpdesk.selection__helpdesk_sla__priority__1
+#: model:ir.model.fields.selection,name:trx_helpdesk.selection__helpdesk_ticket__priority__1
+msgid "Medium"
+msgstr "Media"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_team__message_has_error
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_ticket__message_has_error
+msgid "Message Delivery error"
+msgstr "Error de entrega de mensaje"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_team__message_ids
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_ticket__message_ids
+msgid "Messages"
+msgstr "Mensajes"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_sla__priority
+msgid "Minimum Priority"
+msgstr "Prioridad mínima"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_ticket__my_activity_date_deadline
+msgid "My Activity Deadline"
+msgstr "Fecha límite de mi actividad"
+
+#. module: trx_helpdesk
+#: model:ir.actions.act_window,name:trx_helpdesk.helpdesk_ticket_action_my
+#: model:ir.ui.menu,name:trx_helpdesk.menu_helpdesk_tickets_my
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_ticket_view_search
+msgid "My Tickets"
+msgstr "Mis tickets"
+
+#. module: trx_helpdesk
+#: model:helpdesk.stage,name:trx_helpdesk.stage_new
+msgid "New"
+msgstr "Nuevo"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_ticket__activity_date_deadline
+msgid "Next Activity Deadline"
+msgstr "Fecha límite de la siguiente actividad"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_ticket__activity_summary
+msgid "Next Activity Summary"
+msgstr "Resumen de la siguiente actividad"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_ticket__activity_type_id
+msgid "Next Activity Type"
+msgstr "Tipo de la siguiente actividad"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_team__message_needaction_counter
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_ticket__message_needaction_counter
+msgid "Number of Actions"
+msgstr "Número de acciones"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_team__message_has_error_counter
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_ticket__message_has_error_counter
+msgid "Number of errors"
+msgstr "Número de errores"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,help:trx_helpdesk.field_helpdesk_team__message_needaction_counter
+#: model:ir.model.fields,help:trx_helpdesk.field_helpdesk_ticket__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr "Número de mensajes que requieren acción"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,help:trx_helpdesk.field_helpdesk_team__message_has_error_counter
+#: model:ir.model.fields,help:trx_helpdesk.field_helpdesk_ticket__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr "Número de mensajes con error de entrega"
+
+#. module: trx_helpdesk
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_team_view_form
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_team_view_list
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_ticket_view_search
+msgid "Open"
+msgstr "Abiertos"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_team__ticket_count
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_team_view_kanban
+msgid "Open Tickets"
+msgstr "Tickets abiertos"
+
+#. module: trx_helpdesk
+#: model_terms:ir.actions.act_window,help:trx_helpdesk.helpdesk_team_action
+msgid "Organize your support staff into teams to handle tickets."
+msgstr ""
+"Organice a su personal de soporte en equipos para gestionar los tickets."
+
+#. module: trx_helpdesk
+#: model:ir.ui.menu,name:trx_helpdesk.menu_helpdesk_overview
+msgid "Overview"
+msgstr "Resumen"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_ticket__priority
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_ticket_view_search
+msgid "Priority"
+msgstr "Prioridad"
+
+#. module: trx_helpdesk
+#: model:helpdesk.ticket.type,name:trx_helpdesk.type_question
+msgid "Question"
+msgstr "Pregunta"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields.selection,name:trx_helpdesk.selection__helpdesk_team__assign_method__randomly
+msgid "Random"
+msgstr "Aleatorio"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_team__rating_ids
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_ticket__rating_ids
+msgid "Ratings"
+msgstr "Valoraciones"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields.selection,name:trx_helpdesk.selection__helpdesk_sla_status__status__reached
+msgid "Reached"
+msgstr "Cumplido"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_sla_status__reached_datetime
+msgid "Reached On"
+msgstr "Cumplido el"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields.selection,name:trx_helpdesk.selection__helpdesk_ticket__kanban_state__done
+msgid "Ready for Next Stage"
+msgstr "Listo para la siguiente etapa"
+
+#. module: trx_helpdesk
+#: model:ir.ui.menu,name:trx_helpdesk.menu_helpdesk_reporting
+msgid "Reporting"
+msgstr "Informes"
+
+#. module: trx_helpdesk
+#: model:helpdesk.sla,name:trx_helpdesk.demo_sla_resolve_48h
+msgid "Resolution within 48h"
+msgstr "Resolución en 48h"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_ticket__activity_user_id
+msgid "Responsible User"
+msgstr "Usuario responsable"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,help:trx_helpdesk.field_helpdesk_sla__ticket_type_ids
+msgid "Restrict the policy to these types. Leave empty to apply to all."
+msgstr ""
+"Restringe la política a estos tipos. Déjelo vacío para aplicar a todos."
+
+#. module: trx_helpdesk
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_ticket_view_form
+msgid "SLA"
+msgstr "SLA"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_ticket__sla_deadline
+msgid "SLA Deadline"
+msgstr "Fecha límite de SLA"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_team__ticket_count_sla_fail
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_ticket__sla_fail
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_team_view_kanban
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_ticket_view_search
+msgid "SLA Failed"
+msgstr "SLA vencido"
+
+#. module: trx_helpdesk
+#: model:ir.actions.act_window,name:trx_helpdesk.helpdesk_sla_action
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_team__sla_ids
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_team__use_sla
+#: model:ir.ui.menu,name:trx_helpdesk.menu_helpdesk_config_sla
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_sla_view_list
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_team_view_form
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_ticket_view_form
+msgid "SLA Policies"
+msgstr "Políticas de SLA"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_sla__name
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_sla_status__sla_id
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_sla_view_form
+msgid "SLA Policy"
+msgstr "Política de SLA"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_ticket__sla_status_ids
+msgid "SLA Status"
+msgstr "Estado de SLA"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_stage__sequence
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_team__sequence
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_ticket_type__sequence
+msgid "Sequence"
+msgstr "Secuencia"
+
+#. module: trx_helpdesk
+#: model:helpdesk.stage,name:trx_helpdesk.stage_solved
+msgid "Solved"
+msgstr "Resuelto"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_stage__name
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_ticket__stage_id
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_stage_view_form
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_ticket_view_search
+msgid "Stage"
+msgstr "Etapa"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_stage__description
+msgid "Stage Description"
+msgstr "Descripción de la etapa"
+
+#. module: trx_helpdesk
+#: model:ir.actions.act_window,name:trx_helpdesk.helpdesk_stage_action
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_team__stage_ids
+#: model:ir.ui.menu,name:trx_helpdesk.menu_helpdesk_config_stages
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_stage_view_list
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_team_view_form
+msgid "Stages"
+msgstr "Etapas"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_sla_status__status
+msgid "Status"
+msgstr "Estado"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,help:trx_helpdesk.field_helpdesk_ticket__activity_state
+msgid ""
+"Status based on activities\n"
+"Overdue: Due date is already passed\n"
+"Today: Activity date is today\n"
+"Planned: Future activities."
+msgstr ""
+"Estado basado en actividades\n"
+"Atrasado: la fecha de vencimiento ya pasó\n"
+"Hoy: la fecha de actividad es hoy\n"
+"Planificado: actividades futuras."
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_ticket__name
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_ticket_view_list
+msgid "Subject"
+msgstr "Asunto"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_tag__name
+msgid "Tag"
+msgstr "Etiqueta"
+
+#. module: trx_helpdesk
+#: model:ir.actions.act_window,name:trx_helpdesk.helpdesk_tag_action
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_ticket__tag_ids
+#: model:ir.ui.menu,name:trx_helpdesk.menu_helpdesk_config_tags
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_tag_view_list
+msgid "Tags"
+msgstr "Etiquetas"
+
+#. module: trx_helpdesk
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_sla_view_form
+msgid "Target"
+msgstr "Objetivo"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_sla__stage_id
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_sla_status__sla_stage_id
+msgid "Target Stage"
+msgstr "Etapa objetivo"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,help:trx_helpdesk.field_helpdesk_sla__time
+msgid "Target time, in hours from ticket creation, to reach the target stage."
+msgstr ""
+"Tiempo objetivo, en horas desde la creación del ticket, para alcanzar la "
+"etapa objetivo."
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_sla__team_id
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_ticket__team_id
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_team_view_form
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_ticket_view_search
+msgid "Team"
+msgstr "Equipo"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_team__member_ids
+msgid "Team Members"
+msgstr "Miembros del equipo"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_ticket__team_member_ids
+msgid "Team Members (technical)"
+msgstr "Miembros del equipo (técnico)"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_team__name
+msgid "Team Name"
+msgstr "Nombre del equipo"
+
+#. module: trx_helpdesk
+#: model:ir.actions.act_window,name:trx_helpdesk.helpdesk_team_config_action
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_stage__team_ids
+#: model:ir.ui.menu,name:trx_helpdesk.menu_helpdesk_config_teams
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_stage_view_form
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_team_view_list
+msgid "Teams"
+msgstr "Equipos"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,help:trx_helpdesk.field_helpdesk_stage__team_ids
+msgid ""
+"Teams that use this stage. Leave empty to make it available everywhere."
+msgstr ""
+"Equipos que usan esta etapa. Déjelo vacío para que esté disponible en todos."
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,help:trx_helpdesk.field_helpdesk_sla__stage_id
+#: model:ir.model.fields,help:trx_helpdesk.field_helpdesk_sla_status__sla_stage_id
+msgid "The SLA is met once the ticket reaches this stage."
+msgstr "El SLA se cumple una vez que el ticket alcanza esta etapa."
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,help:trx_helpdesk.field_helpdesk_sla__priority
+msgid "The policy applies to tickets with at least this priority."
+msgstr "La política aplica a los tickets con al menos esta prioridad."
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_sla_status__ticket_id
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_ticket_view_form
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_ticket_view_search
+msgid "Ticket"
+msgstr "Ticket"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_ticket__ticket_ref
+msgid "Ticket Number"
+msgstr "Número de ticket"
+
+#. module: trx_helpdesk
+#: model:ir.actions.act_window,name:trx_helpdesk.helpdesk_ticket_type_action
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_sla__ticket_type_ids
+#: model:ir.ui.menu,name:trx_helpdesk.menu_helpdesk_config_types
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_ticket_type_view_list
+msgid "Ticket Types"
+msgstr "Tipos de ticket"
+
+#. module: trx_helpdesk
+#: model:ir.actions.act_window,name:trx_helpdesk.helpdesk_ticket_action
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_team__ticket_ids
+#: model:ir.ui.menu,name:trx_helpdesk.menu_helpdesk_tickets
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_ticket_view_activity
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_ticket_view_calendar
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_ticket_view_list
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_ticket_view_search
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.res_partner_view_form_helpdesk
+msgid "Tickets"
+msgstr "Tickets"
+
+#. module: trx_helpdesk
+#: model:ir.actions.act_window,name:trx_helpdesk.helpdesk_ticket_action_report
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_ticket_view_graph
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_ticket_view_pivot
+msgid "Tickets Analysis"
+msgstr "Análisis de tickets"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,help:trx_helpdesk.field_helpdesk_stage__fold
+msgid "Tickets in a folded stage are shown collapsed in the Kanban view."
+msgstr ""
+"Los tickets en una etapa plegada se muestran colapsados en la vista Kanban."
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,help:trx_helpdesk.field_helpdesk_stage__is_close
+#: model:ir.model.fields,help:trx_helpdesk.field_helpdesk_ticket__closed
+msgid "Tickets reaching this stage are considered solved/closed."
+msgstr "Los tickets que alcanzan esta etapa se consideran resueltos/cerrados."
+
+#. module: trx_helpdesk
+#: model_terms:ir.actions.act_window,help:trx_helpdesk.helpdesk_ticket_action
+msgid "Track customer requests and resolve them as a team."
+msgstr ""
+"Realice el seguimiento de las solicitudes de los clientes y resuélvalas en "
+"equipo."
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_ticket__ticket_type_id
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_ticket_type__name
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_ticket_view_search
+msgid "Type"
+msgstr "Tipo"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,help:trx_helpdesk.field_helpdesk_ticket__activity_exception_decoration
+msgid "Type of the exception activity on record."
+msgstr "Tipo de la actividad de excepción en el registro."
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_team__ticket_count_unassigned
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_team_view_kanban
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_ticket_view_search
+msgid "Unassigned"
+msgstr "Sin asignar"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_team__ticket_count_urgent
+#: model:ir.model.fields.selection,name:trx_helpdesk.selection__helpdesk_sla__priority__3
+#: model:ir.model.fields.selection,name:trx_helpdesk.selection__helpdesk_ticket__priority__3
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_team_view_kanban
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_ticket_view_search
+msgid "Urgent"
+msgstr "Urgente"
+
+#. module: trx_helpdesk
+#: model:res.groups,name:trx_helpdesk.group_helpdesk_user
+msgid "User"
+msgstr "Usuario"
+
+#. module: trx_helpdesk
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_ticket_view_form
+msgid "What is the issue about?"
+msgstr "¿Sobre qué es el problema?"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_sla__time
+msgid "Within (hours)"
+msgstr "Dentro de (horas)"
+
+#. module: trx_helpdesk
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_team_view_form
+msgid "e.g. Customer Care"
+msgstr "p. ej. Atención al Cliente"
+
+#. module: trx_helpdesk
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_sla_view_form
+msgid "e.g. Urgent tickets solved within 8 hours"
+msgstr "p. ej. Tickets urgentes resueltos en 8 horas"
