@@ -68,21 +68,29 @@ class WhatsmeowTransport(WhatsAppTransport):
             data = self._request("GET", "/session/status")
         except WhatsAppTransportError:
             return "error"
-        if data.get("LoggedIn"):
+        # WuzAPI devuelve las claves en minúscula (connected/loggedIn); la doc
+        # muestra mayúsculas. Aceptamos ambas por robustez.
+        logged = data.get("loggedIn", data.get("LoggedIn"))
+        connected = data.get("connected", data.get("Connected"))
+        if logged:
             return "connected"
-        if data.get("Connected"):
+        if connected:
             return "qr_pending"
         return "logged_out"
 
     def connect(self):
         # Subscribe a Message + ReadReceipt; Immediate=true devuelve enseguida.
-        self._request("POST", "/session/connect",
-                      json={"Subscribe": ["Message", "ReadReceipt"], "Immediate": True})
+        # WuzAPI responde 500 si la sesión ya estaba conectada: no es fatal.
+        try:
+            self._request("POST", "/session/connect",
+                          json={"Subscribe": ["Message", "ReadReceipt"], "Immediate": True})
+        except WhatsAppTransportError as err:
+            _logger.info("connect() no crítico (puede estar ya conectado): %s", err)
         return True
 
     def get_qr(self):
         data = self._request("GET", "/session/qr")
-        qr = data.get("QRCode") or ""
+        qr = data.get("QRCode") or data.get("qrcode") or ""
         # WuzAPI devuelve "data:image/png;base64,XXXX"; el campo Binary de Odoo
         # quiere el base64 pelado.
         if qr.startswith("data:") and "," in qr:
