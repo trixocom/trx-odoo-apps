@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_whatsapp_root" name="WhatsApp"
+              sequence="95"/>
+
+    <menuitem id="menu_whatsapp_messages" name="Mensajes"
+              parent="menu_whatsapp_root"
+              action="action_whatsapp_message" sequence="10"/>
+
+    <menuitem id="menu_whatsapp_config" name="Configuración"
+              parent="menu_whatsapp_root" sequence="90"
+              groups="trixo_whatsapp.group_whatsapp_admin"/>
+
+    <menuitem id="menu_whatsapp_accounts" name="Cuentas"
+              parent="menu_whatsapp_config"
+              action="action_whatsapp_account" sequence="10"/>
+</odoo>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_whatsapp_message_list" model="ir.ui.view">
+        <field name="name">whatsapp.message.list</field>
+        <field name="model">whatsapp.message</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="create_date"/>
+                <field name="wa_account_id"/>
+                <field name="mobile_number"/>
+                <field name="direction"/>
+                <field name="state" widget="badge"/>
+                <field name="msg_uid"/>
+                <field name="failure_reason"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_whatsapp_message" model="ir.actions.act_window">
+        <field name="name">Mensajes WhatsApp</field>
+        <field name="res_model">whatsapp.message</field>
+        <field name="view_mode">list</field>
+    </record>
+</odoo>
