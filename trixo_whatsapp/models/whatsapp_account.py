@@ -2,6 +2,7 @@
 import logging
 import secrets
 import string
+import time
 
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
@@ -111,7 +112,32 @@ class WhatsappAccount(models.Model):
         self.ensure_one()
         transport = self._get_transport()
         transport.connect()
-        return self.action_refresh_qr()
+        # WuzAPI tarda un instante en generar el QR tras conectar: lo esperamos
+        # (hasta ~6s) para mostrarlo en el primer click, sin depender de "Refrescar".
+        state = "logged_out"
+        qr = False
+        for _ in range(8):
+            state = transport.status()
+            if state == "connected":
+                qr = False
+                break
+            if state == "qr_pending":
+                qr = transport.get_qr()
+                if qr:
+                    break
+            time.sleep(0.7)
+        self.whatsmeow_state = state
+        self.whatsmeow_qr = qr or False
+        return self._reload_form()
+
+    def _reload_form(self):
+        return {
+            "type": "ir.actions.act_window",
+            "res_model": self._name,
+            "res_id": self.id,
+            "view_mode": "form",
+            "target": "current",
+        }
 
     def action_refresh_qr(self):
         self.ensure_one()
