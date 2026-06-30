@@ -25,7 +25,6 @@ class DiscussChannel(models.Model):
     # ------------------------------------------------------------------ #
     def _get_or_create_whatsapp_channel(self, account, number, sender_name=False):
         channel = self.sudo().search([
-            ("channel_type", "=", "whatsapp"),
             ("wa_account_id", "=", account.id),
             ("whatsapp_number", "=", number),
         ], limit=1)
@@ -34,9 +33,12 @@ class DiscussChannel(models.Model):
         partner = self._find_or_create_whatsapp_partner(number, sender_name)
         partners = partner + account.notify_user_ids.partner_id
         members = [(0, 0, {"partner_id": p.id}) for p in partners]
+        # Usamos channel_type 'channel' para que Discuss lo liste en la barra
+        # (el tipo propio 'whatsapp' requiere parche JS, pendiente). El ruteo
+        # saliente se decide por wa_account_id, no por el tipo.
         channel = self.sudo().create({
             "name": sender_name or number,
-            "channel_type": "whatsapp",
+            "channel_type": "channel",
             "wa_account_id": account.id,
             "whatsapp_number": number,
             "whatsapp_partner_id": partner.id,
@@ -61,7 +63,7 @@ class DiscussChannel(models.Model):
     def message_post(self, **kwargs):
         message = super().message_post(**kwargs)
         for channel in self:
-            if channel.channel_type != "whatsapp" or not channel.wa_account_id:
+            if not channel.wa_account_id:
                 continue
             # No reenviar lo que entró desde WhatsApp.
             if kwargs.get("message_type") == "whatsapp_message":
