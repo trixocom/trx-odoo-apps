@@ -59,8 +59,8 @@ class WhatsappAccount(models.Model):
             ("connected", "Conectado"),
             ("error", "Error"),
         ], string="Estado de sesión", default="logged_out", copy=False)
-    whatsmeow_qr = fields.Char(string="QR", copy=False, store=False,
-        help="QR de login (efímero, no se persiste).")
+    whatsmeow_qr = fields.Binary(string="QR", copy=False, attachment=False,
+        help="QR de login (se actualiza al pedir/refrescar; se limpia al cerrar sesión).")
 
     _sql_constraints = [
         ("meta_phone_uid_unique", "unique(meta_phone_uid)",
