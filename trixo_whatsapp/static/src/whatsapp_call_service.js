@@ -89,12 +89,14 @@ function startSoftphone(env, { bus_service, orm, notification }) {
         if (!ctx) return;
         const pattern = () => {
             if (!ctx) return;
-            // doble tono tipo "ring ring"
-            beep(ctx, 480, ctx.currentTime, 0.4);
-            beep(ctx, 440, ctx.currentTime + 0.45, 0.4);
+            const t = ctx.currentTime;
+            // "briiing" = warble de dos tonos repetido (suena a teléfono)
+            for (let k = 0; k < 9; k++) {
+                beep(ctx, k % 2 ? 440 : 520, t + k * 0.11, 0.12);
+            }
         };
         pattern();
-        ringIv = setInterval(pattern, 2200);
+        ringIv = setInterval(pattern, 2400);
     }
     function stopRing() { if (ringIv) { clearInterval(ringIv); ringIv = null; } }
     function beep(ctx, freq, t, dur) {
@@ -102,7 +104,7 @@ function startSoftphone(env, { bus_service, orm, notification }) {
             const osc = ctx.createOscillator(), g = ctx.createGain();
             osc.type = "sine"; osc.frequency.value = freq; g.gain.value = 0.0001;
             osc.connect(g).connect(ctx.destination);
-            g.gain.exponentialRampToValueAtTime(0.2, t + 0.03);
+            g.gain.exponentialRampToValueAtTime(0.5, t + 0.03);
             g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
             osc.start(t); osc.stop(t + dur + 0.02);
         } catch (e) {}
