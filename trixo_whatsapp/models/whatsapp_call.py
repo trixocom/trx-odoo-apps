@@ -194,6 +194,22 @@ class WhatsappCall(models.Model):
                 pass
         return self.reject_call()
 
+    def audio_credentials(self):
+        """Devuelve {url, token, call_id} para que el softphone abra el WS de audio
+        del sidecar. token = HMAC-SHA256(call_id, AUDIO_WS_SECRET) (mismo secreto que
+        valida el sidecar). Ver F4 en ARQUITECTURA-LLAMADAS.md."""
+        self.ensure_one()
+        icp = self.env["ir.config_parameter"].sudo()
+        secret = icp.get_param("trixo_whatsapp.audio_ws_secret")
+        url = icp.get_param("trixo_whatsapp.audio_ws_url")
+        if not secret or not url or not self.call_id:
+            return False
+        import hashlib
+        import hmac as _hmac
+        token = _hmac.new(secret.encode(), self.call_id.encode(),
+                          hashlib.sha256).hexdigest()
+        return {"url": url, "token": token, "call_id": self.call_id}
+
     # ------------------------------------------------------------------ #
     #  Helpers para el softphone (JS)
     # ------------------------------------------------------------------ #
