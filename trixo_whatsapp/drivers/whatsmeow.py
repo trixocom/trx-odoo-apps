@@ -112,8 +112,15 @@ class WhatsmeowTransport(WhatsAppTransport):
     # ------------------------------------------------------------------ #
     #  Saliente
     # ------------------------------------------------------------------ #
-    def send_text(self, number, body, reply_to_uid=None):
+    def send_text(self, number, body, reply_to_uid=None, reply_participant=None):
         payload = {"Phone": number, "Body": body}
+        if reply_to_uid:
+            # Cita: StanzaId = id del mensaje citado; Participant = JID del autor
+            # de ese mensaje (por defecto el contacto = <number>@s.whatsapp.net).
+            payload["ContextInfo"] = {
+                "StanzaId": reply_to_uid,
+                "Participant": reply_participant or (number + "@s.whatsapp.net"),
+            }
         data = self._request("POST", "/chat/send/text", json=payload)
         return data.get("Id")
 

@@ -79,15 +79,22 @@ class DiscussChannel(models.Model):
         number = self.whatsapp_number
         body = _strip_html(message.body or "")
         WaMsg = self.env["whatsapp.message"].sudo()
+        # Si es respuesta a un mensaje puntual (Discuss parent_id), citar en WhatsApp.
+        reply_uid = None
+        if message.parent_id:
+            parent_wa = WaMsg.search(
+                [("mail_message_id", "=", message.parent_id.id)], limit=1)
+            reply_uid = parent_wa.msg_uid or None
         try:
             uid = None
             if message.attachment_ids:
                 # Primera adjunto lleva el texto como caption; resto van solos.
                 for idx, att in enumerate(message.attachment_ids):
                     caption = body if idx == 0 else None
-                    uid = transport.send_media(number, att, caption=caption)
+                    uid = transport.send_media(number, att, caption=caption,
+                                               reply_to_uid=reply_uid if idx == 0 else None)
             else:
-                uid = transport.send_text(number, body)
+                uid = transport.send_text(number, body, reply_to_uid=reply_uid)
         except WhatsAppTransportError as err:
             WaMsg.create({
                 "wa_account_id": self.wa_account_id.id,
