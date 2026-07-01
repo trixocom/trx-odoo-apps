@@ -310,3 +310,35 @@ class WhatsappAccount(models.Model):
         targets = self.notify_user_ids or self.env.user
         for user in targets:
             self.env["bus.bus"]._sendone(user.partner_id, "whatsapp.call", payload)
+
+    # ------------------------------------------------------------------ #
+    #  Saliente: originar llamada desde el softphone
+    # ------------------------------------------------------------------ #
+    def place_call(self, number):
+        self.ensure_one()
+        number = (number or "").strip().lstrip("+").replace(" ", "")
+        if not number:
+            raise UserError(_("Número vacío."))
+        transport = self._get_transport()
+        if not hasattr(transport, "call_place"):
+            raise UserError(_("El proveedor de esta cuenta no soporta llamadas."))
+        call_id = transport.call_place(number)
+        call = self.env["whatsapp.call"].sudo().create({
+            "call_id": call_id,
+            "wa_account_id": self.id,
+            "direction": "outgoing",
+            "state": "calling",
+            "phone_number": number,
+            "user_id": self.env.uid,
+        })
+        call.get_contact_info()
+        self._notify_call_bus(call, "calling")
+        return call._call_format()
+
+    @api.model
+    def softphone_place(self, number):
+        """Punto de entrada para el softphone (JS): elige la cuenta whatsmeow y llama."""
+        account = self.search([("provider", "=", "whatsmeow")], limit=1)
+        if not account:
+            raise UserError(_("No hay cuenta whatsmeow configurada."))
+        return account.place_call(number)

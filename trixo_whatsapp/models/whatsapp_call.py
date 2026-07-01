@@ -159,6 +159,42 @@ class WhatsappCall(models.Model):
         return self._store_result()
 
     # ------------------------------------------------------------------ #
+    #  Acciones del softphone (llaman al sidecar + actualizan estado)
+    # ------------------------------------------------------------------ #
+    def _call_transport(self):
+        self.ensure_one()
+        if self.wa_account_id and self.wa_account_id.provider == "whatsmeow":
+            return self.wa_account_id._get_transport()
+        return None
+
+    def action_answer(self):
+        self.ensure_one()
+        transport = self._call_transport()
+        if transport:
+            transport.call_answer(self.call_id)
+        return self.start_call()
+
+    def action_hangup(self):
+        self.ensure_one()
+        transport = self._call_transport()
+        if transport and self.call_id:
+            try:
+                transport.call_hangup(self.call_id)
+            except Exception:  # noqa: BLE001
+                pass
+        return self.end_call()
+
+    def action_reject(self):
+        self.ensure_one()
+        transport = self._call_transport()
+        if transport and self.call_id:
+            try:
+                transport.call_hangup(self.call_id)
+            except Exception:  # noqa: BLE001
+                pass
+        return self.reject_call()
+
+    # ------------------------------------------------------------------ #
     #  Helpers para el softphone (JS)
     # ------------------------------------------------------------------ #
     @api.model

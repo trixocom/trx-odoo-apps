@@ -173,3 +173,20 @@ class WhatsmeowTransport(WhatsAppTransport):
             return base64.b64decode(b64) if b64 else b""
         except (ValueError, TypeError):
             return b""
+
+    # ------------------------------------------------------------------ #
+    #  Llamadas (fork WuzAPI + meowcaller)
+    # ------------------------------------------------------------------ #
+    def call_place(self, to):
+        """Origina una llamada saliente. Devuelve el call_id."""
+        data = self._request("POST", "/call/place", json={"to": to})
+        return data.get("call_id") or data.get("CallID")
+
+    def call_answer(self, call_id):
+        self._request("POST", "/call/answer", json={"call_id": call_id})
+        return True
+
+    def call_hangup(self, call_id):
+        """Cuelga/rechaza (meowcaller Hangup sirve para ambas direcciones)."""
+        self._request("POST", "/call/hangup", json={"call_id": call_id})
+        return True
