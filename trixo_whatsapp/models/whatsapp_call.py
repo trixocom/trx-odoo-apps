@@ -7,8 +7,8 @@ from odoo import _, api, fields, models
 class WhatsappCall(models.Model):
     """Registro de una llamada de voz por WhatsApp (softphone en vivo).
 
-    Espejo funcional de `voip.call` de Odoo EE, reimplementado para Community sobre
-    el transporte WhatsApp (sidecar fork WuzAPI + meowcaller). La máquina de estados
+    Modelo propio de Trixocom para Odoo Community sobre el transporte WhatsApp
+    (sidecar fork WuzAPI + meowcaller). La máquina de estados
     y los métodos de ciclo de vida son comandados por el softphone (OWL) y por el
     webhook de eventos del sidecar. Ver ARQUITECTURA-LLAMADAS.md.
     """

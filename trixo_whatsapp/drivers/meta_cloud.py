@@ -1,8 +1,7 @@
 # Part of Trixocom.
 """Driver del proveedor oficial: WhatsApp Cloud API (Meta / Graph API).
 
-Implementación propia de Trixocom. La interfaz pública (Graph API) es pública y
-puede replicarse; no se reutiliza código licenciado de Odoo Enterprise.
+Implementación propia de Trixocom sobre la Graph API pública de Meta.
 """
 import json
 import logging
