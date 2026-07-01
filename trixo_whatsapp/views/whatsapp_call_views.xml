@@ -65,14 +65,13 @@
                         domain="[('state','=','missed')]"/>
                 <filter name="my_calls" string="Mis llamadas"
                         domain="[('user_id','=',uid)]"/>
-                <group string="Agrupar por">
-                    <filter name="group_state" string="Estado"
-                            context="{'group_by':'state'}"/>
-                    <filter name="group_direction" string="Dirección"
-                            context="{'group_by':'direction'}"/>
-                    <filter name="group_account" string="Cuenta"
-                            context="{'group_by':'wa_account_id'}"/>
-                </group>
+                <separator/>
+                <filter name="group_state" string="Estado"
+                        context="{'group_by':'state'}"/>
+                <filter name="group_direction" string="Dirección"
+                        context="{'group_by':'direction'}"/>
+                <filter name="group_account" string="Cuenta"
+                        context="{'group_by':'wa_account_id'}"/>
             </search>
         </field>
     </record>
