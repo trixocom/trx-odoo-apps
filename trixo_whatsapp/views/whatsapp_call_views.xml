@@ -65,7 +65,7 @@
                         domain="[('state','=','missed')]"/>
                 <filter name="my_calls" string="Mis llamadas"
                         domain="[('user_id','=',uid)]"/>
-                <group expand="0" string="Agrupar por">
+                <group string="Agrupar por">
                     <filter name="group_state" string="Estado"
                             context="{'group_by':'state'}"/>
                     <filter name="group_direction" string="Dirección"
