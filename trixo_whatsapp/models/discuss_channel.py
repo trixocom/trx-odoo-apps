@@ -62,6 +62,12 @@ class DiscussChannel(models.Model):
     # ------------------------------------------------------------------ #
     def message_post(self, **kwargs):
         message = super().message_post(**kwargs)
+        # Notas internas / notificaciones (p.ej. avisos de llamada entrante/perdida)
+        # NUNCA se reenvían al contacto de WhatsApp: solo comentarios de agente salen.
+        if self.env.context.get("whatsapp_skip_outbound") \
+                or kwargs.get("message_type") == "notification" \
+                or kwargs.get("subtype_xmlid") == "mail.mt_note":
+            return message
         for channel in self:
             if not channel.wa_account_id:
                 continue
