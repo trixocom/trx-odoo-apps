@@ -151,9 +151,18 @@ class WhatsmeowTransport(WhatsAppTransport):
                              json={"Phone": number, "Body": emoji, "Id": target_uid})
         return data.get("Id")
 
-    def download_media(self, media_ref):
-        # Con WuzAPI (skipmedia=false) la media entrante llega en base64 dentro del
-        # webhook, así que normalmente no hace falta descargar aparte.
-        # TODO(increment): /chat/downloadimage requiere Url+MediaKey+SHA+Length del
-        # mensaje; implementar si se configura skipmedia=true.
-        raise NotImplementedError("download_media: media llega inline por webhook")
+    def download_inbound_media(self, endpoint, params):
+        """Descarga+desencripta media entrante vía WuzAPI.
+
+        endpoint: /chat/downloadimage | downloadvideo | downloadaudio | downloaddocument
+        params: {Url, Mimetype, FileSHA256, FileLength, MediaKey, FileEncSHA256}
+        Devuelve bytes (el webhook trae solo la referencia cifrada, no el archivo).
+        """
+        data = self._request("POST", endpoint, json=params)
+        b64 = data.get("Data") or data.get("data") or ""
+        if isinstance(b64, str) and b64.startswith("data:") and "," in b64:
+            b64 = b64.split(",", 1)[1]
+        try:
+            return base64.b64decode(b64) if b64 else b""
+        except (ValueError, TypeError):
+            return b""

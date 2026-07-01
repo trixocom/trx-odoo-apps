@@ -30,6 +30,7 @@ Se normaliza al contrato común y se delega en whatsapp.account._process_inbound
 """
 import json
 import logging
+import mimetypes
 
 from odoo import http
 from odoo.http import request
@@ -38,6 +39,15 @@ from odoo.tools import plaintext2html
 _logger = logging.getLogger(__name__)
 
 BASE = "/trixo_whatsapp/whatsmeow/webhook"
+
+#: clave de mensaje de media -> (endpoint de descarga WuzAPI, tipo normalizado)
+MEDIA_MESSAGES = {
+    "imageMessage": ("/chat/downloadimage", "image"),
+    "videoMessage": ("/chat/downloadvideo", "video"),
+    "audioMessage": ("/chat/downloadaudio", "audio"),
+    "documentMessage": ("/chat/downloaddocument", "document"),
+    "stickerMessage": ("/chat/downloadimage", "sticker"),
+}
 
 
 class WhatsmeowWebhook(http.Controller):
@@ -93,9 +103,36 @@ class WhatsmeowWebhook(http.Controller):
             "raw": data,
         }
 
-        if not norm["body"]:
-            # Media u otros tipos: pendiente de implementar (image/document/audio/...).
-            _logger.info("WuzAPI webhook: tipo no soportado aun: %s", info.get("Type"))
+        # --- Media: el webhook trae solo la referencia cifrada; se descarga vía WuzAPI ---
+        media_key = next((k for k in MEDIA_MESSAGES if k in message), None)
+        if media_key:
+            m = message[media_key] or {}
+            endpoint, kind = MEDIA_MESSAGES[media_key]
+            content = b""
+            try:
+                content = account._get_transport().download_inbound_media(endpoint, {
+                    "Url": m.get("URL"),
+                    "Mimetype": m.get("mimetype"),
+                    "FileSHA256": m.get("fileSHA256"),
+                    "FileLength": m.get("fileLength"),
+                    "MediaKey": m.get("mediaKey"),
+                    "FileEncSHA256": m.get("fileEncSHA256"),
+                })
+            except Exception:  # noqa: BLE001
+                _logger.exception("WuzAPI webhook: fallo descargando media (%s)", kind)
+            if content:
+                fname = m.get("fileName")
+                if not fname:
+                    ext = mimetypes.guess_extension(m.get("mimetype") or "") or ""
+                    fname = kind + ext
+                norm["attachment"] = (fname, content, m.get("mimetype"))
+                norm["type"] = kind
+                caption = m.get("caption")
+                norm["body"] = plaintext2html(caption) if caption else None
+
+        if not norm["body"] and not norm["attachment"]:
+            _logger.info("WuzAPI webhook: sin contenido manejable (type=%s, mediaType=%s)",
+                         info.get("Type"), info.get("MediaType"))
             return request.make_response("OK")
 
         try:
