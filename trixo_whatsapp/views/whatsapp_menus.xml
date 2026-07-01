@@ -7,6 +7,10 @@
               parent="menu_whatsapp_root"
               action="action_whatsapp_message" sequence="10"/>
 
+    <menuitem id="menu_whatsapp_calls" name="Llamadas"
+              parent="menu_whatsapp_root"
+              action="action_whatsapp_call" sequence="20"/>
+
     <menuitem id="menu_whatsapp_config" name="Configuración"
               parent="menu_whatsapp_root" sequence="90"
               groups="trixo_whatsapp.group_whatsapp_admin"/>

@@ -205,6 +205,13 @@ class WhatsappAccount(models.Model):
             else:
                 post_vals["attachments"] = [(name, content)]
 
+        # Cita entrante: enlazar como respuesta al mensaje citado si lo tenemos.
+        if event.get("reply_to_uid"):
+            parent_wa = self.env["whatsapp.message"].sudo().search(
+                [("msg_uid", "=", event["reply_to_uid"])], limit=1)
+            if parent_wa.mail_message_id:
+                post_vals["parent_id"] = parent_wa.mail_message_id.id
+
         message = channel.message_post(**post_vals)
 
         # Trazabilidad en whatsapp.message (entrante)

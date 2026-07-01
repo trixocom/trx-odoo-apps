@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_whatsapp_call_list" model="ir.ui.view">
+        <field name="name">whatsapp.call.list</field>
+        <field name="model">whatsapp.call</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="create_date"/>
+                <field name="direction"/>
+                <field name="phone_number"/>
+                <field name="partner_id"/>
+                <field name="user_id"/>
+                <field name="wa_account_id"/>
+                <field name="duration" widget="float_time"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'terminated'"
+                       decoration-info="state in ('calling','ringing','ongoing')"
+                       decoration-warning="state == 'missed'"
+                       decoration-danger="state in ('rejected','aborted')"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_whatsapp_call_form" model="ir.ui.view">
+        <field name="name">whatsapp.call.form</field>
+        <field name="model">whatsapp.call</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="direction"/>
+                            <field name="phone_number"/>
+                            <field name="partner_id"/>
+                            <field name="wa_account_id"/>
+                        </group>
+                        <group>
+                            <field name="state" widget="badge"/>
+                            <field name="start_date"/>
+                            <field name="end_date"/>
+                            <field name="duration" widget="float_time"/>
+                            <field name="call_id"/>
+                        </group>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_whatsapp_call_search" model="ir.ui.view">
+        <field name="name">whatsapp.call.search</field>
+        <field name="model">whatsapp.call</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="phone_number"/>
+                <field name="partner_id"/>
+                <field name="call_id"/>
+                <filter name="incoming" string="Entrantes"
+                        domain="[('direction','=','incoming')]"/>
+                <filter name="outgoing" string="Salientes"
+                        domain="[('direction','=','outgoing')]"/>
+                <separator/>
+                <filter name="missed" string="Perdidas"
+                        domain="[('state','=','missed')]"/>
+                <filter name="my_calls" string="Mis llamadas"
+                        domain="[('user_id','=',uid)]"/>
+                <group expand="0" string="Agrupar por">
+                    <filter name="group_state" string="Estado"
+                            context="{'group_by':'state'}"/>
+                    <filter name="group_direction" string="Dirección"
+                            context="{'group_by':'direction'}"/>
+                    <filter name="group_account" string="Cuenta"
+                            context="{'group_by':'wa_account_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_whatsapp_call" model="ir.actions.act_window">
+        <field name="name">Llamadas WhatsApp</field>
+        <field name="res_model">whatsapp.call</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_my_calls': 1}</field>
+    </record>
+</odoo>

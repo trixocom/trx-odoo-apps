@@ -109,6 +109,10 @@ class WhatsmeowWebhook(http.Controller):
         if media_key:
             m = message[media_key] or {}
             endpoint, kind = MEDIA_MESSAGES[media_key]
+            # Cita cuando la respuesta viene con media (contextInfo en el media msg).
+            if not norm["reply_to_uid"]:
+                mctx = m.get("contextInfo") or {}
+                norm["reply_to_uid"] = mctx.get("stanzaID") or mctx.get("stanzaId")
             content = b""
             try:
                 content = account._get_transport().download_inbound_media(endpoint, {
