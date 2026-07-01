@@ -58,6 +58,7 @@ function startSoftphone(env, { bus_service, orm, notification }) {
 
     // ---------------- audio en vivo (F4) ----------------
     async function connectAudio(recordId, callId) {
+        if (audio && audio.callId === callId) return;
         disconnectAudio();
         let creds;
         try { creds = await orm.call("whatsapp.call", "audio_credentials", [[recordId]]); }
@@ -104,7 +105,7 @@ function startSoftphone(env, { bus_service, orm, notification }) {
         };
         ws.onerror = () => console.warn("[trixo_whatsapp] audio WS error");
         srcNode.connect(node); node.connect(ctx.destination);
-        audio = { ws, ctx, node, src: srcNode, stream };
+        audio = { ws, ctx, node, src: srcNode, stream, callId };
         console.log("[trixo_whatsapp] audio conectado", inRate);
     }
     function disconnectAudio() {
@@ -157,6 +158,7 @@ function startSoftphone(env, { bus_service, orm, notification }) {
                 current = { call_id: res.call_id, id: res.id, state: "calling",
                             who: res.partner_name || res.phone_number || num, direction: "outgoing" };
                 renderActive("Llamando…");
+                connectAudio(res.id, res.call_id);
             }
         };
     }
@@ -173,8 +175,9 @@ function startSoftphone(env, { bus_service, orm, notification }) {
             </div>
           </div>`;
         root.querySelector(".twa-answer").onclick = async () => {
-            stopBeep(); renderActive("Conectando…");
+            stopBeep(); renderActive("En llamada"); startTimer();
             await ormCall("whatsapp.call", "action_answer", [[p.id]]);
+            connectAudio(p.id, p.call_id);
         };
         root.querySelector(".twa-reject").onclick = async () => {
             await ormCall("whatsapp.call", "action_reject", [[p.id]]); clearCard();
