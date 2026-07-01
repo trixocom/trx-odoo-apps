@@ -98,6 +98,7 @@ class WhatsmeowWebhook(http.Controller):
             "type": "text",
             "body": plaintext2html(body) if body else None,
             "attachment": None,
+            "voice": False,
             "reply_to_uid": ctx.get("stanzaId") or ctx.get("stanzaID"),
             "reaction": None,
             "raw": data,
@@ -127,6 +128,10 @@ class WhatsmeowWebhook(http.Controller):
                     fname = kind + ext
                 norm["attachment"] = (fname, content, m.get("mimetype"))
                 norm["type"] = kind
+                # Audio de WhatsApp = nota de voz: marcar como 'voice' para que
+                # Discuss lo muestre con reproductor inline (no como archivo).
+                if kind == "audio":
+                    norm["voice"] = True
                 caption = m.get("caption")
                 norm["body"] = plaintext2html(caption) if caption else None
 

@@ -198,7 +198,12 @@ class WhatsappAccount(models.Model):
             post_vals["body"] = event["body"]
         if event.get("attachment"):
             name, content, mimetype = event["attachment"]
-            post_vals["attachments"] = [(name, content)]
+            if event.get("voice"):
+                # 3er elemento dict -> Odoo marca el adjunto como nota de voz
+                # (reproductor inline en Discuss).
+                post_vals["attachments"] = [(name, content, {"voice": True})]
+            else:
+                post_vals["attachments"] = [(name, content)]
 
         message = channel.message_post(**post_vals)
 
