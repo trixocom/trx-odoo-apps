@@ -69,6 +69,10 @@ class WhatsAppTransport:
         """Descarga media entrante. Devuelve bytes."""
         raise NotImplementedError
 
+    def fetch_avatar(self, number):
+        """Devuelve los bytes de la foto de perfil del contacto, o b'' si no hay."""
+        return b""
+
     # ------------------------------------------------------------------ #
     #  Plantillas (sólo proveedores que las soporten, p.ej. Meta)
     # ------------------------------------------------------------------ #

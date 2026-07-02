@@ -158,6 +158,33 @@ class WhatsmeowTransport(WhatsAppTransport):
                              json={"Phone": number, "Body": emoji, "Id": target_uid})
         return data.get("Id")
 
+    def fetch_avatar(self, number):
+        """Foto de perfil del contacto. WuzAPI /user/avatar devuelve la URL/path
+        pública en pps.whatsapp.net; bajamos los bytes de esa imagen."""
+        try:
+            res = requests.post(self._base + "/user/avatar",
+                                json={"Phone": number, "Preview": False},
+                                headers=self._headers(), timeout=TIMEOUT)
+        except requests.exceptions.RequestException:
+            return b""
+        if not res.ok:
+            return b""
+        try:
+            data = res.json().get("data", {}) or {}
+        except ValueError:
+            return b""
+        url = data.get("url") or data.get("URL")
+        if not url:
+            dp = data.get("direct_path") or data.get("DirectPath")
+            url = ("https://pps.whatsapp.net" + dp) if dp else None
+        if not url:
+            return b""
+        try:
+            img = requests.get(url, timeout=TIMEOUT)
+            return img.content if img.ok else b""
+        except requests.exceptions.RequestException:
+            return b""
+
     def download_inbound_media(self, endpoint, params):
         """Descarga+desencripta media entrante vía WuzAPI.
 
@@ -174,19 +201,3 @@ class WhatsmeowTransport(WhatsAppTransport):
         except (ValueError, TypeError):
             return b""
 
-    # ------------------------------------------------------------------ #
-    #  Llamadas (fork WuzAPI + meowcaller)
-    # ------------------------------------------------------------------ #
-    def call_place(self, to):
-        """Origina una llamada saliente. Devuelve el call_id."""
-        data = self._request("POST", "/call/place", json={"to": to})
-        return data.get("call_id") or data.get("CallID")
-
-    def call_answer(self, call_id):
-        self._request("POST", "/call/answer", json={"call_id": call_id})
-        return True
-
-    def call_hangup(self, call_id):
-        """Cuelga/rechaza (meowcaller Hangup sirve para ambas direcciones)."""
-        self._request("POST", "/call/hangup", json={"call_id": call_id})
-        return True

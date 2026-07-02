@@ -52,6 +52,14 @@ MEDIA_MESSAGES = {
 
 class WhatsmeowWebhook(http.Controller):
 
+    def _dispatch_extra_event(self, data):
+        """Hook para módulos que extienden el webhook (p.ej. trixo_whatsapp_call).
+
+        Devuelve True si el evento ya fue manejado y no debe seguir el flujo
+        normal de mensajería. Por defecto no maneja nada.
+        """
+        return False
+
     @http.route(BASE, methods=["POST"], type="http", auth="public", csrf=False)
     def receive(self):
         try:
@@ -59,21 +67,9 @@ class WhatsmeowWebhook(http.Controller):
         except ValueError:
             return request.make_response("OK")
 
-        # --- Eventos de LLAMADA del fork (meowcaller): CallIncoming/State/Ended ---
-        if data.get("type") in ("CallIncoming", "CallState", "CallEnded"):
-            account = request.env["whatsapp.account"].sudo().search([
-                ("provider", "=", "whatsmeow"),
-                "|", ("whatsmeow_session_id", "=", data.get("userID")),
-                     ("name", "=", data.get("instanceName")),
-            ], limit=1)
-            if not account:
-                _logger.warning("WuzAPI webhook (call): cuenta no encontrada (userID=%s instance=%s)",
-                                data.get("userID"), data.get("instanceName"))
-                return request.make_response("OK")
-            try:
-                account._process_call_event(data)
-            except Exception:  # noqa: BLE001 - no devolver 500 al sidecar
-                _logger.exception("WuzAPI webhook: error procesando evento de llamada")
+        # Punto de extensión: otros módulos (p.ej. trixo_whatsapp_call) pueden
+        # manejar tipos de evento propios (llamadas). Si alguno lo maneja, cortamos.
+        if self._dispatch_extra_event(data):
             return request.make_response("OK")
 
         if data.get("type") != "Message":
