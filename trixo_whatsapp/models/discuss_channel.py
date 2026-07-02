@@ -44,6 +44,9 @@ class DiscussChannel(models.Model):
             "whatsapp_partner_id": partner.id,
             "channel_member_ids": members,
         })
+        # Avatar del canal = foto de perfil del contacto (si no, Discuss muestra "#").
+        if partner.image_1920:
+            channel.sudo().image_128 = partner.image_1920
         return channel
 
     def _find_or_create_whatsapp_partner(self, number, sender_name=False, account=False):
