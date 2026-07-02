@@ -8,6 +8,15 @@
     font-size: 0.75em;
 }
 
+// Linea del pedido en pantalla: agrandamos y ponemos en negrita el detalle principal
+// (cantidad, nombre y precio) hasta ~el tamano de la tarjeta de producto (1em base).
+// El contenedor esta en 0.75em, por eso 1.35em -> ~1em efectivo (igual que la tarjeta).
+// Solo aplica al panel de armado; el ticket (.pos-receipt) queda compacto.
+.pos .leftpane .order-container .orderline .line-details {
+    font-size: 1.35em;
+    font-weight: 700;
+}
+
 // Ticket en pantalla (vista previa del recibo) y render para impresoras ePOS (raster).
 .pos-receipt {
     font-size: 0.75em;
