@@ -186,15 +186,11 @@ class WhatsmeowTransport(WhatsAppTransport):
             return b""
 
     def fetch_group_name(self, group_jid):
-        """Nombre del grupo vía WuzAPI /group/info (GET con body {GroupJID})."""
+        """Nombre del grupo vía WuzAPI GET /group/info?groupJID=<jid> (query param)."""
         try:
-            res = requests.request("GET", self._base + "/group/info",
-                                   json={"GroupJID": group_jid},
-                                   headers=self._headers(), timeout=TIMEOUT)
-            if not res.ok:
-                res = requests.post(self._base + "/group/info",
-                                    json={"GroupJID": group_jid},
-                                    headers=self._headers(), timeout=TIMEOUT)
+            res = requests.get(self._base + "/group/info",
+                               params={"groupJID": group_jid},
+                               headers=self._headers(), timeout=TIMEOUT)
         except requests.exceptions.RequestException:
             return None
         if not res.ok:
