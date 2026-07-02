@@ -185,6 +185,26 @@ class WhatsmeowTransport(WhatsAppTransport):
         except requests.exceptions.RequestException:
             return b""
 
+    def fetch_group_name(self, group_jid):
+        """Nombre del grupo vía WuzAPI /group/info (GET con body {GroupJID})."""
+        try:
+            res = requests.request("GET", self._base + "/group/info",
+                                   json={"GroupJID": group_jid},
+                                   headers=self._headers(), timeout=TIMEOUT)
+            if not res.ok:
+                res = requests.post(self._base + "/group/info",
+                                    json={"GroupJID": group_jid},
+                                    headers=self._headers(), timeout=TIMEOUT)
+        except requests.exceptions.RequestException:
+            return None
+        if not res.ok:
+            return None
+        try:
+            data = res.json().get("data", {}) or {}
+        except ValueError:
+            return None
+        return data.get("Name") or data.get("name") or None
+
     def download_inbound_media(self, endpoint, params):
         """Descarga+desencripta media entrante vía WuzAPI.
 

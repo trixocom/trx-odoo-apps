@@ -108,6 +108,8 @@ class WhatsmeowWebhook(http.Controller):
             "msg_uid": info.get("ID"),
             "from": number,
             "sender_name": info.get("PushName"),
+            "is_group": bool(info.get("IsGroup")),
+            "chat_jid": info.get("Chat") or "",
             "type": "text",
             "body": plaintext2html(body) if body else None,
             "attachment": None,

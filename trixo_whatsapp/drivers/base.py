@@ -73,6 +73,10 @@ class WhatsAppTransport:
         """Devuelve los bytes de la foto de perfil del contacto, o b'' si no hay."""
         return b""
 
+    def fetch_group_name(self, group_jid):
+        """Devuelve el nombre (subject) de un grupo, o None."""
+        return None
+
     # ------------------------------------------------------------------ #
     #  Plantillas (sólo proveedores que las soporten, p.ej. Meta)
     # ------------------------------------------------------------------ #

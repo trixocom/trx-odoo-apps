@@ -19,6 +19,7 @@ class DiscussChannel(models.Model):
     whatsapp_number = fields.Char(string="Número WhatsApp", index=True, copy=False)
     whatsapp_partner_id = fields.Many2one("res.partner", string="Contacto WhatsApp",
         copy=False)
+    whatsapp_is_group = fields.Boolean(string="Es grupo WhatsApp", copy=False)
 
     # ------------------------------------------------------------------ #
     #  Canal: buscar o crear
@@ -47,6 +48,29 @@ class DiscussChannel(models.Model):
         # Avatar del canal = foto de perfil del contacto (si no, Discuss muestra "#").
         if partner.image_1920:
             channel.sudo().image_128 = partner.image_1920
+        return channel
+
+    def _get_or_create_whatsapp_group_channel(self, account, group_jid, group_name=False):
+        """UN canal por grupo (keyed por el JID @g.us). Los mensajes de todos los
+        integrantes caen acá; el autor de cada mensaje es el integrante."""
+        channel = self.sudo().search([
+            ("wa_account_id", "=", account.id),
+            ("whatsapp_number", "=", group_jid),
+        ], limit=1)
+        if channel:
+            if group_name and channel.name != group_name:
+                channel.sudo().name = group_name
+            return channel
+        members = [(0, 0, {"partner_id": u.partner_id.id})
+                   for u in account.notify_user_ids]
+        channel = self.sudo().create({
+            "name": group_name or group_jid,
+            "channel_type": "channel",
+            "wa_account_id": account.id,
+            "whatsapp_number": group_jid,
+            "whatsapp_is_group": True,
+            "channel_member_ids": members,
+        })
         return channel
 
     def _find_or_create_whatsapp_partner(self, number, sender_name=False, account=False):

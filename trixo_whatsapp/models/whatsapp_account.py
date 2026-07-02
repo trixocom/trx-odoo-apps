@@ -186,12 +186,26 @@ class WhatsappAccount(models.Model):
                          event["reaction"])
             return
 
-        channel = Channel._get_or_create_whatsapp_channel(
-            self, event["from"], event.get("sender_name"))
+        if event.get("is_group") and event.get("chat_jid"):
+            group_name = None
+            try:
+                group_name = self._get_transport().fetch_group_name(event["chat_jid"])
+            except Exception:  # noqa: BLE001
+                pass
+            channel = Channel._get_or_create_whatsapp_group_channel(
+                self, event["chat_jid"], group_name)
+            # En un grupo, el autor de cada mensaje es el integrante que lo envió.
+            author = Channel._find_or_create_whatsapp_partner(
+                event["from"], event.get("sender_name"), self)
+            author_id = author.id
+        else:
+            channel = Channel._get_or_create_whatsapp_channel(
+                self, event["from"], event.get("sender_name"))
+            author_id = channel.whatsapp_partner_id.id
 
         post_vals = {
             "message_type": "whatsapp_message",
-            "author_id": channel.whatsapp_partner_id.id,
+            "author_id": author_id,
             "subtype_xmlid": "mail.mt_comment",
         }
         if event.get("body"):
