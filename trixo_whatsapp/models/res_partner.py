@@ -2,13 +2,33 @@
 import base64
 import logging
 
-from odoo import models
+from odoo import _, fields, models
 
 _logger = logging.getLogger(__name__)
 
 
 class ResPartner(models.Model):
     _inherit = "res.partner"
+
+    whatsapp_channel_count = fields.Integer(
+        string="Chats WhatsApp", compute="_compute_whatsapp_channel_count")
+
+    def _compute_whatsapp_channel_count(self):
+        Channel = self.env["discuss.channel"].sudo()
+        for partner in self:
+            partner.whatsapp_channel_count = Channel.search_count(
+                [("whatsapp_partner_id", "=", partner.id)]) if partner.id else 0
+
+    def action_open_whatsapp_channels(self):
+        self.ensure_one()
+        return {
+            "type": "ir.actions.act_window",
+            "name": _("Chats WhatsApp"),
+            "res_model": "discuss.channel",
+            "view_mode": "list,form",
+            "domain": [("whatsapp_partner_id", "=", self.id)],
+            "context": {"create": False},
+        }
 
     def _set_whatsapp_avatar(self, account, number):
         """Baja la foto de perfil de WhatsApp del contacto y la usa como imagen."""

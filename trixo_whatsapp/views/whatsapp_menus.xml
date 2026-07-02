@@ -3,6 +3,10 @@
     <menuitem id="menu_whatsapp_root" name="WhatsApp"
               sequence="95"/>
 
+    <menuitem id="menu_whatsapp_conversations" name="Conversaciones"
+              parent="menu_whatsapp_root"
+              action="action_whatsapp_channel" sequence="5"/>
+
     <menuitem id="menu_whatsapp_messages" name="Mensajes"
               parent="menu_whatsapp_root"
               action="action_whatsapp_message" sequence="10"/>

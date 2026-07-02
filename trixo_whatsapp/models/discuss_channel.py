@@ -1,4 +1,5 @@
 # Part of Trixocom.
+import base64
 import logging
 
 from odoo import fields, models
@@ -71,6 +72,13 @@ class DiscussChannel(models.Model):
             "whatsapp_is_group": True,
             "channel_member_ids": members,
         })
+        # Foto del grupo como avatar del canal (si el grupo tiene una).
+        try:
+            raw = account._get_transport().fetch_avatar(group_jid)
+            if raw:
+                channel.sudo().image_128 = base64.b64encode(raw)
+        except Exception:  # noqa: BLE001
+            pass
         return channel
 
     def _find_or_create_whatsapp_partner(self, number, sender_name=False, account=False):
@@ -86,6 +94,19 @@ class DiscussChannel(models.Model):
         if account and not partner.image_1920:
             partner._set_whatsapp_avatar(account, number)
         return partner
+
+    def action_open_whatsapp_partner(self):
+        """Salta del chat al cliente (desde ahí, sus ventas/compras nativas)."""
+        self.ensure_one()
+        if not self.whatsapp_partner_id:
+            return False
+        return {
+            "type": "ir.actions.act_window",
+            "res_model": "res.partner",
+            "res_id": self.whatsapp_partner_id.id,
+            "view_mode": "form",
+            "target": "current",
+        }
 
     # ------------------------------------------------------------------ #
     #  Saliente: cuando un agente escribe en un canal WhatsApp
