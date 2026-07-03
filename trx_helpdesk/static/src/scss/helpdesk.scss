@@ -1,6 +1,37 @@
+// Trixo Helpdesk - dashboard (team overview) styling.
+// Card sizing mirrors the Enterprise dashboard proportions.
+@include media-breakpoint-up(md) {
+    .o_helpdesk_team_kanban .o_kanban_renderer {
+        --KanbanRecord-width: #{map-get($grid-breakpoints, 'xl') * 0.35};
+    }
+}
+
 .o_helpdesk_team_kanban {
-    .o_kanban_card_header {
-        border-bottom: 1px solid var(--gray-300, #dee2e6);
-        padding-bottom: 4px;
+    .o_kanban_record {
+        transition: box-shadow 0.15s ease-in-out;
+
+        &:hover {
+            box-shadow: $box-shadow-sm;
+        }
+    }
+
+    .o_trx_helpdesk_btn {
+        min-width: 75%;
+    }
+
+    // KPI counters row: keep zeros discreet, make numbers prominent.
+    .o_trx_helpdesk_counters {
+        a {
+            text-decoration: none;
+            border-radius: $border-radius;
+
+            &:hover {
+                background-color: rgba(0, 0, 0, 0.04);
+            }
+        }
+
+        span.text-muted {
+            font-size: 0.8em;
+        }
     }
 }

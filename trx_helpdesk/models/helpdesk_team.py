@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from datetime import timedelta
+
 from odoo import api, fields, models
 
 
@@ -46,6 +48,14 @@ class HelpdeskTeam(models.Model):
         string='Urgent', compute='_compute_ticket_counts')
     ticket_count_sla_fail = fields.Integer(
         string='SLA Failed', compute='_compute_ticket_counts')
+    ticket_count_my = fields.Integer(
+        string='My Tickets', compute='_compute_ticket_counts')
+    ticket_closed_7days = fields.Integer(
+        string='Closed (last 7 days)', compute='_compute_performance_7days')
+    sla_success_rate = fields.Float(
+        string='SLA Success Rate', compute='_compute_performance_7days',
+        help='Percentage of tickets closed in the past 7 days whose SLA '
+             'targets were all reached on time. -1 when there is no data.')
 
     @api.model
     def _default_stage_ids(self):
@@ -87,11 +97,46 @@ class HelpdeskTeam(models.Model):
             ['team_id'], ['__count'])
         sla_map = {team.id: count for team, count in sla_data}
 
+        my_data = Ticket._read_group(
+            [('team_id', 'in', self.ids), ('closed', '=', False),
+             ('user_id', '=', self.env.uid)],
+            ['team_id'], ['__count'])
+        my_map = {team.id: count for team, count in my_data}
+
         for team in self:
             team.ticket_count = open_map.get(team.id, 0)
             team.ticket_count_unassigned = unassigned_map.get(team.id, 0)
             team.ticket_count_urgent = urgent_map.get(team.id, 0)
             team.ticket_count_sla_fail = sla_map.get(team.id, 0)
+            team.ticket_count_my = my_map.get(team.id, 0)
+
+    def _compute_performance_7days(self):
+        """KPIs over the tickets closed within the past 7 days.
+
+        Mirrors the Enterprise dashboard behaviour: the SLA success rate is
+        the share of closed tickets (with at least one SLA line) whose SLA
+        targets were all reached before their deadline.
+        """
+        Ticket = self.env['helpdesk.ticket']
+        since = fields.Datetime.now() - timedelta(days=7)
+        closed_tickets = Ticket.search([
+            ('team_id', 'in', self.ids),
+            ('closed', '=', True),
+            ('close_date', '>=', since),
+        ])
+        for team in self:
+            tickets = closed_tickets.filtered(lambda t: t.team_id == team)
+            team.ticket_closed_7days = len(tickets)
+            with_sla = tickets.filtered('sla_status_ids')
+            if not team.use_sla or not with_sla:
+                team.sla_success_rate = -1
+                continue
+            success = with_sla.filtered(
+                lambda t: all(
+                    s.reached_datetime and
+                    (not s.deadline or s.reached_datetime <= s.deadline)
+                    for s in t.sla_status_ids))
+            team.sla_success_rate = round(100.0 * len(success) / len(with_sla), 1)
 
     # ------------------------------------------------------------------
     # Assignment helper used by tickets
@@ -157,3 +202,17 @@ class HelpdeskTeam(models.Model):
         return self._action_tickets(
             self.name + ' - SLA Failed',
             [('closed', '=', False), ('sla_fail', '=', True)])
+
+    def action_view_my_tickets(self):
+        return self._action_tickets(
+            self.name + ' - My Tickets',
+            [('closed', '=', False), ('user_id', '=', self.env.uid)])
+
+    def action_view_closed_7days(self):
+        since = fields.Datetime.now() - timedelta(days=7)
+        action = self._action_tickets(
+            self.name + ' - Closed (7 days)',
+            [('closed', '=', True), ('close_date', '>=', since)])
+        # Closed tickets are better browsed as a list.
+        action['view_mode'] = 'list,kanban,form,calendar,pivot,graph,activity'
+        return action

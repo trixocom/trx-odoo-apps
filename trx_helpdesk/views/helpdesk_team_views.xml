@@ -6,47 +6,107 @@
         <field name="name">helpdesk.team.kanban</field>
         <field name="model">helpdesk.team</field>
         <field name="arch" type="xml">
-            <kanban class="o_helpdesk_team_kanban" create="1">
+            <kanban class="o_helpdesk_team_kanban" create="1" group_create="0"
+                    sample="1" highlight_color="color"
+                    action="action_view_all_tickets" type="object">
+                <field name="sequence" widget="handle"/>
+                <field name="color"/>
                 <field name="ticket_count"/>
                 <field name="ticket_count_unassigned"/>
                 <field name="ticket_count_urgent"/>
                 <field name="ticket_count_sla_fail"/>
+                <field name="ticket_count_my"/>
+                <field name="ticket_closed_7days"/>
+                <field name="sla_success_rate"/>
                 <field name="use_sla"/>
                 <templates>
                     <t t-name="menu">
-                        <a type="edit" class="dropdown-item">Configure Team</a>
-                        <field name="color" widget="kanban_color_picker"/>
-                    </t>
-                    <t t-name="card">
-                        <main>
-                            <div class="o_kanban_card_header mb-2">
-                                <field name="name" class="fw-bold fs-4"/>
-                            </div>
+                        <div class="container">
                             <div class="row">
                                 <div class="col-6">
-                                    <a type="object" name="action_view_open_tickets">
-                                        <span class="fs-2 fw-bold"><field name="ticket_count"/></span>
-                                        <div class="text-muted">Open Tickets</div>
-                                    </a>
+                                    <h5 role="menuitem" class="o_kanban_card_manage_title">
+                                        <span>View</span>
+                                    </h5>
+                                    <div role="menuitem">
+                                        <a name="action_view_all_tickets" type="object">All Tickets</a>
+                                    </div>
+                                    <div role="menuitem">
+                                        <a name="action_view_my_tickets" type="object">My Tickets</a>
+                                    </div>
                                 </div>
-                                <div class="col-6 text-end">
-                                    <a type="object" name="action_view_unassigned" class="d-block">
-                                        <field name="ticket_count_unassigned"/> Unassigned
-                                    </a>
-                                    <a type="object" name="action_view_urgent" class="d-block text-warning">
-                                        <field name="ticket_count_urgent"/> Urgent
-                                    </a>
-                                    <a type="object" name="action_view_sla_fail"
-                                       class="d-block text-danger" t-if="record.use_sla.raw_value">
-                                        <field name="ticket_count_sla_fail"/> SLA Failed
-                                    </a>
+                                <div class="col-6">
+                                    <h5 role="menuitem" class="o_kanban_card_manage_title">
+                                        <span>Configuration</span>
+                                    </h5>
+                                    <div role="menuitem">
+                                        <a type="edit">Configure Team</a>
+                                    </div>
                                 </div>
                             </div>
-                            <footer class="pt-2">
-                                <a type="object" name="action_view_all_tickets"
-                                   class="btn btn-sm btn-secondary">All Tickets</a>
-                            </footer>
-                        </main>
+                            <div class="o_kanban_card_manage_settings row">
+                                <div role="menuitem" aria-haspopup="true" class="col-12">
+                                    <field name="color" widget="kanban_color_picker"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                    <t t-name="card" class="px-3 py-2">
+                        <field name="name" class="fw-bold fs-4"/>
+                        <div class="row mt-3" t-if="!selection_mode">
+                            <div class="col-5">
+                                <button class="btn btn-primary o_trx_helpdesk_btn" name="action_view_open_tickets"
+                                        type="object" context="{'default_team_id': id}">Tickets</button>
+                            </div>
+                            <div class="col-7">
+                                <a name="action_view_my_tickets" type="object"
+                                   title="My open tickets in this team."
+                                   class="justify-content-between flex-nowrap d-inline-flex w-100 mb-1">
+                                    <span>My Tickets</span>
+                                    <field name="ticket_count_my" class="ms-3 text-nowrap fw-bold"/>
+                                </a>
+                                <a name="action_view_closed_7days" type="object"
+                                   title="Number of tickets closed in the past 7 days."
+                                   class="justify-content-between flex-nowrap d-inline-flex w-100 mb-1">
+                                    <span>Tickets Closed</span>
+                                    <field name="ticket_closed_7days" class="ms-3 text-nowrap fw-bold"/>
+                                </a>
+                                <a name="action_view_closed_7days" type="object"
+                                   t-if="record.use_sla.raw_value and record.sla_success_rate.raw_value &gt;= 0"
+                                   title="Percentage of tickets closed in the past 7 days whose SLA targets were all reached on time."
+                                   class="justify-content-between flex-nowrap d-inline-flex w-100 mb-1">
+                                    <span>SLA Success Rate</span>
+                                    <span t-attf-class="ms-3 text-nowrap fw-bold {{ record.sla_success_rate.raw_value &lt; 50 ? 'text-danger' : record.sla_success_rate.raw_value &lt; 85 ? 'text-warning' : 'text-success' }}">
+                                        <field name="sla_success_rate" widget="float" digits="[1, 1]"/> %
+                                    </span>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="row pt-4 mt-auto o_trx_helpdesk_counters" t-if="!selection_mode">
+                            <a name="action_view_open_tickets" type="object"
+                               class="d-flex flex-column align-items-center col">
+                                <field name="ticket_count" class="fw-bold fs-3"/>
+                                <span class="text-muted text-nowrap">Open</span>
+                            </a>
+                            <a name="action_view_unassigned" type="object"
+                               class="d-flex flex-column align-items-center col border-start">
+                                <field name="ticket_count_unassigned"
+                                       t-attf-class="fw-bold fs-3 {{ record.ticket_count_unassigned.raw_value &gt; 0 ? 'text-warning' : '' }}"/>
+                                <span class="text-muted text-nowrap">Unassigned</span>
+                            </a>
+                            <a name="action_view_urgent" type="object"
+                               class="d-flex flex-column align-items-center col border-start">
+                                <field name="ticket_count_urgent"
+                                       t-attf-class="fw-bold fs-3 {{ record.ticket_count_urgent.raw_value &gt; 0 ? 'text-danger' : '' }}"/>
+                                <span class="text-muted text-nowrap">Urgent</span>
+                            </a>
+                            <a name="action_view_sla_fail" type="object" t-if="record.use_sla.raw_value"
+                               title="Number of open tickets with at least one SLA failed."
+                               class="d-flex flex-column align-items-center col border-start">
+                                <field name="ticket_count_sla_fail"
+                                       t-attf-class="fw-bold fs-3 {{ record.ticket_count_sla_fail.raw_value &gt; 0 ? 'text-danger' : '' }}"/>
+                                <span class="text-muted text-nowrap">SLA Failed</span>
+                            </a>
+                        </div>
                     </t>
                 </templates>
             </kanban>

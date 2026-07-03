@@ -972,3 +972,58 @@ msgstr "p. ej. Atención al Cliente"
 #: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_sla_view_form
 msgid "e.g. Urgent tickets solved within 8 hours"
 msgstr "p. ej. Tickets urgentes resueltos en 8 horas"
+
+#. module: trx_helpdesk
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_team_view_kanban
+msgid "Tickets Closed"
+msgstr "Tickets cerrados"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_team__sla_success_rate
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_team_view_kanban
+msgid "SLA Success Rate"
+msgstr "Éxito de SLA"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_team__ticket_closed_7days
+msgid "Closed (last 7 days)"
+msgstr "Cerrados (últimos 7 días)"
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_team__ticket_count_my
+msgid "My Tickets"
+msgstr "Mis tickets"
+
+#. module: trx_helpdesk
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_team_view_kanban
+msgid "View"
+msgstr "Ver"
+
+#. module: trx_helpdesk
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_team_view_kanban
+msgid "My open tickets in this team."
+msgstr "Mis tickets abiertos en este equipo."
+
+#. module: trx_helpdesk
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_team_view_kanban
+msgid "Number of tickets closed in the past 7 days."
+msgstr "Cantidad de tickets cerrados en los últimos 7 días."
+
+#. module: trx_helpdesk
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_team_view_kanban
+msgid "Percentage of tickets closed in the past 7 days whose SLA targets were all reached on time."
+msgstr "Porcentaje de tickets cerrados en los últimos 7 días cuyos objetivos de SLA se alcanzaron a tiempo."
+
+#. module: trx_helpdesk
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_team_view_kanban
+msgid "Number of open tickets with at least one SLA failed."
+msgstr "Cantidad de tickets abiertos con al menos un SLA vencido."
+
+#. module: trx_helpdesk
+#: model:ir.model.fields,help:trx_helpdesk.field_helpdesk_team__sla_success_rate
+msgid ""
+"Percentage of tickets closed in the past 7 days whose SLA targets were all "
+"reached on time. -1 when there is no data."
+msgstr ""
+"Porcentaje de tickets cerrados en los últimos 7 días cuyos objetivos de SLA "
+"se alcanzaron a tiempo. -1 cuando no hay datos."
