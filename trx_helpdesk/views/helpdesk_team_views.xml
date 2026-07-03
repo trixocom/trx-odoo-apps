@@ -89,21 +89,24 @@
                             </a>
                             <a name="action_view_unassigned" type="object"
                                class="d-flex flex-column align-items-center col border-start">
-                                <field name="ticket_count_unassigned"
-                                       t-attf-class="fw-bold fs-3 {{ record.ticket_count_unassigned.raw_value &gt; 0 ? 'text-warning' : '' }}"/>
+                                <span t-attf-class="fw-bold fs-3 {{ record.ticket_count_unassigned.raw_value &gt; 0 ? 'text-warning' : '' }}">
+                                    <field name="ticket_count_unassigned"/>
+                                </span>
                                 <span class="text-muted text-nowrap">Unassigned</span>
                             </a>
                             <a name="action_view_urgent" type="object"
                                class="d-flex flex-column align-items-center col border-start">
-                                <field name="ticket_count_urgent"
-                                       t-attf-class="fw-bold fs-3 {{ record.ticket_count_urgent.raw_value &gt; 0 ? 'text-danger' : '' }}"/>
+                                <span t-attf-class="fw-bold fs-3 {{ record.ticket_count_urgent.raw_value &gt; 0 ? 'text-danger' : '' }}">
+                                    <field name="ticket_count_urgent"/>
+                                </span>
                                 <span class="text-muted text-nowrap">Urgent</span>
                             </a>
                             <a name="action_view_sla_fail" type="object" t-if="record.use_sla.raw_value"
                                title="Number of open tickets with at least one SLA failed."
                                class="d-flex flex-column align-items-center col border-start">
-                                <field name="ticket_count_sla_fail"
-                                       t-attf-class="fw-bold fs-3 {{ record.ticket_count_sla_fail.raw_value &gt; 0 ? 'text-danger' : '' }}"/>
+                                <span t-attf-class="fw-bold fs-3 {{ record.ticket_count_sla_fail.raw_value &gt; 0 ? 'text-danger' : '' }}">
+                                    <field name="ticket_count_sla_fail"/>
+                                </span>
                                 <span class="text-muted text-nowrap">SLA Failed</span>
                             </a>
                         </div>
