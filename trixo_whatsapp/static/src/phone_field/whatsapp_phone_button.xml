@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="trixo_whatsapp.SendWhatsAppButton">
+        <a class="o_phone_form_link ms-2 d-inline-flex align-items-center" href="#"
+           t-att-title="title" t-on-click.prevent.stop="onClick">
+            <i class="fa fa-whatsapp"/><small class="fw-bold ms-1">WhatsApp</small>
+        </a>
+    </t>
+</templates>

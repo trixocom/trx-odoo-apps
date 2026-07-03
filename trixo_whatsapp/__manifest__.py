@@ -1,7 +1,7 @@
 # Part of Trixocom. Multi-connector WhatsApp for Odoo Community.
 {
     'name': "Trixocom WhatsApp (multi-conector)",
-    'version': "19.0.2.2.0",
+    'version': "19.0.2.3.0",
     'category': "Productivity/WhatsApp",
     'summary': "Conecta WhatsApp con la plataforma de mensajería de Odoo (Meta Cloud API y whatsmeow)",
     'description': """
@@ -28,8 +28,14 @@ Desarrollo propio de Trixocom para Odoo Community.
         'views/whatsapp_account_views.xml',
         'views/whatsapp_message_views.xml',
         'views/whatsapp_channel_views.xml',
+        'wizard/whatsapp_compose_views.xml',
         'views/whatsapp_menus.xml',
     ],
+    'assets': {
+        'web.assets_backend': [
+            'trixo_whatsapp/static/src/phone_field/**/*',
+        ],
+    },
     'application': True,
     'installable': True,
 }

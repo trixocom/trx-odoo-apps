@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <record id="whatsapp_compose_form" model="ir.ui.view">
-        <field name="name">whatsapp.doc.compose.form</field>
-        <field name="model">whatsapp.doc.compose</field>
+        <field name="name">whatsapp.compose.form</field>
+        <field name="model">whatsapp.compose</field>
         <field name="arch" type="xml">
             <form string="Enviar por WhatsApp">
                 <group>
-                    <field name="record_name" readonly="1"/>
+                    <field name="record_name" readonly="1"
+                           invisible="not record_name"/>
                     <field name="partner_id"/>
                     <field name="phone"/>
                     <field name="wa_account_id"/>
-                    <field name="attach_document"/>
-                    <field name="body" placeholder="Mensaje opcional para el contacto..."/>
+                    <field name="body" placeholder="Mensaje..."/>
                     <field name="res_model" invisible="1"/>
                     <field name="res_id" invisible="1"/>
                 </group>
@@ -26,7 +26,7 @@
 
     <record id="action_whatsapp_compose" model="ir.actions.act_window">
         <field name="name">Enviar por WhatsApp</field>
-        <field name="res_model">whatsapp.doc.compose</field>
+        <field name="res_model">whatsapp.compose</field>
         <field name="view_mode">form</field>
         <field name="target">new</field>
     </record>
