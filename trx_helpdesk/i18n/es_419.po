@@ -174,6 +174,7 @@ msgstr "Compañía"
 
 #. module: trx_helpdesk
 #: model:ir.ui.menu,name:trx_helpdesk.menu_helpdesk_config
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_team_view_kanban
 msgid "Configuration"
 msgstr "Configuración"
 
@@ -604,6 +605,7 @@ msgstr "Número de mensajes con error de entrega"
 #: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_team_view_form
 #: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_team_view_list
 #: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_ticket_view_search
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_team_view_kanban
 msgid "Open"
 msgstr "Abiertos"
 
@@ -891,6 +893,7 @@ msgstr "Tipos de ticket"
 #: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_ticket_view_list
 #: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_ticket_view_search
 #: model_terms:ir.ui.view,arch_db:trx_helpdesk.res_partner_view_form_helpdesk
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_team_view_kanban
 msgid "Tickets"
 msgstr "Tickets"
 
@@ -991,6 +994,7 @@ msgstr "Cerrados (últimos 7 días)"
 
 #. module: trx_helpdesk
 #: model:ir.model.fields,field_description:trx_helpdesk.field_helpdesk_team__ticket_count_my
+#: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_team_view_kanban
 msgid "My Tickets"
 msgstr "Mis tickets"
 
@@ -1011,8 +1015,12 @@ msgstr "Cantidad de tickets cerrados en los últimos 7 días."
 
 #. module: trx_helpdesk
 #: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_team_view_kanban
-msgid "Percentage of tickets closed in the past 7 days whose SLA targets were all reached on time."
-msgstr "Porcentaje de tickets cerrados en los últimos 7 días cuyos objetivos de SLA se alcanzaron a tiempo."
+msgid ""
+"Percentage of tickets closed in the past 7 days whose SLA targets were all "
+"reached on time."
+msgstr ""
+"Porcentaje de tickets cerrados en los últimos 7 días cuyos objetivos de SLA "
+"se alcanzaron a tiempo."
 
 #. module: trx_helpdesk
 #: model_terms:ir.ui.view,arch_db:trx_helpdesk.helpdesk_team_view_kanban
