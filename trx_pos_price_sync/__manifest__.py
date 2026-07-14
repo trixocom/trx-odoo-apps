@@ -1,6 +1,6 @@
 {
     'name': 'POS - Sincronizacion de precios en vivo',
-    'version': '19.0.1.0.0',
+    'version': '19.0.1.0.1',
     'category': 'Sales/Point of Sale',
     'summary': 'Empuja cambios de precios/productos/reglas de tarifa del backend '
                'a todas las sesiones POS abiertas, en vivo via bus, sin necesidad '

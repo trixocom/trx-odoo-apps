@@ -82,12 +82,10 @@ def _flush_sync(env):
     if not data:
         return
     try:
-        configs = (
-            env["pos.config"]
-            .sudo()
-            .search([("current_session_id.state", "=", "opened")])
-        )
-        if not configs:
+        # current_session_id no es stored -> no se puede buscar por el;
+        # se parte de las sesiones abiertas.
+        sessions = env["pos.session"].sudo().search([("state", "=", "opened")])
+        if not sessions:
             return
 
         Template = env["product.template"].sudo()
@@ -100,7 +98,8 @@ def _flush_sync(env):
         # Variantes de los templates tocados: el POS trabaja sobre ambos modelos.
         products |= templates.product_variant_ids
 
-        for config in configs:
+        for session in sessions:
+            config = session.config_id
             records = {}
             # Mismo dominio que usa el POS para cargar productos (compania,
             # available_in_pos, sale_ok, limite de categorias).
@@ -119,13 +118,11 @@ def _flush_sync(env):
                 records["product.pricelist.item"] = config_items.ids
             if not records:
                 continue
-            config.notify_synchronisation(
-                config.current_session_id.id, 0, records
-            )
+            config.notify_synchronisation(session.id, 0, records)
             _logger.debug(
                 "trx_pos_price_sync: notificado config %s (sesion %s): %s",
                 config.id,
-                config.current_session_id.id,
+                session.id,
                 {m: len(i) for m, i in records.items()},
             )
     except Exception:  # noqa: BLE001 - no romper el commit por un fallo de sync
