@@ -201,6 +201,31 @@ class WhatsmeowTransport(WhatsAppTransport):
             return None
         return data.get("Name") or data.get("name") or None
 
+    def fetch_group_participants(self, group_jid):
+        """Participantes del grupo via WuzAPI GET /group/info. Cada uno trae su
+        LID y su telefono (PhoneNumber), lo que permite mapear el LID -> contacto
+        sin esperar a que la persona escriba. Devuelve
+        [{"lid": "<digitos>", "phone": "<digitos>"}]."""
+        try:
+            res = requests.get(self._base + "/group/info",
+                               params={"groupJID": group_jid},
+                               headers=self._headers(), timeout=TIMEOUT)
+        except requests.exceptions.RequestException:
+            return []
+        if not res.ok:
+            return []
+        try:
+            data = res.json().get("data", {}) or {}
+        except ValueError:
+            return []
+        out = []
+        for p in (data.get("Participants") or data.get("participants") or []):
+            lid = (p.get("LID") or p.get("JID") or "").split("@")[0].split(":")[0]
+            phone = (p.get("PhoneNumber") or "").split("@")[0].split(":")[0]
+            if lid and phone:
+                out.append({"lid": lid, "phone": phone})
+        return out
+
     def download_inbound_media(self, endpoint, params):
         """Descarga+desencripta media entrante vía WuzAPI.
 

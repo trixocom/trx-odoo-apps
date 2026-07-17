@@ -172,6 +172,32 @@ class WhatsappAccount(models.Model):
     # ------------------------------------------------------------------ #
     #  Entrante UNIFICADO (ambos proveedores convergen aquí)
     # ------------------------------------------------------------------ #
+    def _wa_backfill_group_lids(self, group_jid, mentioned_lids):
+        """Trae los participantes del grupo (LID+telefono) y fija el LID sobre los
+        contactos EXISTENTES que coincidan por telefono. Solo se dispara si hay
+        algun LID mencionado que todavia no conocemos, y no crea contactos nuevos."""
+        Partner = self.env["res.partner"].sudo()
+        faltan = [l for l in mentioned_lids
+                  if l and not Partner.search_count([("whatsapp_lid", "=", l)])]
+        if not faltan:
+            return
+        fetch = getattr(self._get_transport(), "fetch_group_participants", None)
+        if not fetch:
+            return
+        try:
+            parts = fetch(group_jid)
+        except Exception:  # noqa: BLE001
+            _logger.info("No se pudieron traer participantes de %s", group_jid)
+            return
+        for p in parts:
+            phone, lid = p.get("phone"), p.get("lid")
+            if not phone or not lid:
+                continue
+            partner = Partner.search([("phone", "=", "+" + phone)], limit=1) \
+                or Partner.search([("phone", "like", phone)], limit=1)
+            if partner:
+                partner._wa_set_lid(lid)
+
     def _wa_resolve_mentions(self, body, mentioned_lids):
         """Reescribe menciones (WhatsApp manda el LID crudo, p.ej. "@2379...") al
         contacto: si el n\u00famero coincide con un contacto real se usa ese; si no, el
@@ -239,6 +265,12 @@ class WhatsappAccount(models.Model):
             "author_id": author_id,
             "subtype_xmlid": "mail.mt_comment",
         }
+        # Menciones: si mencionan a alguien cuyo LID aun no conocemos, traer el
+        # roster del grupo (LID+telefono) y mapearlo sobre los contactos.
+        if event.get("is_group") and event.get("chat_jid") \
+                and event.get("mentioned_jids"):
+            self._wa_backfill_group_lids(
+                event["chat_jid"], event["mentioned_jids"])
         if event.get("body"):
             post_vals["body"] = self._wa_resolve_mentions(
                 event["body"], event.get("mentioned_jids"))
