@@ -13,6 +13,22 @@ class ResPartner(models.Model):
     whatsapp_channel_count = fields.Integer(
         string="Chats WhatsApp", compute="_compute_whatsapp_channel_count")
 
+    whatsapp_lid = fields.Char(
+        string="WhatsApp LID", index=True, copy=False,
+        help="Identificador interno de WhatsApp (@lid) del contacto. En grupos, "
+             "WhatsApp identifica a los integrantes por LID y en las menciones "
+             "s\u00f3lo env\u00eda ese LID (no el tel\u00e9fono ni el nombre). Guardarlo permite "
+             "resolver las menciones al contacto correcto.")
+
+    def _wa_set_lid(self, lid):
+        """Guarda el LID de WhatsApp en el contacto si a\u00fan no lo tiene o cambi\u00f3."""
+        lid = (lid or "").strip()
+        if not lid:
+            return
+        for partner in self:
+            if partner.whatsapp_lid != lid:
+                partner.sudo().whatsapp_lid = lid
+
     def _compute_whatsapp_channel_count(self):
         Channel = self.env["discuss.channel"].sudo()
         for partner in self:

@@ -1,8 +1,11 @@
 # Part of Trixocom.
 import logging
+import re
 import secrets
 import string
 import time
+
+from markupsafe import Markup, escape
 
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
@@ -169,6 +172,32 @@ class WhatsappAccount(models.Model):
     # ------------------------------------------------------------------ #
     #  Entrante UNIFICADO (ambos proveedores convergen aquí)
     # ------------------------------------------------------------------ #
+    def _wa_resolve_mentions(self, body, mentioned_lids):
+        """Reescribe menciones (WhatsApp manda el LID crudo, p.ej. "@2379...") al
+        contacto: si el n\u00famero coincide con un contacto real se usa ese; si no, el
+        nombre que trae WhatsApp (placeholder por PushName). Mencion nativa de Odoo
+        (resaltada/clickeable). LID desconocido: texto intacto (no se inventa nada).
+        Sin notificaciones extra."""
+        if not body or not mentioned_lids:
+            return body
+        Partner = self.env["res.partner"].sudo()
+        html = body if isinstance(body, str) else str(body)
+        for lid in dict.fromkeys(mentioned_lids):
+            lid = (lid or "").strip()
+            if not lid:
+                continue
+            partner = Partner.search([("whatsapp_lid", "=", lid)], limit=1)
+            if not partner:
+                continue
+            name = escape(partner.display_name or partner.name or lid)
+            anchor = Markup(
+                '<a href="#" class="o_mail_redirect" data-oe-id="%s" '
+                'data-oe-model="res.partner" contenteditable="false">@%s</a>'
+            ) % (partner.id, name)
+            html = re.sub(r"@%s(?!\d)" % re.escape(lid),
+                          lambda _m, a=str(anchor): a, html)
+        return Markup(html)
+
     def _process_inbound(self, event):
         """Procesa un evento entrante normalizado (ver drivers/base.py).
 
@@ -196,11 +225,13 @@ class WhatsappAccount(models.Model):
                 self, event["chat_jid"], group_name)
             # En un grupo, el autor de cada mensaje es el integrante que lo envió.
             author = Channel._find_or_create_whatsapp_partner(
-                event["from"], event.get("sender_name"), self)
+                event["from"], event.get("sender_name"), self,
+                lid=event.get("sender_lid"))
             author_id = author.id
         else:
             channel = Channel._get_or_create_whatsapp_channel(
-                self, event["from"], event.get("sender_name"))
+                self, event["from"], event.get("sender_name"),
+                lid=event.get("sender_lid"))
             author_id = channel.whatsapp_partner_id.id
 
         post_vals = {
@@ -209,7 +240,8 @@ class WhatsappAccount(models.Model):
             "subtype_xmlid": "mail.mt_comment",
         }
         if event.get("body"):
-            post_vals["body"] = event["body"]
+            post_vals["body"] = self._wa_resolve_mentions(
+                event["body"], event.get("mentioned_jids"))
         if event.get("attachment"):
             name, content, mimetype = event["attachment"]
             if event.get("voice"):

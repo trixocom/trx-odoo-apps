@@ -98,11 +98,24 @@ class WhatsmeowWebhook(http.Controller):
         if not number:
             return request.make_response("OK")
 
+        # LID del remitente: en grupos el Sender es un @lid (SenderAlt trae el
+        # tel\u00e9fono). Guardamos el LID contra el contacto para resolver menciones.
+        raw_sender = info.get("Sender") or ""
+        sender_lid = raw_sender.split("@")[0].split(":")[0] \
+            if raw_sender.endswith("@lid") else ""
+
         message = event.get("Message") or {}
         body = message.get("conversation")
         if not body:
             body = (message.get("extendedTextMessage") or {}).get("text")
         ctx = (message.get("extendedTextMessage") or {}).get("contextInfo") or {}
+
+        def _mention_lids(context):
+            raw = (context or {}).get("mentionedJID") \
+                or (context or {}).get("mentionedJid") or []
+            return [j.split("@")[0].split(":")[0] for j in raw if j]
+
+        mentioned_jids = _mention_lids(ctx)
 
         norm = {
             "msg_uid": info.get("ID"),
@@ -116,6 +129,8 @@ class WhatsmeowWebhook(http.Controller):
             "voice": False,
             "reply_to_uid": ctx.get("stanzaId") or ctx.get("stanzaID"),
             "reaction": None,
+            "sender_lid": sender_lid,
+            "mentioned_jids": mentioned_jids,
             "raw": data,
         }
 
@@ -124,10 +139,13 @@ class WhatsmeowWebhook(http.Controller):
         if media_key:
             m = message[media_key] or {}
             endpoint, kind = MEDIA_MESSAGES[media_key]
+            mctx = m.get("contextInfo") or {}
             # Cita cuando la respuesta viene con media (contextInfo en el media msg).
             if not norm["reply_to_uid"]:
-                mctx = m.get("contextInfo") or {}
                 norm["reply_to_uid"] = mctx.get("stanzaID") or mctx.get("stanzaId")
+            # Menciones en el ep\u00edgrafe (caption) del media.
+            if not norm["mentioned_jids"]:
+                norm["mentioned_jids"] = _mention_lids(mctx)
             content = b""
             try:
                 content = account._get_transport().download_inbound_media(endpoint, {

@@ -25,14 +25,18 @@ class DiscussChannel(models.Model):
     # ------------------------------------------------------------------ #
     #  Canal: buscar o crear
     # ------------------------------------------------------------------ #
-    def _get_or_create_whatsapp_channel(self, account, number, sender_name=False):
+    def _get_or_create_whatsapp_channel(self, account, number, sender_name=False,
+                                        lid=False):
         channel = self.sudo().search([
             ("wa_account_id", "=", account.id),
             ("whatsapp_number", "=", number),
         ], limit=1)
         if channel:
+            if lid and channel.whatsapp_partner_id:
+                channel.whatsapp_partner_id._wa_set_lid(lid)
             return channel
-        partner = self._find_or_create_whatsapp_partner(number, sender_name, account)
+        partner = self._find_or_create_whatsapp_partner(
+            number, sender_name, account, lid=lid)
         partners = partner + account.notify_user_ids.partner_id
         members = [(0, 0, {"partner_id": p.id}) for p in partners]
         # Usamos channel_type 'channel' para que Discuss lo liste en la barra
@@ -81,8 +85,11 @@ class DiscussChannel(models.Model):
             pass
         return channel
 
-    def _find_or_create_whatsapp_partner(self, number, sender_name=False, account=False):
+    def _find_or_create_whatsapp_partner(self, number, sender_name=False,
+                                         account=False, lid=False):
         Partner = self.env["res.partner"].sudo()
+        # Si el n\u00famero coincide con un contacto existente, se usa ese contacto;
+        # si no, se crea un placeholder con el nombre que trae WhatsApp (PushName).
         partner = Partner.search([("phone", "=", "+" + number)], limit=1) \
             or Partner.search([("phone", "like", number)], limit=1)
         if not partner:
@@ -90,6 +97,9 @@ class DiscussChannel(models.Model):
                 "name": sender_name or ("+" + number),
                 "phone": "+" + number,
             })
+        # LID de WhatsApp -> contacto: habilita resolver menciones en grupos.
+        if lid:
+            partner._wa_set_lid(lid)
         # Foto de perfil de WhatsApp -> imagen del contacto (si no tiene una).
         if account and not partner.image_1920:
             partner._set_whatsapp_avatar(account, number)
