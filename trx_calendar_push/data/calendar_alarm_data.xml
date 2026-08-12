@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="alarm_push_5min" model="calendar.alarm">
+            <field name="name">Push al celular - 5 minutos</field>
+            <field name="duration" eval="5"/>
+            <field name="interval">minutes</field>
+            <field name="alarm_type">push</field>
+        </record>
+
+        <record id="alarm_push_15min" model="calendar.alarm">
+            <field name="name">Push al celular - 15 minutos</field>
+            <field name="duration" eval="15"/>
+            <field name="interval">minutes</field>
+            <field name="alarm_type">push</field>
+        </record>
+
+        <record id="alarm_push_30min" model="calendar.alarm">
+            <field name="name">Push al celular - 30 minutos</field>
+            <field name="duration" eval="30"/>
+            <field name="interval">minutes</field>
+            <field name="alarm_type">push</field>
+        </record>
+
+        <record id="alarm_push_1h" model="calendar.alarm">
+            <field name="name">Push al celular - 1 hora</field>
+            <field name="duration" eval="1"/>
+            <field name="interval">hours</field>
+            <field name="alarm_type">push</field>
+        </record>
+
+        <record id="alarm_push_1d" model="calendar.alarm">
+            <field name="name">Push al celular - 1 día</field>
+            <field name="duration" eval="1"/>
+            <field name="interval">days</field>
+            <field name="alarm_type">push</field>
+        </record>
+
+    </data>
+</odoo>
