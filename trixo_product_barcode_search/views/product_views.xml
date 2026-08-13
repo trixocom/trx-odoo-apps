@@ -3,12 +3,12 @@
     <record id="product_template_search_view_barcode_default" model="ir.ui.view">
         <field name="name">product.template.search.barcode.default</field>
         <field name="model">product.template</field>
-        <field name="priority" eval="99"/>
+        <field name="priority" eval="999"/>
         <field name="inherit_id" ref="product.product_template_search_view"/>
         <field name="arch" type="xml">
-            <!-- Si otro módulo inyectó campos al principio, forzamos nuestra búsqueda general al inicio para que sea el default absoluto al darle Enter -->
+            <!-- Usamos name='barcode' en vez de 'name' para que otros módulos que inyectan ANTES de 'name' no nos pisen la primera posición -->
             <xpath expr="//search/field[1]" position="before">
-                <field name="name" string="Búsqueda (Nombre/Ref/Barras)" filter_domain="['|', '|', '|', ('default_code', 'ilike', self), ('product_variant_ids.default_code', 'ilike', self), ('name', 'ilike', self), ('barcode', 'ilike', self)]"/>
+                <field name="barcode" string="Búsqueda Automática (Nombre/Ref/Barras)" filter_domain="['|', '|', '|', ('default_code', 'ilike', self), ('product_variant_ids.default_code', 'ilike', self), ('name', 'ilike', self), ('barcode', 'ilike', self)]"/>
             </xpath>
         </field>
     </record>
@@ -16,11 +16,11 @@
     <record id="product_product_search_view_barcode_default" model="ir.ui.view">
         <field name="name">product.product.search.barcode.default</field>
         <field name="model">product.product</field>
-        <field name="priority" eval="99"/>
+        <field name="priority" eval="999"/>
         <field name="inherit_id" ref="product.product_search_form_view"/>
         <field name="arch" type="xml">
             <xpath expr="//search/field[1]" position="before">
-                <field name="name" string="Búsqueda (Nombre/Ref/Barras)" filter_domain="['|', '|', ('default_code', 'ilike', self), ('name', 'ilike', self), ('barcode', 'ilike', self)]"/>
+                <field name="barcode" string="Búsqueda Automática (Nombre/Ref/Barras)" filter_domain="['|', '|', ('default_code', 'ilike', self), ('name', 'ilike', self), ('barcode', 'ilike', self)]"/>
             </xpath>
         </field>
     </record>

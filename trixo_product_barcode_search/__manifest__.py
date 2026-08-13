@@ -1,6 +1,6 @@
 {
     'name': 'Búsqueda por Código de Barras (Predeterminada)',
-    'version': '18.0.1.0.0',
+    'version': '18.0.1.1.0',
     'category': 'Sales',
     'summary': 'Permite buscar productos por código de barras predeterminadamente en vistas tree y kanban',
     'description': """
@@ -17,5 +17,6 @@
     'installable': True,
     'application': False,
     'auto_install': False,
-    'changelog': '1.0.0 - Versión Inicial con soporte Odoo 18',
+    'changelog': '1.0.0 - Versión Inicial con soporte Odoo 18\n'
+                 '1.1.0 - La búsqueda queda realmente primera aunque otros módulos inyecten campos antes: priority 99->999 y se inyecta el campo barcode en vez de name para no colisionar con el name de la vista base',
 }
