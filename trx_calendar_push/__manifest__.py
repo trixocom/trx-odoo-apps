@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Trixo Calendar Push',
-    'version': '19.0.1.0.0',
+    'version': '19.0.1.0.1',
     'category': 'Productivity/Calendar',
     'summary': 'Recordatorios de reuniones por Web Push al celular (aunque Odoo esté cerrado)',
     'description': """Trixo Calendar Push

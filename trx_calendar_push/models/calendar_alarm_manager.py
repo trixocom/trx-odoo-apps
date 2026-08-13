@@ -40,32 +40,41 @@ class CalendarAlarmManager(models.AbstractModel):
         event_ids = list({eid for eids in events_by_alarm.values() for eid in eids})
         events = self.env['calendar.event'].browse(event_ids)
         now = fields.Datetime.now()
-        sent = 0
+        totals = {'events': 0, 'ok': 0, 'failed': 0, 'no_device': 0}
 
         for alarm in self.env['calendar.alarm'].browse(events_by_alarm.keys()):
             alarm_events = events.filtered(
                 lambda ev: ev.id in events_by_alarm[alarm.id] and ev.stop > now
             )
             for event in alarm_events:
-                sent += self._push_notify_event(Push, event, alarm)
+                totals['events'] += 1
+                self._push_notify_event(Push, event, alarm, totals)
 
         # Mantiene vivo el trigger del cron para la próxima ocurrencia de las
         # reuniones recurrentes (mismo comportamiento que el recordatorio mail).
         events._setup_event_recurrent_alarms(events_by_alarm)
 
-        if sent:
-            _logger.info("trx_calendar_push: %s recordatorio(s) push enviados", sent)
+        if totals['events']:
+            _logger.info(
+                "trx_calendar_push: %(events)s recordatorio(s); "
+                "%(ok)s dispositivo(s) entregados, %(failed)s con error, "
+                "%(no_device)s usuario(s) sin dispositivo suscripto",
+                totals,
+            )
 
-    def _push_notify_event(self, Push, event, alarm):
+    def _push_notify_event(self, Push, event, alarm, totals):
         """Envía el push de `event` a cada asistente que corresponda.
 
-        :return: cantidad de usuarios notificados.
+        Acumula en `totals` el resultado real informado por trx_web_push: ese
+        módulo atrapa la excepción de cada endpoint y la devuelve en la lista de
+        resultados, así que sin mirarla estaríamos contando intentos y no
+        entregas.
         """
         partners = event.attendee_ids.filtered(
             lambda att: att.state != 'declined'
         ).partner_id
         if not partners:
-            return 0
+            return
 
         users = self.env['res.users'].sudo().search([
             ('partner_id', 'in', partners.ids),
@@ -73,21 +82,40 @@ class CalendarAlarmManager(models.AbstractModel):
             ('share', '=', False),
         ])
         if not users:
-            return 0
+            return
 
         url = '/odoo/calendar.event/%s' % event.id
-        sent = 0
         for user in users:
             title, body = self._push_get_payload(event, alarm, user)
             try:
-                Push.sudo().send_to_users(user, title, body, url=url)
-                sent += 1
+                results = Push.sudo().send_to_users(user, title, body, url=url) or []
             except Exception:  # noqa: BLE001
+                totals['failed'] += 1
                 _logger.exception(
-                    "trx_calendar_push: falló el push del evento %s al usuario %s",
+                    "trx_calendar_push: falló el push del evento %s a %s",
                     event.id, user.login,
                 )
-        return sent
+                continue
+
+            if not results:
+                totals['no_device'] += 1
+                _logger.info(
+                    "trx_calendar_push: %s no tiene dispositivo suscripto, no se le avisó del evento %s",
+                    user.login, event.id,
+                )
+                continue
+
+            for result in results:
+                if result.get('error'):
+                    totals['failed'] += 1
+                    _logger.warning(
+                        "trx_calendar_push: evento %s, usuario %s, dispositivo %s: "
+                        "status %s - %s",
+                        event.id, user.login, result.get('id'),
+                        result.get('status'), result.get('error'),
+                    )
+                else:
+                    totals['ok'] += 1
 
     def _push_get_payload(self, event, alarm, user):
         """Título y cuerpo de la notificación, en el idioma y huso del usuario."""
