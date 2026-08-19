@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Trixo Helpdesk',
-    'version': '19.0.1.1.2',
+    'version': '19.0.1.1.3',
     'category': 'Services/Helpdesk',
     'summary': 'Mesa de ayuda: equipos, tickets, etapas, SLA y reportes (Community)',
     'description': """
