@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_trx_cobranza_dashboard" model="ir.actions.client">
+        <field name="name">Panel de Cobranzas</field>
+        <field name="tag">trx_cobranza_dashboard</field>
+    </record>
+
+    <menuitem id="menu_trx_cobranza_root"
+              name="Cobranzas"
+              sequence="37"
+              groups="account.group_account_invoice"/>
+
+    <menuitem id="menu_trx_cobranza_dashboard"
+              name="Panel de control"
+              parent="menu_trx_cobranza_root"
+              action="action_trx_cobranza_dashboard"
+              sequence="10"/>
+
+    <menuitem id="menu_trx_cobranza_rendiciones"
+              name="Rendiciones SIRO"
+              parent="menu_trx_cobranza_root"
+              action="payment_siro_roela.action_siro_rendicion"
+              sequence="20"/>
+</odoo>

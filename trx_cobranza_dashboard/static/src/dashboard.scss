@@ -1,0 +1,65 @@
+// Copyright 2026 Trixocom — License OPL-1.
+.o_trx_cobranza_dashboard {
+    padding: 16px;
+    overflow-y: auto;
+    height: 100%;
+
+    .trx-kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+    .trx-kpi {
+        border: 1px solid var(--border-color, #dee2e6);
+        border-radius: 8px;
+        padding: 14px 16px;
+        background: var(--o-view-background-color, #fff);
+        .trx-kpi-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            opacity: 0.7;
+        }
+        .trx-kpi-value {
+            font-size: 22px;
+            font-weight: 600;
+            margin-top: 2px;
+        }
+        .trx-kpi-sub {
+            font-size: 12px;
+            opacity: 0.7;
+        }
+        &.trx-kpi-rojo {
+            border-color: #dc3545;
+            background: rgba(220, 53, 69, 0.06);
+            .trx-kpi-value { color: #dc3545; }
+        }
+        &.trx-kpi-verde .trx-kpi-value { color: #198754; }
+        &.trx-kpi-ambar .trx-kpi-value { color: #b58105; }
+    }
+    .trx-tabla-titulo {
+        font-size: 15px;
+        font-weight: 600;
+        margin: 18px 0 8px;
+    }
+    table.trx-tabla {
+        width: 100%;
+        font-size: 13px;
+        th { white-space: nowrap; }
+        tr.trx-fila-click { cursor: pointer; }
+        tr.trx-fila-rechazo {
+            background: rgba(220, 53, 69, 0.08);
+            color: #b02a37;
+            font-weight: 500;
+        }
+        tr.trx-fila-vencida {
+            background: rgba(220, 53, 69, 0.08);
+            color: #b02a37;
+        }
+    }
+    .trx-refresco {
+        font-size: 12px;
+        opacity: 0.6;
+    }
+}

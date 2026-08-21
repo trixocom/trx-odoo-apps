@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="trx_cobranza_dashboard.Dashboard">
+    <div class="o_trx_cobranza_dashboard">
+        <t t-if="state.cargando">
+            <div class="text-center p-5">Cargando panel de cobranzas...</div>
+        </t>
+        <t t-if="!state.cargando and state.data">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="m-0">Panel de Control de Cobranzas</h4>
+                <div class="d-flex align-items-center gap-2">
+                    <span class="trx-refresco">Actualizado <t t-esc="state.ultima"/> · se refresca cada 60s</span>
+                    <button class="btn btn-sm btn-secondary" t-on-click="() => this.cargar()">Actualizar</button>
+                </div>
+            </div>
+
+            <div class="trx-kpi-grid">
+                <div class="trx-kpi">
+                    <div class="trx-kpi-label">Facturado (mes)</div>
+                    <div class="trx-kpi-value" t-esc="fmt(state.data.kpis.facturado_mes)"/>
+                    <div class="trx-kpi-sub"><t t-esc="state.data.kpis.facturado_mes_qty"/> comprobantes</div>
+                </div>
+                <div class="trx-kpi trx-kpi-verde">
+                    <div class="trx-kpi-label">Cobrado</div>
+                    <div class="trx-kpi-value" t-esc="fmt(state.data.kpis.cobrado)"/>
+                    <div class="trx-kpi-sub"><t t-esc="state.data.kpis.cobrado_qty"/> facturas</div>
+                </div>
+                <div class="trx-kpi trx-kpi-ambar">
+                    <div class="trx-kpi-label">Pendiente de cobro</div>
+                    <div class="trx-kpi-value" t-esc="fmt(state.data.kpis.pendiente)"/>
+                    <div class="trx-kpi-sub"><t t-esc="state.data.kpis.pendiente_qty"/> facturas</div>
+                </div>
+                <div t-attf-class="trx-kpi {{ state.data.kpis.rechazado_qty ? 'trx-kpi-rojo' : '' }}">
+                    <div class="trx-kpi-label">Rechazos</div>
+                    <div class="trx-kpi-value" t-esc="fmt(state.data.kpis.rechazado)"/>
+                    <div class="trx-kpi-sub"><t t-esc="state.data.kpis.rechazado_qty"/> débitos rechazados</div>
+                </div>
+                <div t-attf-class="trx-kpi {{ state.data.kpis.vencido_qty ? 'trx-kpi-rojo' : '' }}">
+                    <div class="trx-kpi-label">Vencido sin cobrar</div>
+                    <div class="trx-kpi-value" t-esc="fmt(state.data.kpis.vencido)"/>
+                    <div class="trx-kpi-sub"><t t-esc="state.data.kpis.vencido_qty"/> facturas vencidas</div>
+                </div>
+                <div class="trx-kpi">
+                    <div class="trx-kpi-label">Efectividad de cobranza</div>
+                    <div class="trx-kpi-value"><t t-esc="state.data.kpis.efectividad"/>%</div>
+                    <div class="trx-kpi-sub"><t t-esc="state.data.kpis.suscripciones_activas"/> suscripciones · <t t-esc="state.data.kpis.adhesiones"/> adhesiones (SIRO <t t-esc="state.data.kpis.adh_siro"/> / P360 <t t-esc="state.data.kpis.adh_p360"/>)</div>
+                </div>
+            </div>
+
+            <div class="trx-tabla-titulo text-danger">⚠ Cobranzas rechazadas — requieren seguimiento</div>
+            <t t-if="!state.data.rechazos.length">
+                <div class="text-muted mb-3">Sin rechazos registrados. 👍</div>
+            </t>
+            <table class="trx-tabla table table-sm" t-if="state.data.rechazos.length">
+                <thead><tr>
+                    <th>Fecha</th><th>Cliente</th><th>Comprobante</th>
+                    <th class="text-end">Importe</th><th>Motivo</th><th>Canal</th>
+                </tr></thead>
+                <tbody>
+                    <tr t-foreach="state.data.rechazos" t-as="r" t-key="r.canal + '-' + r.id"
+                        class="trx-fila-click trx-fila-rechazo"
+                        t-on-click="() => this.abrir(r.model, r.id)">
+                        <td t-esc="r.fecha"/>
+                        <td t-esc="r.cliente"/>
+                        <td t-esc="r.comprobante"/>
+                        <td class="text-end" t-esc="fmt(r.importe)"/>
+                        <td><t t-esc="r.motivo"/> <t t-if="r.codigo">(<t t-esc="r.codigo"/>)</t></td>
+                        <td t-esc="r.canal"/>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="trx-tabla-titulo">Facturas pendientes de débito</div>
+            <t t-if="!state.data.pendientes.length">
+                <div class="text-muted mb-3">No hay facturas pendientes.</div>
+            </t>
+            <table class="trx-tabla table table-sm" t-if="state.data.pendientes.length">
+                <thead><tr>
+                    <th>Comprobante</th><th>Cliente</th>
+                    <th class="text-end">Importe</th><th>Vencimiento</th><th>Estado</th>
+                </tr></thead>
+                <tbody>
+                    <tr t-foreach="state.data.pendientes" t-as="p" t-key="p.id"
+                        t-attf-class="trx-fila-click {{ p.vencida ? 'trx-fila-vencida' : '' }}"
+                        t-on-click="() => this.abrir(p.model, p.id)">
+                        <td t-esc="p.comprobante"/>
+                        <td t-esc="p.cliente"/>
+                        <td class="text-end" t-esc="fmt(p.importe)"/>
+                        <td t-esc="p.vencimiento"/>
+                        <td>
+                            <t t-if="p.vencida">VENCIDA</t>
+                            <t t-elif="p.en_base">En base de deuda</t>
+                            <t t-else="">A incluir en próxima base</t>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </t>
+    </div>
+</t>
+
+</templates>
