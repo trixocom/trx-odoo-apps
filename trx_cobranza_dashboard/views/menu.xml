@@ -8,6 +8,7 @@
     <menuitem id="menu_trx_cobranza_root"
               name="Cobranzas"
               sequence="37"
+              web_icon="trx_cobranza_dashboard,static/description/icon.png"
               groups="account.group_account_invoice"/>
 
     <menuitem id="menu_trx_cobranza_dashboard"

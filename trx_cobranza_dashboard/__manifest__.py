@@ -3,7 +3,7 @@
 # License OPL-1 (see LICENSE file at repository root).
 {
     'name': 'Panel de Control de Cobranzas',
-    'version': '19.0.1.0.0',
+    'version': '19.0.1.0.1',
     'author': 'Trixocom',
     'license': 'OPL-1',
     'category': 'Accounting/Payment',
