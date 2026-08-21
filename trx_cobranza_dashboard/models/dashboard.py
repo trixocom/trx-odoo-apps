@@ -36,8 +36,8 @@ class TrxCobranzaDashboard(models.AbstractModel):
 
         # ---------------- Rechazos (SIRO + PAGOS360) ----------------
         rechazos = []
-        Rend = self.env['siro.rendicion']
-        BatchLine = self.env['siro.debt.batch.line']
+        Rend = self.env['siro.rendicion'].sudo()
+        BatchLine = self.env['siro.debt.batch.line'].sudo()
         for r in Rend.search([('is_rejection', '=', True)],
                              order='fecha_proceso desc, id desc', limit=80):
             line = BatchLine.search([
@@ -57,7 +57,7 @@ class TrxCobranzaDashboard(models.AbstractModel):
                 'canal': 'SIRO',
             })
         if 'pagos360.debit.request' in self.env:
-            Deb = self.env['pagos360.debit.request']
+            Deb = self.env['pagos360.debit.request'].sudo()
             for d in Deb.search([('state', 'in', ('rejected', 'expired'))],
                                 order='id desc', limit=80):
                 rechazos.append({
@@ -90,11 +90,11 @@ class TrxCobranzaDashboard(models.AbstractModel):
             key=lambda m: m.invoice_date_due or hoy)[:80]]
 
         # ---------------- Adhesiones ----------------
-        adh_siro = self.env['payment.token'].search_count([
+        adh_siro = self.env['payment.token'].sudo().search_count([
             ('provider_id.code', '=', 'siro_roela'), ('active', '=', True)])
         adh_p360 = 0
         if 'pagos360.adhesion' in self.env:
-            adh_p360 = self.env['pagos360.adhesion'].search_count(
+            adh_p360 = self.env['pagos360.adhesion'].sudo().search_count(
                 [('state', '=', 'signed')])
 
         moneda = self.env.company.currency_id
