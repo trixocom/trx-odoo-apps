@@ -13,6 +13,17 @@
         <field name="binding_type">report</field>
     </record>
 
+    <record id="report_product_label_3xa4" model="ir.actions.report">
+        <field name="name">Product Label 1/3 A4</field>
+        <field name="model">product.product</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">trixo_product_label.report_producttemplatelabel3xa4</field>
+        <field name="report_file">trixo_product_label.report_producttemplatelabel3xa4</field>
+        <field name="paperformat_id" ref="trixo_product_label.paperformat_trixo_label_portrait_full"/>
+        <field name="binding_model_id" ref="product.model_product_product"/>
+        <field name="binding_type">report</field>
+    </record>
+
     <template id="report_producttemplatelabel4xa4">
         <t t-call="web.basic_layout">
             <div class="page">
@@ -71,9 +82,8 @@
                                     <small>Precio Unidad</small>
                                 </div>
                                 <div class="text-end">
-                                    <t t-set="packaging" t-value="product.packaging_ids and product.packaging_ids[0] or False"/>
-                                    <!-- Odoo 19: Use factor_inv (UoM) instead of qty -->
-                                    <t t-set="qty_per_package" t-value="packaging and packaging.factor_inv or 1.0"/>
+                                    <!-- Odoo 19: los embalajes son UoM (uom_ids), ya no product.packaging -->
+                                    <t t-set="qty_per_package" t-value="product._trixo_label_qty_per_package()"/>
 
                                     <div style="font-size: 16px;">
                                         <t t-esc="qty_per_package"/>
@@ -96,6 +106,125 @@
                                     <div class="col-4 text-end" style="border-left: 1px solid black; padding-left: 10px;">
                                         <small style="display: block; line-height: 1;">Fecha cambio de precio</small>
                                         <strong t-esc="context_timestamp(datetime.datetime.now()).strftime('%d/%m/%Y')"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="report_producttemplatelabel3xa4">
+        <t t-call="web.basic_layout">
+            <div class="page">
+                <style>
+                    .label-3xa4 {
+                        border: 2px solid black;
+                        width: 100%;
+                        height: 94mm; /* Adjusted to fit 3x in 297mm - 8mm margins */
+                        margin-bottom: 2mm; 
+                        padding: 10px;
+                        box-sizing: border-box;
+                        page-break-inside: avoid;
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: space-between;
+                    }
+                    .label-header {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        border-bottom: 2px solid black;
+                        padding-bottom: 5px;
+                        margin-bottom: 5px;
+                        flex-shrink: 0;
+                    }
+                    .product-code {
+                        border: 2px solid black;
+                        border-radius: 8px;
+                        padding: 5px 10px;
+                        font-weight: bold;
+                        font-size: 20px;
+                        white-space: nowrap;
+                    }
+                    .price-section {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        flex-grow: 1;
+                    }
+                    .price-large {
+                        font-size: 38px;
+                        font-weight: bold;
+                        line-height: 1;
+                    }
+                    .product-name {
+                         font-size: 24px; 
+                         font-weight: bold;
+                         max-width: 70%;
+                         line-height: 1.1;
+                    }
+                    .price-label {
+                        font-size: 14px;
+                        display: block;
+                    }
+                    .footer-section {
+                        margin-top: 5px;
+                        flex-shrink: 0;
+                        border-top: 1px solid #ddd; /* Optional visual separator */
+                        padding-top: 5px;
+                    }
+                </style>
+                <div style="width: 100%;">
+                    <t t-foreach="docs" t-as="product">
+                        <div class="label-3xa4">
+                            <!-- Header -->
+                            <div class="label-header">
+                                <div class="product-name">
+                                    <span t-field="product.name" style="display: block; max-height: 55px; overflow: hidden;"/>
+                                </div>
+                                <div class="product-code">
+                                    <span t-field="product.default_code"/>
+                                </div>
+                            </div>
+
+                            <!-- Body (Prices) -->
+                            <div class="price-section">
+                                <div>
+                                    <div class="price-large">
+                                        <span t-field="product.list_price" t-options='{"widget": "monetary", "display_currency": product.currency_id}'/>
+                                    </div>
+                                    <span class="price-label">Precio Unidad</span>
+                                </div>
+                                <div class="text-end">
+                                    <!-- Odoo 19: los embalajes son UoM (uom_ids), ya no product.packaging -->
+                                    <t t-set="qty_per_package" t-value="product._trixo_label_qty_per_package()"/>
+
+                                    <div style="font-size: 18px; font-weight: bold;">
+                                        <t t-esc="qty_per_package"/>
+                                        un/bulto
+                                    </div>
+                                    <div class="price-large">
+                                        <span t-esc="product.list_price * qty_per_package" t-options='{"widget": "monetary", "display_currency": product.currency_id}'/>
+                                    </div>
+                                    <span class="price-label">Precio Bulto</span>
+                                </div>
+                            </div>
+
+                            <!-- Footer (Barcode & Date) -->
+                            <div class="footer-section">
+                                <div class="row align-items-end">
+                                    <div class="col-8">
+                                        <div style="height: 50px; overflow: hidden;">
+                                            <span t-field="product.barcode" t-options="{'widget': 'barcode', 'symbology': 'auto', 'width': 500, 'height': 80, 'img_style': 'width:100%; height:100%; object-fit: contain;'}"/>
+                                        </div>
+                                        <div t-if="product.barcode" t-esc="product.barcode" class="text-center" style="font-size: 12px;"/>
+                                    </div>
+                                    <div class="col-4 text-end" style="border-left: 2px solid black; padding-left: 5px;">
+                                        <small style="display: block; line-height: 1.2; font-size: 10px;">Fecha cambio precio</small>
+                                        <strong style="font-size: 14px;" t-esc="context_timestamp(datetime.datetime.now()).strftime('%d/%m/%Y')"/>
                                     </div>
                                 </div>
                             </div>
