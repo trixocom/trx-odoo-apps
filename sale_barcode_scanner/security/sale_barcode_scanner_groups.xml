@@ -3,7 +3,8 @@
     <data>
         <record id="group_barcode_scanner_user" model="res.groups">
             <field name="name">Barcode Scanner User</field>
-            <field name="category_id" ref="base.module_category_sales_sales"/>
+            <!-- Odoo 19: res.groups usa privilege_id en lugar de category_id -->
+            <field name="privilege_id" ref="sales_team.res_groups_privilege_sales"/>
         </record>
     </data>
 </odoo>

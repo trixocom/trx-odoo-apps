@@ -2,7 +2,7 @@
 
 # Script de instalación - Stock Packaging Invoice Report
 # Autor: Trixocom - www.trixocom.com
-# Versión: 19.0.1.0.2
+# Versión: 18.0.1.0.2
 
 set -e
 
@@ -12,7 +12,7 @@ RED='\033[0;31m'
 NC='\033[0m'
 
 echo -e "${GREEN}================================================${NC}"
-echo -e "${GREEN}  Stock Packaging Invoice Report v19.0.1.0.2${NC}"
+echo -e "${GREEN}  Stock Packaging Invoice Report v18.0.1.0.2${NC}"
 echo -e "${GREEN}  Trixocom - www.trixocom.com${NC}"
 echo -e "${GREEN}================================================${NC}"
 echo ""

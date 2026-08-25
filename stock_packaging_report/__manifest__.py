@@ -1,106 +1,74 @@
 # -*- coding: utf-8 -*-
+# Copyright 2026 Trixocom
+# License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl-3.0).
 {
     'name': 'Stock Packaging Report',
-    'version': '19.0.11.7.2',
+    'version': '19.0.12.0.0',
     'category': 'Inventory/Inventory',
-    'summary': 'Muestra cantidad de embalajes en el reporte de Existencias y en los smart buttons del producto',
+    'summary': 'Stock expresado en bultos: ajuste del embalaje por defecto y '
+               'boton de estado en el producto',
     'description': """
-        Stock Packaging Report
-        ======================
-        
-        Este módulo añade funcionalidad para mostrar cantidades en embalajes en lugar de unidades:
-        
-        1. Columna "Bultos Disponibles" en el reporte de Existencias 
-           (Inventario > Reportes > Existencias)
-        
-        2. Smart Buttons del producto modificados para mostrar embalajes:
-           - "Disponible": En lugar de "5.030 U", muestra "503 Cajas"
-           - "Pronosticado": En lugar de "4.890 U", muestra "489 Cajas"
-           (o el nombre del embalaje configurado)
-        
-        Funcionamiento:
-        ---------------
-        1. Configure el nombre del tipo de embalaje en:
-           Inventario > Configuración > Ajustes > Nombre del Embalaje para Stock
-        
-        2. Defina los packagings en cada producto con el nombre configurado
-           (pestaña Inventario > sección Embalajes)
-        
-        3. El sistema calculará automáticamente:
-           - Disponible: qty_available / unidades_por_embalaje
-           - Pronosticado: virtual_available / unidades_por_embalaje
-        
-        Ejemplo:
-        --------
-        * Configuración: Nombre del embalaje = "Caja"
-        * Producto "Azúcar" tiene packaging con name="Caja" y qty=10 (10 unidades por caja)
-        * Stock disponible = 5.030 unidades → Mostrará: "503 Cajas"
-        * Stock pronosticado = 4.890 unidades → Mostrará: "489 Cajas"
-        * En reporte de inventario: 5.030 unidades → Columna muestra: "503"
-        
-        Características:
-        ----------------
-        * Dos smart buttons modificados: "Disponible" y "Pronosticado"
-        * Nueva columna "Bultos Disponibles" en Inventario > Reportes > Existencias
-        * Botones ensanchados (180px) con layout optimizado para claridad
-        * Configuración sencilla desde Ajustes de Inventario
-        * Cálculo automático basado en los packagings ya definidos en Odoo
-        * No requiere duplicar información: usa el qty existente en product.packaging
-        * Compatible con Odoo 18 Enterprise Edition
-        
-        Changelog v11.7.2:
-        ------------------
-        * No se mantiene para Odoo 19: el rediseno del smart-button On Hand + Forecasted
-          requiere refactor profundo. Marcado installable=False hasta nueva orden.
+Stock Packaging Report
+======================
 
-        Changelog v11.7.1:
-        ------------------
-        * FIX Odoo 19: action_update_quantity_on_hand renombrado a action_open_quants
-          en stock.product_template_form_view_procurement_button.
-        * Compatibilidad: carga correctamente en Odoo 19.0 Community.
+Expresa el stock en bultos en la ficha del producto y centraliza el ajuste
+del embalaje por defecto que usan el resto de los modulos de bultos.
 
-        Changelog v11.7.0:
-        ------------------
-        * FIX CRÍTICO: Corregido modelo - el reporte usa product.product, NO stock.quant
-        * Eliminado modelo stock_quant.py innecesario
-        * La columna ahora aparece correctamente en Inventario > Reportes > Existencias
-        * Usa el campo packaging_quantity_available de product.product
-        
-        Changelog v11.6.0:
-        ------------------
-        * FEATURE: Agregado modelo stock.quant con campo calculado packaging_quantity
-        * FEATURE: Columna "Cantidad de Embalajes" completamente funcional en reporte de Existencias
-        * Calcula automáticamente embalajes disponibles para cada línea del inventario
-        * Usa la misma lógica de cálculo que los smart buttons del producto
-        
-        Changelog v11.5.2:
-        ------------------
-        * FIX: Reemplazado @class por hasclass() en xpaths para evitar warnings
-        * Odoo recomienda usar hasclass() en lugar de @class='...' para mayor robustez
-        * Eliminados los warnings: "Error-prone use of @class in view"
-        
-        Changelog v11.5.1:
-        ------------------
-        * FIX: Aumentado ancho de botones a 180px (era 140px, muy angosto)
-        * FIX: Corregida estructura de botones - número y embalaje en misma línea
-        * IMPROVE: Uso de d-flex gap-1 para espaciado correcto entre número y nombre
-        
-        Changelog v11.5.0:
-        ------------------
-        * FEATURE: Agregado botón "Pronosticado" con embalajes (packaging_virtual_available)
-        * REFACTOR: Método auxiliar _calculate_packaging_qty para evitar duplicación de código
-    """,
+Que aporta
+----------
+1. **Ajuste** en Inventario > Configuracion > Ajustes > "Stock en Bultos":
+   define el parametro ``stock_packaging_report.packaging_name``, que es la
+   clave canonica que consumen tambien ``sale_default_packaging``,
+   ``stock_packaging_invoice_report``, ``trixo_stock_packaging_display`` y
+   ``trixo_internal_transfer_pkg``.
+2. **Boton de estado "bultos"** en el formulario de producto y de plantilla,
+   con la cantidad a mano y la pronosticada convertidas a bultos.
+3. **Filtro de busqueda** "Bultos Disponibles" en Inventario > Reportes >
+   Existencias, que sostiene los favoritos guardados por el cliente.
+4. **Almacen por defecto del usuario**: si el usuario tiene
+   ``property_warehouse_id``, las cantidades del producto se calculan sobre ese
+   almacen salvo que el contexto pida uno explicito.
+
+Migracion 18 -> 19
+------------------
+* ``product.packaging`` no existe en Odoo 19: el embalaje es una ``uom.uom``
+  del producto (``product.uom_ids``). El calculo pasa de
+  ``qty / packaging.qty`` a ``uom_id._compute_quantity(qty, bulto)``, usando el
+  helper compartido ``product._trixo_default_packaging_uom()`` de
+  ``sale_default_packaging``.
+* El boton "Actualizar cantidad" (``action_update_quantity_on_hand``) ya no
+  existe en Odoo 19: quedo fusionado dentro del boton de pronostico. En lugar
+  de reemplazar el contenido de los botones del core se agrega un boton propio
+  al lado, que no se rompe con cada cambio de arch del core.
+* Se retiran la columna de bultos en el arbol de Existencias y el campo de
+  bultos en ``stock.quant``: los provee ``trixo_stock_packaging_display``
+  19.0.2.0.0 (``available_quantity_pkg`` / ``quantity_pkg`` /
+  ``inventory_quantity_pkg``). Duplicarlos mostraba dos columnas iguales.
+* Se retira ``models/res_users.py``, que en la v18 ya era un comentario muerto.
+* La busqueda por bultos se acota a productos almacenables activos y calcula en
+  lote, en lugar de hacer un ``search([])`` con una consulta por producto.
+
+Changelog
+---------
+* 19.0.12.0.0: port a Odoo 19 Community sobre unidades de medida.
+* 18.0.11.7.1: ultima version sobre ``product.packaging`` (Odoo 18 EE).
+""",
     'author': 'Trixocom',
-    'website': 'https://github.com/trixocom/odoo_stock_packaging_report',
+    'website': 'https://www.trixocom.com',
     'license': 'LGPL-3',
-    'depends': ['stock', 'product'],
+    'depends': [
+        'stock',
+        'product',
+        'sale_stock',
+        'sale_default_packaging',
+    ],
     'data': [
         'data/system_parameters.xml',
         'views/res_config_settings_views.xml',
         'views/product_product_views.xml',
         'views/product_template_views.xml',
     ],
-    'installable': False,
+    'installable': True,
     'application': False,
     'auto_install': False,
 }

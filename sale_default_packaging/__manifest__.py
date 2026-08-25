@@ -1,55 +1,33 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Sale Default Packaging',
-    'version': '19.0.1.1.2',
+    'version': '19.0.2.3.0',
     'category': 'Sales',
-    'summary': 'Establece embalaje por defecto en líneas de venta basándose en Stock Packaging Report',
+    'summary': 'Venta por Bultos: setea la unidad de embalaje por defecto en '
+               'las líneas de venta y muestra el Total Bultos',
     'description': """
-        Módulo para Odoo 18 que establece automáticamente el embalaje por defecto en las líneas de venta
-        
-        Características:
-        =================
-        - Establece automáticamente el embalaje configurado en Stock Packaging Report
-        - Define una cantidad de embalaje por defecto (1.0)
-        - Calcula automáticamente las unidades de producto basándose en la cantidad de embalajes
-        - Sincroniza bidireccionalmente las cantidades de embalajes y unidades
-        - Campos adicionales en las líneas de venta:
-          * Embalaje (product_packaging_id)
-          * Cantidad de Embalajes (product_packaging_qty)
-        
-        Dependencias:
-        =============
-        - stock_packaging_report (https://github.com/trixocom/odoo_stock_packaging_report)
-        
-        Funcionamiento:
-        ===============
-        1. Al seleccionar un producto, busca el embalaje configurado en Stock Packaging Report
-        2. Si el producto tiene ese embalaje, lo establece automáticamente
-        3. La cantidad de producto se calcula como: Cant. Embalajes × Unidades por Embalaje
-        4. Los cambios en cualquier campo se sincronizan automáticamente
-        
-        Configuración:
-        ==============
-        1. Instalar el módulo stock_packaging_report
-        2. Configurar el nombre del embalaje en Inventario > Configuración > Ajustes
-        3. Asignar embalajes a los productos con el mismo nombre configurado
-        
-        Versión 1.1.2:
-        ==============
-        - Corrección de nombre de dependencia: stock_packaging_report (no odoo_stock_packaging_report)
-        
-        Versión 1.1.1:
-        ==============
-        - Corrección de xpath en vistas XML para Odoo 18
-        - Mejora en la compatibilidad con vistas de sale.order
-        
-        Versión 1.1.0:
-        ==============
-        - Refactorización completa del modelo
-        - Mejora en el cálculo de cantidades
-        - Sincronización bidireccional entre cantidades
-        - Vista mejorada con campos más intuitivos
-        - Mejor integración con stock_packaging_report
+Venta por Bultos sobre el modelo de UoM de Odoo 19
+==================================================
+
+En Odoo 19 product.packaging no existe: los embalajes son unidades de
+medida relativas (uom.uom con relative_factor) vinculadas al producto via
+product.template.uom_ids ("Packagings").
+
+Comportamiento (identico al 18 para el usuario):
+- Al elegir un producto en la linea de venta, la unidad pasa automaticamente
+  al embalaje por defecto del producto (parametro
+  stock_packaging_report.packaging_name, ej "Bulto") con cantidad 1.
+- La columna "Cantidad" queda expresada en Bultos (es la UoM de la linea).
+- Columna opcional "Unidades" (solo lectura) con la conversion a unidades.
+- "Total Bultos" grande en el encabezado del pedido y en el PDF.
+
+Notas de migracion 18 -> 19:
+- product_packaging_id / product_packaging_qty desaparecen: la UoM de la
+  linea ES el embalaje y product_uom_qty ES la cantidad de embalajes.
+- Se conserva la clave de parametro stock_packaging_report.packaging_name
+  por continuidad con los datos migrados de prod (valor: "Bulto").
+
+Version 2.0.0: reescritura completa para Odoo 19 CE (packaging -> UoM).
     """,
     'author': 'Trixocom',
     'website': 'https://trixocom.com',
@@ -58,9 +36,9 @@
         'sale',
         'stock',
         'product',
-        'stock_packaging_report',
     ],
     'data': [
+        'data/config_parameter.xml',
         'views/sale_order_views.xml',
         'views/report_saleorder.xml',
     ],

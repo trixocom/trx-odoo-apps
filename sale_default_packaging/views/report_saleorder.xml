@@ -10,13 +10,8 @@
         </xpath>
     </template>
 
-    <!-- Herencia para el reporte personalizado de Studio en Miracca -->
-    <template id="report_saleorder_document_inherit_studio" inherit_id="studio_customization.report_saleorder_doc_e8471eb2-9fb1-4046-9879-c4f05c087c7f" priority="99">
-        <xpath expr="//div[@id='informations']" position="before">
-            <div class="mt-2 mb-3" t-if="doc.total_bultos" style="font-size: 1.5rem; font-weight: bold;">
-                <span>Total Bultos: </span>
-                <span t-field="doc.total_bultos"/>
-            </div>
-        </xpath>
-    </template>
+    <!-- v19: removida la herencia del reporte de Studio
+         (studio_customization.report_saleorder_doc_...): esas plantillas son
+         copias de Odoo Studio (EE) que solo existen en la DB 18 de prod. Se
+         reintroduce cuando el workstream Studio->modulos recree el reporte. -->
 </odoo>

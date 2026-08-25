@@ -10,68 +10,39 @@ class AccountMoveLine(models.Model):
         string='Cantidad de Embalaje',
         compute='_compute_packaging_quantity_invoice',
         digits='Product Unit of Measure',
-        help='Cantidad de embalajes calculada según el tipo de embalaje configurado en el sistema.',
-        store=True
+        help='Cantidad de embalajes (bultos) equivalente a la cantidad de la '
+             'linea, segun la unidad de embalaje por defecto del producto.',
+        store=True,
     )
 
     packaging_name = fields.Char(
         string='Nombre del Embalaje',
         compute='_compute_packaging_name',
         help='Nombre del tipo de embalaje configurado en el sistema.',
-        store=False
+        store=False,
     )
 
-    @api.depends('quantity', 'product_id')
+    @api.depends('quantity', 'product_id', 'product_uom_id')
     def _compute_packaging_quantity_invoice(self):
-        """
-        Calcula la cantidad de embalajes para la línea de factura basándose en:
-        1. La cantidad del producto en la línea de factura
-        2. El nombre del tipo de embalaje configurado en el sistema
-        3. El qty definido en product.packaging para ese tipo de embalaje
-        """
-        # Obtener el nombre del packaging configurado en el sistema
-        packaging_name = self.env['ir.config_parameter'].sudo().get_param(
-            'stock_packaging_report.packaging_name',
-            default=''
-        )
-        
+        """Odoo 19: el embalaje es una uom.uom del producto. La cantidad de
+        bultos es la cantidad de la linea convertida a esa unidad (si la
+        linea ya esta en bultos, es la cantidad tal cual)."""
         for line in self:
             line.packaging_quantity_invoice = 0.0
-            
-            # Solo procesar líneas con producto y cantidad válida
             if not line.product_id or not line.quantity or line.quantity <= 0:
                 continue
-            
-            # Si no hay nombre de packaging configurado, no calcular
-            if not packaging_name:
+            bulto = line.product_id._trixo_default_packaging_uom()
+            if not bulto or not bulto.factor:
                 continue
-            
-            # Odoo 19: Unification - Search UoM by name
-            packaging_uom = self.env['uom.uom'].search([
-                ('name', '=', packaging_name)
-            ], limit=1)
-            
-            # Si no se encuentra el packaging o no tiene factor_inv válido, no calcular
-            if not packaging_uom or packaging_uom.factor_inv <= 0:
-                continue
-            
-            # Calcular cantidad de embalajes: Cantidad en línea / Unidades por Embalaje
-            quantity = line.quantity
-            packaging_qty = packaging_uom.factor_inv
-            
+            src_uom = line.product_uom_id or line.product_id.uom_id
             line.packaging_quantity_invoice = float_round(
-                quantity / packaging_qty,
-                precision_rounding=0.01
+                src_uom._compute_quantity(line.quantity, bulto,
+                                          rounding_method='HALF-UP'),
+                precision_rounding=0.01,
             )
 
     def _compute_packaging_name(self):
-        """
-        Obtiene el nombre del embalaje configurado en el sistema para mostrar en la vista.
-        """
         packaging_name = self.env['ir.config_parameter'].sudo().get_param(
-            'stock_packaging_report.packaging_name',
-            default=''
-        )
-        
+            'stock_packaging_report.packaging_name', default='')
         for line in self:
             line.packaging_name = packaging_name

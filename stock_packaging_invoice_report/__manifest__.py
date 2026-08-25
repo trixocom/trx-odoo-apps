@@ -1,52 +1,31 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Stock Packaging Invoice Report',
-    'version': '19.0.1.0.3',
+    'version': '19.0.2.0.0',
     'category': 'Accounting/Accounting',
-    'summary': 'Agrega columna de cantidad de embalaje al reporte de factura',
+    'summary': 'Cantidad de embalaje (bultos) en lineas y PDF de factura',
     'description': """
-        Stock Packaging Invoice Report
-        ==============================
-        
-        Este módulo extiende la funcionalidad del módulo stock_packaging_report 
-        para mostrar la cantidad de embalajes en el reporte de factura.
-        
-        Características:
-        ---------------
-        * Agrega una columna "Cantidad de Embalaje" en las líneas de factura
-        * Utiliza el mismo parámetro de sistema que stock_packaging_report
-        * Calcula automáticamente la cantidad de embalajes según:
-          - Cantidad de producto en la línea de factura
-          - Unidades por embalaje definidas en el producto
-          - Nombre del embalaje configurado en el sistema
-        
-        Dependencias:
-        ------------
-        * stock_packaging_report (módulo padre)
-        * account (módulo de contabilidad)
-        
-        Configuración:
-        -------------
-        1. Instalar el módulo stock_packaging_report primero
-        2. Configurar el nombre del embalaje en:
-           Inventario > Configuración > Ajustes > Nombre del Embalaje para Stock
-        3. Definir los embalajes en cada producto con el nombre configurado
-        
-        Uso:
-        ----
-        Al crear una factura, aparecerá automáticamente la columna 
-        "Cantidad de Embalaje" mostrando el cálculo correspondiente.
-        
-        Changelog v1.0.3:
-        -----------------
-        * FIX: Eliminada vista innecesaria account_move_views.xml
-        * Solo mantiene modelo y template de reporte
+Stock Packaging Invoice Report
+==============================
+
+Muestra la cantidad de embalajes (bultos) en las lineas de factura, el
+Total Bultos en el encabezado del form y ambos en el PDF.
+
+Odoo 19: el modulo tercero stock_packaging_report fue ABSORBIDO
+(aprobado 2026-07-12). El parametro stock_packaging_report.packaging_name
+y el helper de embalaje por defecto viven en sale_default_packaging
+(product._trixo_default_packaging_uom). La cantidad de bultos es la
+cantidad de la linea convertida a la unidad de embalaje del producto.
+
+Version 2.0.0: reescritura para Odoo 19 CE (packaging -> UoM); depende de
+sale_default_packaging en lugar de stock_packaging_report; sin herencias
+de plantillas Studio (workstream aparte).
     """,
     'author': 'Trixocom',
     'website': 'www.trixocom.com',
     'license': 'LGPL-3',
     'depends': [
-        'stock_packaging_report',
+        'sale_default_packaging',
         'account',
     ],
     'data': [

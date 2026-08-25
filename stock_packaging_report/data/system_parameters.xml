@@ -1,13 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Trixocom - License LGPL-3.0 or later -->
 <odoo>
     <data noupdate="1">
-        <!-- Parámetro del sistema para definir el NOMBRE del embalaje -->
-        <!-- Este parámetro guarda el nombre del tipo de embalaje (campo 'name' de product.packaging)
-             que se usará para buscar y obtener el qty (unidades por embalaje) -->
-        <!-- Puede ser modificado desde: Inventario > Configuración > Ajustes -->
+        <!--
+            Nombre del embalaje por defecto. En Odoo 19 product.packaging ya no
+            existe: el embalaje es una uom.uom del producto (product.uom_ids) y
+            este parametro guarda el prefijo del nombre de esa unidad (ej.
+            "Bulto"). La clave se conserva por continuidad con los datos
+            migrados de la v18.
+
+            El mismo registro lo declara sale_default_packaging; esta
+            declaracion se mantiene para no dejar huerfano el ir.model.data que
+            viene de la base de produccion. Con noupdate="1" el valor cargado en
+            la base nunca se pisa.
+        -->
         <record id="stock_packaging_name_param" model="ir.config_parameter">
             <field name="key">stock_packaging_report.packaging_name</field>
-            <field name="value">Caja</field>
+            <field name="value">Bulto</field>
         </record>
     </data>
 </odoo>

@@ -1,14 +1,14 @@
 # Stock Packaging Invoice Report
 
-Módulo para Odoo 19 que agrega la columna "Cantidad de Embalaje" en el reporte de facturas.
+Módulo para Odoo 18 que agrega la columna "Cantidad de Embalaje" en el reporte de facturas.
 
-## Versión 19.0.1.0.3
+## Versión 18.0.1.0.3
 
 ### Características
 
 * Agrega columna "Cantidad de Embalaje" en reportes de factura PDF
 * Cálculo automático basado en configuración de `stock_packaging_report`
-* Compatible con estructura de reportes de Odoo 19
+* Compatible con estructura de reportes de Odoo 18
 
 ### Dependencias
 

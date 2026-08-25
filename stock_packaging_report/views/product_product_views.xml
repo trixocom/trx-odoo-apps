@@ -1,25 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Trixocom - License LGPL-3.0 or later -->
 <odoo>
-    <!-- 
-        Heredar de stock.product_product_stock_tree que es la vista BASE
-        que usa la acción del menú "Inventario > Reportes > Existencias" (ID: 663)
-        
-        Esta es la vista correcta para Odoo 18 EE.
+
+    <!--
+        Boton de estado con el stock expresado en bultos.
+
+        Odoo 19 fusiono el viejo boton "Actualizar cantidad"
+        (action_update_quantity_on_hand, que ya no existe) dentro del boton de
+        pronostico. Por eso, en vez de reemplazar el contenido de un boton del
+        core - fragil ante cada cambio de arch - agregamos un boton propio al
+        lado, con el mismo layout de dos columnas que usa el core.
     -->
-    <record id="view_product_product_tree_inherit_packaging" model="ir.ui.view">
-        <field name="name">product.product.tree.inherit.packaging</field>
+    <record id="view_product_product_form_packaging_button" model="ir.ui.view">
+        <field name="name">product.product.form.packaging.button</field>
         <field name="model">product.product</field>
-        <field name="inherit_id" ref="stock.product_product_stock_tree"/>
+        <field name="inherit_id" ref="stock.product_form_view_procurement_button"/>
         <field name="arch" type="xml">
-            <!-- Añadir después de qty_available (On Hand / Disponible) -->
-            <field name="qty_available" position="after">
-                <field name="packaging_quantity_available" 
-                       string="Bultos Disponibles" 
-                       widget="float"
-                       optional="show"
-                       sum="Total Bultos Disponibles"
-                       decoration-info="packaging_quantity_available &gt; 0"/>
-            </field>
+            <xpath expr="//button[@name='action_product_forecast_report']" position="after">
+                <field name="packaging_name_display" invisible="1"/>
+                <button type="object"
+                        name="action_product_forecast_report"
+                        invisible="not packaging_name_display"
+                        context="{'default_product_id': id, 'active_model': 'product.template'}"
+                        class="oe_stat_button" icon="fa-cubes">
+                    <div class="d-flex flex-row gap-1 ms-1">
+                        <div class="o_field_widget o_stat_info flex-column align-items-end gap-1">
+                            <span class="o_stat_value">
+                                <field name="packaging_quantity_available" nolabel="1"/>
+                            </span>
+                            <span class="o_stat_value text-muted">
+                                <field name="packaging_virtual_available" nolabel="1"/>
+                            </span>
+                        </div>
+                        <div class="o_field_widget o_stat_info flex-column align-items-start gap-1">
+                            <span class="o_stat_value">
+                                <field name="packaging_name_display" nolabel="1"/>
+                            </span>
+                            <span class="o_stat_value text-muted">Pronosticado</span>
+                        </div>
+                    </div>
+                </button>
+            </xpath>
         </field>
     </record>
+
+    <!--
+        Filtro de busqueda por bultos disponibles. Lo usan los favoritos
+        guardados por el cliente ("10 bultos o Menos!", "Mas de 100 Bultos!").
+    -->
+    <record id="view_product_product_search_inherit_packaging" model="ir.ui.view">
+        <field name="name">product.product.search.inherit.packaging</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="stock.stock_product_search_form_view"/>
+        <field name="arch" type="xml">
+            <filter name="real_stock_available" position="after">
+                <field name="packaging_quantity_available" string="Bultos Disponibles"/>
+                <filter string="Con Bultos Disponibles" name="filter_packaging_available"
+                        domain="[('packaging_quantity_available', '&gt;', 0)]"/>
+            </filter>
+        </field>
+    </record>
+
 </odoo>

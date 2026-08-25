@@ -5,7 +5,7 @@
         <xpath expr="//table[@name='invoice_line_table']/thead/tr/th[@name='th_quantity']" position="after">
             <th name="th_packaging_quantity" class="text-end">Cantidad de Embalaje</th>
         </xpath>
-        
+
         <!-- Agregar dato de cantidad de embalaje después de cantidad -->
         <xpath expr="//table[@name='invoice_line_table']/tbody//tr//td[@name='td_quantity']" position="after">
             <td name="td_packaging_quantity" class="text-end">
@@ -14,7 +14,9 @@
         </xpath>
     </template>
 
-    <!-- Mostrar Total Bultos grande en el encabezado del reporte de factura estándar -->
+    <!-- Mostrar Total Bultos grande en el encabezado del reporte de factura estándar.
+         Nota: l10n_ar.report_invoice_document hereda (primary) de esta plantilla,
+         asi que la factura AR tambien lo muestra, igual que en 18. -->
     <template id="report_invoice_document_inherit_total_bultos" inherit_id="account.report_invoice_document" priority="99">
         <xpath expr="//div[@id='informations']" position="before">
             <div class="mt-2 mb-3" t-if="o.total_bultos" style="font-size: 1.5rem; font-weight: bold;">
@@ -24,22 +26,7 @@
         </xpath>
     </template>
 
-    <!-- Mostrar Total Bultos en las copias de Studio de la factura -->
-    <template id="report_invoice_document_inherit_studio_1" inherit_id="studio_customization.report_invoice_docum_d0941c06-08ed-45a8-a2e1-283036cb02c8" priority="99">
-        <xpath expr="//div[@id='informations']" position="before">
-            <div class="mt-2 mb-3" t-if="o.total_bultos" style="font-size: 1.5rem; font-weight: bold;">
-                <span>Total Bultos: </span>
-                <span t-field="o.total_bultos"/>
-            </div>
-        </xpath>
-    </template>
-
-    <template id="report_invoice_document_inherit_studio_2" inherit_id="studio_customization.report_invoice_docum_5420c613-1d96-40b6-af1e-01a7e6927fd8" priority="99">
-        <xpath expr="//div[@id='informations']" position="before">
-            <div class="mt-2 mb-3" t-if="o.total_bultos" style="font-size: 1.5rem; font-weight: bold;">
-                <span>Total Bultos: </span>
-                <span t-field="o.total_bultos"/>
-            </div>
-        </xpath>
-    </template>
+    <!-- v19: removidas las 2 herencias de plantillas studio_customization.*
+         (copias de Odoo Studio EE que solo existen en la DB 18 de prod).
+         Se reintroducen con el workstream Studio->modulos. -->
 </odoo>

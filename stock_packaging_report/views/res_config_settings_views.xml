@@ -1,37 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Trixocom - License LGPL-3.0 or later -->
 <odoo>
-    <!-- Vista de configuración para el módulo de reporte de embalajes -->
+
     <record id="res_config_settings_view_form" model="ir.ui.view">
         <field name="name">res.config.settings.view.form.inherit.stock.packaging</field>
         <field name="model">res.config.settings</field>
         <field name="inherit_id" ref="stock.res_config_settings_view_form"/>
         <field name="arch" type="xml">
-            <!-- Añadir después de la última configuración de stock -->
             <xpath expr="//app[@name='stock']" position="inside">
-                <block title="Reporte de Embalajes en Stock">
-                    <setting help="Configure el nombre del tipo de embalaje que se usará para calcular la cantidad de embalajes en el reporte de stock.">
-                        <field name="packaging_name_for_stock" placeholder="Ej: Caja, Pallet, Bulto, etc."/>
+                <block title="Stock en Bultos">
+                    <setting help="Nombre de la unidad de medida de embalaje que se usa para expresar el stock en bultos.">
+                        <field name="packaging_name_for_stock"
+                               placeholder="Ej: Bulto, Caja, Pallet"/>
                         <div class="mt8 text-muted">
-                            <strong>¿Cómo funciona?</strong>
-                            <br/>
-                            1. El sistema buscará una Unidad de Medida (UoM/Embalaje) 
-                               cuya "Categoría" o "Nombre" coincida con este valor.<br/>
-                            2. Usará el campo "Factor Inverso" (Unidades por Embalaje).<br/>
-                            3. Calculará: <em>Stock Disponible ÷ Unidades por Embalaje = Cantidad de Embalajes</em>
-                    <br/>
-                    <br/>
+                            <strong>Como funciona</strong><br/>
+                            1. En Odoo 19 los embalajes son unidades de medida del producto
+                               (Producto &gt; Informacion general &gt; Unidades de medida).<br/>
+                            2. El sistema toma la primera unidad del producto cuyo nombre
+                               empiece con este valor.<br/>
+                            3. Convierte la cantidad a esa unidad: 246 U con un
+                               <em>Bulto</em> de 6 U da 41 bultos.<br/><br/>
+                            <strong>Importante:</strong> este parametro tambien lo usan
+                            Venta por Bultos, el reporte de facturas en bultos y los
+                            conteos de inventario en bultos. Cambiarlo afecta a todos.
+                        </div>
+                    </setting>
+                </block>
+            </xpath>
+        </field>
+    </record>
 
-                    <strong>Ejemplo:</strong>
-                    <br/>
-                            • Nombre configurado: <code>Caja</code>
-                    <br/>
-                            • UoM con name="Caja" y ratio=12 (12 un = 1 caja)<br/>
-                            • Stock disponible: 144 unidades<br/>
-                            • Resultado: 144 ÷ 12 = <strong>12 cajas</strong>
-        </div>
-    </setting>
-</block>
-</xpath>
-</field>
-</record>
 </odoo>
