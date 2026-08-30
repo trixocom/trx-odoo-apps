@@ -24,14 +24,9 @@ patch(ActivityMenu.prototype, {
                 ),
                 confirmLabel: _t("Entendido"),
                 confirm: () => {
-                    this._attendanceInProgress = false;
-                },
+                    this._attendanceInProgress = false;ttendanceInProgre},
                 dismiss: () => {
-                    this._attendanceInProgress = false;
-                },
-            });
-            return;
-        }
-        return super.confirmChecking();
-    },
-});
+                    this._attendanceInProgress = false;ttendanceInProgre},
+            });ttendanceInPrreturn;ttendance}
+        return super.confirmChecking();ttend},
+});t

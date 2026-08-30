@@ -8,7 +8,7 @@ class HrWorkLocation(models.Model):
     _inherit = 'hr.work.location'
 
     geofence_enabled = fields.Boolean(
-        string="Geo-barrera activa",
+        string="Geo-barreranactiva",
         help="Si está activa, los empleados asignados a esta ubicación solo "
              "pueden fichar (ingreso/egreso) desde el navegador o celular "
              "estando físicamente dentro del radio configurado.",
