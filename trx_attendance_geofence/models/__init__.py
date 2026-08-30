@@ -1,0 +1,4 @@
+# -*- coding: utf-8 -*-
+from . import hr_work_location
+from . import hr_employee
+from . import ir_http

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="hr_work_location_form_view_geofence" model="ir.ui.view">
+        <field name="name">hr.work.location.form.geofence</field>
+        <field name="model">hr.work.location</field>
+        <field name="inherit_id" ref="hr.hr_work_location_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group" position="after">
+                <group string="Geo-barrera" name="geofence">
+                    <field name="geofence_enabled"/>
+                    <field name="latitude" invisible="not geofence_enabled" required="geofence_enabled"/>
+                    <field name="longitude" invisible="not geofence_enabled" required="geofence_enabled"/>
+                    <field name="geofence_radius" invisible="not geofence_enabled" required="geofence_enabled"/>
+                    <button name="action_open_map" type="object" string="Ver en el mapa"
+                            icon="fa-map-marker" class="btn-link"
+                            invisible="not geofence_enabled or (not latitude and not longitude)"
+                            colspan="2"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="hr_work_location_tree_view_geofence" model="ir.ui.view">
+        <field name="name">hr.work.location.list.geofence</field>
+        <field name="model">hr.work.location</field>
+        <field name="inherit_id" ref="hr.hr_work_location_tree_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="geofence_enabled" string="Geo-barrera" optional="show"/>
+                <field name="geofence_radius" string="Radio (m)" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
