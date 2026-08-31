@@ -9,6 +9,8 @@
             <xpath expr="//group[@name='managers']" position="inside">
                 <field name="attendance_geofence_exempt"
                        groups="hr_attendance.group_hr_attendance_officer"/>
+                <field name="attendance_excluded"
+                       groups="hr_attendance.group_hr_attendance_officer"/>
             </xpath>
         </field>
     </record>
