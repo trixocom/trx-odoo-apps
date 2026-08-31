@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Trixocom - Geo-barrera de Asistencias',
-    'version': '19.0.2.0.0',
+    'version': '19.0.2.0.1',
     'category': 'Human Resources/Attendances',
     'summary': 'Bloquea el ingreso/egreso si el empleado no está en su ubicación de trabajo',
     'description': """
