@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Trixocom - Geo-barrera de Asistencias',
-    'version': '19.0.2.0.1',
+    'version': '19.0.2.0.2',
     'category': 'Human Resources/Attendances',
     'summary': 'Bloquea el ingreso/egreso si el empleado no está en su ubicación de trabajo',
     'description': """
@@ -42,11 +42,6 @@ activado (se activa automáticamente al instalar).
         'views/hr_work_location_views.xml',
         'views/hr_employee_views.xml',
     ],
-    'assets': {
-        'web.assets_backend': [
-            'trx_attendance_geofence/static/src/attendance_menu/attendance_menu_patch.js',
-        ],
-    },
     'post_init_hook': '_enable_device_tracking',
     'installable': True,
     'application': False,
