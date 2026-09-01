@@ -218,10 +218,6 @@ class HrEmployee(models.Model):
                 now_ar.strftime("%d/%m/%Y %H:%M"),
                 _("Resultado: %s", detail),
             ]
-            if mode == 'kiosk':
-                lines.append(_("Origen: kiosco"))
-            elif mode == 'systray':
-                lines.append(_("Origen: navegador"))
             if latitude and longitude:
                 lines.append(_("Ubicación: https://maps.google.com?q=%(lat)s,%(lng)s",
                                lat=latitude, lng=longitude))
