@@ -40,6 +40,15 @@ class HrEmployee(models.Model):
              "cualquier intento de fichaje (dueños, socios, etc.). RRHH "
              "igual puede cargarle asistencias a mano.",
     )
+    attendance_notify_channel_id = fields.Many2one(
+        'discuss.channel',
+        string="Canal de avisos de asistencia",
+        groups="hr.group_hr_user",
+        help="Canal de WhatsApp (contacto o grupo) al que se mandan los "
+             "avisos de ingreso/egreso de ESTE empleado. Si queda vacío, "
+             "los avisos van al número general configurado en el parámetro "
+             "de sistema trx_attendance_geofence.notify_number.",
+    )
 
     # ------------------------------------------------------------------
     # Helpers
@@ -177,16 +186,27 @@ class HrEmployee(models.Model):
             env = self.env
             if 'whatsapp.account' not in env:
                 return
-            number = env['ir.config_parameter'].sudo().get_param(NOTIFY_NUMBER_PARAM)
-            if not number:
-                return
+
+            # Destino: canal propio del empleado (contacto o grupo) o, si no
+            # tiene, el número general del parámetro de sistema.
+            channel = False
+            notify_channel = self.sudo().attendance_notify_channel_id
+            if notify_channel:
+                if notify_channel.wa_account_id:
+                    channel = notify_channel
+                else:
+                    _logger.warning(
+                        "Geo-barrera: el canal de avisos %r de %s no es un "
+                        "canal de WhatsApp; se usa el número general",
+                        notify_channel.display_name, self.sudo().name)
+            if not channel:
+                number = env['ir.config_parameter'].sudo().get_param(NOTIFY_NUMBER_PARAM)
+                if not number:
+                    return
             account = env['whatsapp.account'].sudo().search([], limit=1)
             if not account:
                 _logger.warning("Geo-barrera: no hay cuenta de WhatsApp configurada")
                 return
-
-            from odoo.addons.trixo_whatsapp.drivers.base import normalize_ar_number
-            number = normalize_ar_number(number)
 
             now_ar = fields.Datetime.now().replace(tzinfo=pytz.utc).astimezone(
                 pytz.timezone(AR_TZ))
@@ -209,9 +229,11 @@ class HrEmployee(models.Model):
                 lines.append(_("Ubicación: no informada"))
             body = "\n".join(lines)
 
-            channel = env['discuss.channel'].sudo()._get_or_create_whatsapp_channel(
-                account, number, _("Control de asistencia"))
-            channel.message_post(
+            if not channel:
+                from odoo.addons.trixo_whatsapp.drivers.base import normalize_ar_number
+                channel = env['discuss.channel'].sudo()._get_or_create_whatsapp_channel(
+                    account, normalize_ar_number(number), _("Control de asistencia"))
+            channel.sudo().message_post(
                 body=body,
                 message_type="comment",
                 author_id=env.ref('base.partner_root').id,

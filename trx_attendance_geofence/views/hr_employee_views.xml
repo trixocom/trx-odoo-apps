@@ -11,6 +11,9 @@
                        groups="hr_attendance.group_hr_attendance_officer"/>
                 <field name="attendance_excluded"
                        groups="hr_attendance.group_hr_attendance_officer"/>
+                <field name="attendance_notify_channel_id"
+                       groups="hr_attendance.group_hr_attendance_officer"
+                       invisible="attendance_excluded"/>
             </xpath>
         </field>
     </record>

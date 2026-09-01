@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Trixocom - Geo-barrera de Asistencias',
-    'version': '19.0.3.0.0',
+    'version': '19.0.4.0.0',
     'category': 'Human Resources/Attendances',
     'summary': 'Bloquea el ingreso/egreso si el empleado no está en su ubicación de trabajo',
     'description': """
@@ -27,8 +27,10 @@ Geo-barrera para el control de asistencias
   aparece en el kiosco y el servidor le rechaza cualquier fichaje.
 * Notificación por WhatsApp (vía trixo_whatsapp, dependencia blanda) de
   cada evento de fichaje —ingreso, egreso o intento rechazado— con el
-  resultado y el link de Google Maps de la ubicación reportada, al
-  número del parámetro de sistema trx_attendance_geofence.notify_number.
+  resultado y el link de Google Maps de la ubicación reportada. Destino:
+  el "Canal de avisos de asistencia" del empleado (contacto o grupo de
+  WhatsApp) o, si no tiene, el número general del parámetro de sistema
+  trx_attendance_geofence.notify_number.
 
 La validación es en el servidor: no se puede saltar deshabilitando
 JavaScript ni negando el permiso de ubicación.
