@@ -1,0 +1,232 @@
+.o_trixo_deudores {
+    // Dentro del action manager somos un flex item: sin esto el ancho lo fija
+    // el contenido y el tablero queda angosto como si fuera una pantalla chica.
+    flex: 1 1 auto;
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
+    height: 100%;
+    // El .o_action del action manager fuerza overflow:hidden con mas
+    // especificidad que cualquier selector propio: sin el !important el
+    // tablero no se puede scrollear (verificado en pantalla).
+    overflow-y: auto !important;
+    background: #f6f6f7;
+
+    .o_trixo_cargando {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 60%;
+        color: #9aa0a6;
+    }
+
+    .o_trixo_wrap {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 24px 24px 40px;
+    }
+
+    .o_trixo_header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        margin-bottom: 20px;
+
+        h1 {
+            font-size: 26px;
+            font-weight: 500;
+            margin: 0;
+            color: #21252a;
+        }
+        .o_trixo_sub {
+            font-size: 13px;
+            color: #7c828d;
+        }
+    }
+
+    // ---- tarjetas -------------------------------------------------
+    .o_trixo_tarjetas {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+        gap: 16px;
+        margin-bottom: 20px;
+
+        @media (min-width: 992px) {
+            grid-template-columns: repeat(4, 1fr);
+        }
+    }
+
+    .o_trixo_card {
+        background: #fff;
+        border: 1px solid #e4e6ea;
+        border-left: 4px solid #9aa0a6;
+        border-radius: 8px;
+        padding: 16px 18px;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, .04);
+        cursor: pointer;
+        transition: box-shadow .15s ease, transform .15s ease;
+
+        &:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, .10);
+            transform: translateY(-1px);
+        }
+
+        .o_trixo_card_label {
+            font-size: 11px;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+            color: #7c828d;
+            margin-bottom: 6px;
+        }
+        .o_trixo_card_valor {
+            font-size: 28px;
+            font-weight: 600;
+            line-height: 1.1;
+            color: #21252a;
+        }
+        .o_trixo_card_pie {
+            font-size: 12px;
+            color: #7c828d;
+            margin-top: 6px;
+        }
+
+        &.o_trixo_total { border-left-color: #714b67; .o_trixo_card_valor { color: #714b67; } }
+        &.o_trixo_warn  { border-left-color: #ed9a4a; .o_trixo_card_valor { color: #c9761f; } }
+        &.o_trixo_danger{ border-left-color: #c0392b; .o_trixo_card_valor { color: #c0392b; } }
+        &.o_trixo_sube  { border-left-color: #c0392b; .o_trixo_card_valor { color: #c0392b; } cursor: default; }
+        &.o_trixo_baja  { border-left-color: #2e9e5b; .o_trixo_card_valor { color: #2e9e5b; } cursor: default; }
+    }
+
+    // ---- paneles --------------------------------------------------
+    .o_trixo_cols {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 16px;
+
+        @media (min-width: 992px) {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+    .o_trixo_panel {
+        background: #fff;
+        border: 1px solid #e4e6ea;
+        border-radius: 8px;
+        padding: 18px 20px 22px;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, .04);
+
+        .o_trixo_panel_titulo {
+            font-size: 15px;
+            font-weight: 600;
+            color: #21252a;
+        }
+        .o_trixo_panel_sub {
+            font-size: 12px;
+            color: #9aa0a6;
+            margin-bottom: 14px;
+        }
+    }
+
+    // ---- tramos ---------------------------------------------------
+    .o_trixo_tramo {
+        padding: 8px 6px;
+        border-radius: 6px;
+        cursor: pointer;
+
+        &:hover { background: #f2f3f5; }
+
+        .o_trixo_tramo_top {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            font-size: 13px;
+        }
+        .o_trixo_tramo_label { color: #4a4f57; }
+        .o_trixo_tramo_monto { font-weight: 600; color: #21252a; }
+        .o_trixo_tramo_pct {
+            font-size: 11px;
+            color: #9aa0a6;
+            margin-top: 2px;
+        }
+    }
+
+    .o_trixo_barra {
+        height: 10px;
+        background: #eceef1;
+        border-radius: 5px;
+        overflow: hidden;
+        margin-top: 5px;
+
+        &.o_trixo_barra_fina { height: 5px; margin-top: 4px; }
+    }
+    .o_trixo_barra_fill {
+        height: 100%;
+        border-radius: 5px;
+        min-width: 2px;
+        background: #9aa0a6;
+    }
+    .o_trixo_b_a30    { background: #8ab4f8; }
+    .o_trixo_b_a60    { background: #f2c14e; }
+    .o_trixo_b_a90    { background: #ed9a4a; }
+    .o_trixo_b_a180   { background: #e4693c; }
+    .o_trixo_b_mas180 { background: #c0392b; }
+    .o_trixo_b_top    { background: #714b67; }
+
+    // ---- top deudores ---------------------------------------------
+    .o_trixo_top {
+        width: 100%;
+
+        tr {
+            cursor: pointer;
+            &:hover { background: #f2f3f5; }
+        }
+        td {
+            padding: 7px 6px;
+            vertical-align: middle;
+            border-top: 1px solid #f0f1f3;
+        }
+        tr:first-child td { border-top: 0; }
+
+        .o_trixo_top_pos {
+            width: 26px;
+            color: #9aa0a6;
+            font-size: 12px;
+            text-align: right;
+        }
+        .o_trixo_top_cliente {
+            font-size: 13px;
+            color: #21252a;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 320px;
+        }
+        .o_trixo_top_monto {
+            text-align: right;
+            white-space: nowrap;
+            font-weight: 600;
+            font-size: 13px;
+            color: #21252a;
+        }
+        .o_trixo_top_dias {
+            font-weight: 400;
+            font-size: 11px;
+            color: #9aa0a6;
+        }
+    }
+
+    // ---- pie ------------------------------------------------------
+    .o_trixo_pie {
+        margin-top: 16px;
+        padding: 12px 16px;
+        background: #fff;
+        border: 1px solid #e4e6ea;
+        border-left: 4px solid #2e9e5b;
+        border-radius: 8px;
+        font-size: 13px;
+        color: #4a4f57;
+        cursor: pointer;
+
+        &:hover { box-shadow: 0 4px 12px rgba(0, 0, 0, .08); }
+    }
+}

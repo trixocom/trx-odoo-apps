@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_trixo_receivable_partner_list" model="ir.ui.view">
+        <field name="name">trixo.receivable.partner.list</field>
+        <field name="model">trixo.receivable.partner</field>
+        <field name="arch" type="xml">
+            <list string="Deudores" create="0" edit="0" delete="0" default_order="saldo desc"
+                  action="action_ver_comprobantes" type="object"
+                  decoration-danger="dias_max &gt; 180" decoration-warning="dias_max &gt; 90 and dias_max &lt;= 180">
+                <field name="currency_id" column_invisible="True"/>
+                <field name="partner_ref" string="Codigo" optional="show"/>
+                <field name="partner_id" string="Cliente"/>
+                <field name="telefono" optional="show"/>
+                <field name="vendedor_id" optional="hide"/>
+                <field name="saldo" widget="monetary" sum="Saldo total"/>
+                <field name="b_a30" widget="monetary" sum="0-30" optional="show"/>
+                <field name="b_a60" widget="monetary" sum="31-60" optional="show"/>
+                <field name="b_a90" widget="monetary" sum="61-90" optional="show"/>
+                <field name="b_a180" widget="monetary" sum="91-180" optional="show"/>
+                <field name="b_mas180" widget="monetary" sum="+180" optional="show"/>
+                <field name="deuda" widget="monetary" sum="Deuda" optional="hide"/>
+                <field name="a_favor" widget="monetary" sum="A favor" optional="hide"/>
+                <field name="comprobantes" optional="hide" sum="Comprobantes"/>
+                <field name="fecha_mas_antigua" optional="hide"/>
+                <field name="dias_max" string="Antiguedad"/>
+                <button name="action_ver_contacto" type="object" string="Contacto"
+                        icon="fa-address-card-o" title="Abrir la ficha del cliente"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_trixo_receivable_partner_form" model="ir.ui.view">
+        <field name="name">trixo.receivable.partner.form</field>
+        <field name="model">trixo.receivable.partner</field>
+        <field name="arch" type="xml">
+            <form string="Deudor" create="0" edit="0" delete="0">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_ver_comprobantes" type="object"
+                                class="oe_stat_button" icon="fa-list-ul">
+                            <field name="comprobantes" widget="statinfo" string="Comprobantes"/>
+                        </button>
+                        <button name="action_ver_contacto" type="object"
+                                class="oe_stat_button" icon="fa-address-card-o">
+                            <span class="o_stat_text">Ficha del cliente</span>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1><field name="partner_id" readonly="1" options="{'no_open': True}"/></h1>
+                    </div>
+                    <group>
+                        <group string="Saldo">
+                            <field name="currency_id" invisible="1"/>
+                            <field name="saldo" widget="monetary"/>
+                            <field name="deuda" widget="monetary"/>
+                            <field name="a_favor" widget="monetary"/>
+                        </group>
+                        <group string="Antiguedad">
+                            <field name="dias_max"/>
+                            <field name="fecha_mas_antigua"/>
+                            <field name="partner_ref"/>
+                            <field name="telefono" widget="phone"/>
+                            <field name="vendedor_id"/>
+                        </group>
+                    </group>
+                    <group string="Apertura por antiguedad (desde la fecha del comprobante)">
+                        <group>
+                            <field name="b_a30" widget="monetary"/>
+                            <field name="b_a60" widget="monetary"/>
+                            <field name="b_a90" widget="monetary"/>
+                        </group>
+                        <group>
+                            <field name="b_a180" widget="monetary"/>
+                            <field name="b_mas180" widget="monetary"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_trixo_receivable_partner_graph" model="ir.ui.view">
+        <field name="name">trixo.receivable.partner.graph</field>
+        <field name="model">trixo.receivable.partner</field>
+        <field name="arch" type="xml">
+            <graph string="Deuda por cliente" type="bar" order="DESC">
+                <field name="partner_id"/>
+                <field name="saldo" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_trixo_receivable_partner_pivot" model="ir.ui.view">
+        <field name="name">trixo.receivable.partner.pivot</field>
+        <field name="model">trixo.receivable.partner</field>
+        <field name="arch" type="xml">
+            <pivot string="Antiguedad de saldos">
+                <field name="partner_id" type="row"/>
+                <field name="b_a30" type="measure"/>
+                <field name="b_a60" type="measure"/>
+                <field name="b_a90" type="measure"/>
+                <field name="b_a180" type="measure"/>
+                <field name="b_mas180" type="measure"/>
+                <field name="saldo" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_trixo_receivable_partner_search" model="ir.ui.view">
+        <field name="name">trixo.receivable.partner.search</field>
+        <field name="model">trixo.receivable.partner</field>
+        <field name="arch" type="xml">
+            <search string="Deudores">
+                <field name="partner_id" string="Cliente"/>
+                <field name="partner_ref" string="Codigo"
+                       filter_domain="['|', ('partner_ref', '=', self), ('partner_ref', 'ilike', self)]"/>
+                <field name="vendedor_id"/>
+                <filter name="con_deuda" string="Con deuda" domain="[('saldo', '&gt;', 0)]"/>
+                <filter name="con_saldo_favor" string="Con saldo a favor" domain="[('saldo', '&lt;', 0)]"/>
+                <separator/>
+                <filter name="mas_90" string="Mas de 90 dias" domain="[('dias_max', '&gt;', 90)]"/>
+                <filter name="mas_180" string="Mas de 180 dias" domain="[('dias_max', '&gt;', 180)]"/>
+                <group>
+                    <filter name="group_vendedor" string="Vendedor" domain="[]" context="{'group_by': 'vendedor_id'}"/>
+                    <filter name="group_company" string="Compania" domain="[]" context="{'group_by': 'company_id'}"
+                            groups="base.group_multi_company"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_trixo_receivable_partner" model="ir.actions.act_window">
+        <field name="name">Deudores por cliente</field>
+        <field name="res_model">trixo.receivable.partner</field>
+        <field name="view_mode">list,graph,pivot,form</field>
+        <field name="search_view_id" ref="view_trixo_receivable_partner_search"/>
+        <field name="domain">[('saldo', '&gt;', 0)]</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No hay clientes con deuda pendiente</p>
+            <p>Aca se listan los clientes con comprobantes por cobrar sin conciliar,
+               con la apertura por antiguedad contada desde la fecha del comprobante.</p>
+        </field>
+    </record>
+
+    <record id="action_trixo_receivable_partner_grafico" model="ir.actions.act_window">
+        <field name="name">Panorama de deuda</field>
+        <field name="res_model">trixo.receivable.partner</field>
+        <field name="view_mode">graph,pivot,list,form</field>
+        <field name="search_view_id" ref="view_trixo_receivable_partner_search"/>
+        <field name="domain">[('saldo', '&gt;', 0)]</field>
+    </record>
+
+    <record id="action_trixo_receivable_partner_favor" model="ir.actions.act_window">
+        <field name="name">Saldos a favor</field>
+        <field name="res_model">trixo.receivable.partner</field>
+        <field name="view_mode">list,graph,pivot,form</field>
+        <field name="search_view_id" ref="view_trixo_receivable_partner_search"/>
+        <field name="domain">[('saldo', '&lt;', 0)]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Ningun cliente tiene saldo a favor</p>
+            <p>Pagos a cuenta y notas de credito que todavia no se aplicaron a un comprobante.</p>
+        </field>
+    </record>
+
+</odoo>

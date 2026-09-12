@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_trixo_receivable_line_deudores,trixo.receivable.line deudores,model_trixo_receivable_line,group_trixo_deudores,1,0,0,0
+access_trixo_receivable_partner_deudores,trixo.receivable.partner deudores,model_trixo_receivable_partner,group_trixo_deudores,1,0,0,0
+access_trixo_receivable_line_account_manager,trixo.receivable.line contabilidad,model_trixo_receivable_line,account.group_account_manager,1,0,0,0
+access_trixo_receivable_partner_account_manager,trixo.receivable.partner contabilidad,model_trixo_receivable_partner,account.group_account_manager,1,0,0,0

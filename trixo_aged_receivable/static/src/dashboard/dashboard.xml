@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="trixo_aged_receivable.Dashboard">
+        <div class="o_action o_trixo_deudores">
+
+            <div t-if="state.cargando" class="o_trixo_cargando">
+                <span class="fa fa-circle-o-notch fa-spin fa-2x"/>
+            </div>
+
+            <div t-else="" class="o_trixo_wrap">
+
+                <div class="o_trixo_header">
+                    <div>
+                        <h1>Deudores</h1>
+                        <span class="o_trixo_sub">Cuentas por cobrar al <t t-esc="d.fecha"/></span>
+                    </div>
+                    <button class="btn btn-light" t-on-click="() => this.cargar()" title="Actualizar">
+                        <span class="fa fa-refresh"/>
+                    </button>
+                </div>
+
+                <div class="o_trixo_tarjetas">
+
+                    <div class="o_trixo_card o_trixo_total" t-on-click="() => this.abrirDeudores()">
+                        <div class="o_trixo_card_label">Total adeudado</div>
+                        <div class="o_trixo_card_valor"><t t-esc="moneyCorto(d.total)"/></div>
+                        <div class="o_trixo_card_pie">
+                            <t t-esc="d.deudores"/> clientes · <t t-esc="money(d.total)"/>
+                        </div>
+                    </div>
+
+                    <div class="o_trixo_card o_trixo_warn" t-on-click="() => this.abrirVencido(90)">
+                        <div class="o_trixo_card_label">Mas de 90 dias</div>
+                        <div class="o_trixo_card_valor"><t t-esc="moneyCorto(d.venc_90)"/></div>
+                        <div class="o_trixo_card_pie">
+                            <t t-esc="d.venc_90_cant"/> clientes · <t t-esc="money(d.venc_90)"/>
+                        </div>
+                    </div>
+
+                    <div class="o_trixo_card o_trixo_danger" t-on-click="() => this.abrirVencido(180)">
+                        <div class="o_trixo_card_label">Mas de 180 dias</div>
+                        <div class="o_trixo_card_valor"><t t-esc="moneyCorto(d.venc_180)"/></div>
+                        <div class="o_trixo_card_pie">
+                            <t t-esc="d.venc_180_cant"/> clientes · <t t-esc="money(d.venc_180)"/>
+                        </div>
+                    </div>
+
+                    <div class="o_trixo_card" t-att-class="variacionSube ? 'o_trixo_sube' : 'o_trixo_baja'">
+                        <div class="o_trixo_card_label">Contra el cierre de mes</div>
+                        <div class="o_trixo_card_valor">
+                            <span t-if="variacionSube">+</span><t t-esc="pct(d.mes.pct)"/>
+                        </div>
+                        <div class="o_trixo_card_pie">
+                            <span t-if="variacionSube">+</span><t t-esc="money(d.mes.delta)"/>
+                            vs <t t-esc="money(d.mes.anterior)"/> al <t t-esc="d.mes.corte"/>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="o_trixo_cols">
+
+                    <div class="o_trixo_panel">
+                        <div class="o_trixo_panel_titulo">Antiguedad de la deuda</div>
+                        <div class="o_trixo_panel_sub">Contada desde la fecha del comprobante. Clic en un tramo para ver los comprobantes.</div>
+                        <div class="o_trixo_tramos">
+                            <div class="o_trixo_tramo" t-foreach="d.tramos" t-as="tramo" t-key="tramo.key"
+                                 t-on-click="() => this.abrirTramo(tramo.key)">
+                                <div class="o_trixo_tramo_top">
+                                    <span class="o_trixo_tramo_label"><t t-esc="tramo.label"/></span>
+                                    <span class="o_trixo_tramo_monto"><t t-esc="money(tramo.amount)"/></span>
+                                </div>
+                                <div class="o_trixo_barra">
+                                    <div t-attf-class="o_trixo_barra_fill o_trixo_b_{{ tramo.key }}"
+                                         t-attf-style="width: {{ tramo.pct }}%;"/>
+                                </div>
+                                <div class="o_trixo_tramo_pct"><t t-esc="pct(tramo.pct)"/> del total</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="o_trixo_panel">
+                        <div class="o_trixo_panel_titulo">Los que mas deben</div>
+                        <div class="o_trixo_panel_sub">Clic en un cliente para ver sus comprobantes impagos.</div>
+                        <table class="o_trixo_top">
+                            <tbody>
+                                <tr t-foreach="d.top" t-as="linea" t-key="linea.id"
+                                    t-on-click="() => this.abrirCliente(linea)">
+                                    <td class="o_trixo_top_pos"><t t-esc="linea_index + 1"/></td>
+                                    <td class="o_trixo_top_nombre">
+                                        <div class="o_trixo_top_cliente"><t t-esc="linea.name"/></div>
+                                        <div class="o_trixo_barra o_trixo_barra_fina">
+                                            <div class="o_trixo_barra_fill o_trixo_b_top"
+                                                 t-attf-style="width: {{ linea.pct }}%;"/>
+                                        </div>
+                                    </td>
+                                    <td class="o_trixo_top_monto">
+                                        <div><t t-esc="money(linea.saldo)"/></div>
+                                        <div class="o_trixo_top_dias"><t t-esc="linea.dias"/> dias</div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+
+                <div class="o_trixo_pie" t-on-click="() => this.abrirAFavor()">
+                    <span class="fa fa-arrow-circle-o-down me-2"/>
+                    <t t-esc="d.a_favor_cant"/> clientes con saldo a favor por <t t-esc="money(d.a_favor)"/>
+                </div>
+
+            </div>
+        </div>
+    </t>
+
+</templates>

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_trixo_receivable_line_list" model="ir.ui.view">
+        <field name="name">trixo.receivable.line.list</field>
+        <field name="model">trixo.receivable.line</field>
+        <field name="arch" type="xml">
+            <list string="Comprobantes impagos" create="0" edit="0" delete="0"
+                  action="action_trixo_ver_comprobante" type="object"
+                  default_order="dias desc"
+                  decoration-danger="dias &gt; 180" decoration-warning="dias &gt; 90 and dias &lt;= 180"
+                  decoration-success="amount_residual &lt; 0">
+                <field name="currency_id" column_invisible="True"/>
+                <field name="invoice_date" string="Fecha"/>
+                <field name="partner_ref" string="Codigo" optional="show"/>
+                <field name="partner_id" string="Cliente"/>
+                <field name="move_name" string="Comprobante"/>
+                <field name="journal_id" optional="hide"/>
+                <field name="date_maturity" string="Vencimiento" optional="show"/>
+                <field name="amount_residual" widget="monetary" sum="Total"/>
+                <field name="dias" string="Antiguedad (dias)"/>
+                <field name="dias_vencido" string="Dias vencido" optional="hide"/>
+                <field name="bucket" string="Tramo" widget="badge"
+                       decoration-danger="bucket == 'mas180'"
+                       decoration-warning="bucket == 'a180'"
+                       decoration-info="bucket in ('a30', 'a60', 'a90')"/>
+                <field name="vendedor_id" optional="hide"/>
+                <field name="tipo" optional="hide"/>
+                <field name="move_id" column_invisible="True"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_trixo_receivable_line_pivot" model="ir.ui.view">
+        <field name="name">trixo.receivable.line.pivot</field>
+        <field name="model">trixo.receivable.line</field>
+        <field name="arch" type="xml">
+            <pivot string="Antiguedad de saldos">
+                <field name="partner_id" type="row"/>
+                <field name="bucket" type="col"/>
+                <field name="amount_residual" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_trixo_receivable_line_graph" model="ir.ui.view">
+        <field name="name">trixo.receivable.line.graph</field>
+        <field name="model">trixo.receivable.line</field>
+        <field name="arch" type="xml">
+            <graph string="Deuda por antiguedad" type="bar" stacked="1">
+                <field name="bucket"/>
+                <field name="amount_residual" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_trixo_receivable_line_search" model="ir.ui.view">
+        <field name="name">trixo.receivable.line.search</field>
+        <field name="model">trixo.receivable.line</field>
+        <field name="arch" type="xml">
+            <search string="Comprobantes impagos">
+                <field name="partner_id" string="Cliente"/>
+                <field name="partner_ref" string="Codigo"
+                       filter_domain="['|', ('partner_ref', '=', self), ('partner_ref', 'ilike', self)]"/>
+                <field name="move_name" string="Comprobante"/>
+                <field name="vendedor_id"/>
+                <filter name="solo_deuda" string="Solo deuda" domain="[('tipo', '=', 'deuda')]"/>
+                <filter name="solo_favor" string="Solo saldo a favor" domain="[('tipo', '=', 'favor')]"/>
+                <separator/>
+                <filter name="vencidas" string="Vencidas" domain="[('dias_vencido', '&gt;', 0)]"/>
+                <filter name="mas_90" string="Mas de 90 dias" domain="[('dias', '&gt;', 90)]"/>
+                <filter name="mas_180" string="Mas de 180 dias" domain="[('dias', '&gt;', 180)]"/>
+                <group>
+                    <filter name="group_partner" string="Cliente" domain="[]" context="{'group_by': 'partner_id'}"/>
+                    <filter name="group_bucket" string="Tramo de antiguedad" domain="[]" context="{'group_by': 'bucket'}"/>
+                    <filter name="group_vendedor" string="Vendedor" domain="[]" context="{'group_by': 'vendedor_id'}"/>
+                    <filter name="group_journal" string="Diario" domain="[]" context="{'group_by': 'journal_id'}"/>
+                    <filter name="group_fecha" string="Fecha" domain="[]" context="{'group_by': 'invoice_date'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_trixo_receivable_line" model="ir.actions.act_window">
+        <field name="name">Detalle de comprobantes</field>
+        <field name="res_model">trixo.receivable.line</field>
+        <field name="view_mode">list,pivot,graph</field>
+        <field name="search_view_id" ref="view_trixo_receivable_line_search"/>
+        <field name="context">{'search_default_solo_deuda': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No hay comprobantes por cobrar pendientes</p>
+            <p>Cada linea es un apunte por cobrar sin conciliar. La antiguedad se
+               cuenta desde la fecha del comprobante.</p>
+        </field>
+    </record>
+
+    <record id="action_trixo_receivable_line_aging" model="ir.actions.act_window">
+        <field name="name">Antiguedad de saldos</field>
+        <field name="res_model">trixo.receivable.line</field>
+        <field name="view_mode">pivot,graph,list</field>
+        <field name="search_view_id" ref="view_trixo_receivable_line_search"/>
+        <field name="context">{'search_default_solo_deuda': 1, 'search_default_group_partner': 1}</field>
+    </record>
+
+</odoo>

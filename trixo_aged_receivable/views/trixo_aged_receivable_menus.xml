@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_trixo_deudores_root"
+              name="Deudores"
+              web_icon="trixo_aged_receivable,static/description/icon.png"
+              sequence="46"
+              groups="trixo_aged_receivable.group_trixo_deudores"/>
+
+    <menuitem id="menu_trixo_deudores_tablero"
+              name="Tablero"
+              parent="menu_trixo_deudores_root"
+              action="action_trixo_deudores_dashboard"
+              sequence="1"/>
+
+    <menuitem id="menu_trixo_deudores_panorama"
+              name="Panorama"
+              parent="menu_trixo_deudores_root"
+              action="action_trixo_receivable_partner_grafico"
+              sequence="5"/>
+
+    <menuitem id="menu_trixo_deudores_por_cliente"
+              name="Deudores por cliente"
+              parent="menu_trixo_deudores_root"
+              action="action_trixo_receivable_partner"
+              sequence="10"/>
+
+    <menuitem id="menu_trixo_deudores_aging"
+              name="Antiguedad de saldos"
+              parent="menu_trixo_deudores_root"
+              action="action_trixo_receivable_line_aging"
+              sequence="20"/>
+
+    <menuitem id="menu_trixo_deudores_detalle"
+              name="Detalle de comprobantes"
+              parent="menu_trixo_deudores_root"
+              action="action_trixo_receivable_line"
+              sequence="30"/>
+
+    <menuitem id="menu_trixo_deudores_favor"
+              name="Saldos a favor"
+              parent="menu_trixo_deudores_root"
+              action="action_trixo_receivable_partner_favor"
+              sequence="40"/>
+
+    <menuitem id="menu_trixo_deudores_config"
+              name="Configuracion"
+              parent="menu_trixo_deudores_root"
+              sequence="90"/>
+
+    <menuitem id="menu_trixo_deudores_excluidos"
+              name="Contactos excluidos"
+              parent="menu_trixo_deudores_config"
+              action="action_trixo_partner_excluidos"
+              sequence="10"/>
+
+</odoo>
