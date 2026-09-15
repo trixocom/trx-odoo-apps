@@ -2,7 +2,7 @@
 # Copyright 2026 Trixocom - License AGPL-3.0
 {
     "name": "Trixocom - Tablero de Deudores",
-    "version": "19.0.2.2.1",
+    "version": "19.0.2.2.2",
     "category": "Accounting",
     "summary": "Tablero de cuentas por cobrar: quien debe, cuanto y desde cuando (antiguedad de saldos)",
     "description": """

@@ -73,9 +73,15 @@ class TrixoReceivablePartnerDashboard(models.Model):
     def trixo_get_dashboard_data(self):
         self.browse().check_access("read")
         Partner = self.sudo()
+        # sudo() saltea las ir.rule multi-compania: el alcance se fija a mano
+        # con las companias activas del selector, igual que _saldo_a_fecha() y
+        # que las listas a las que se entra con un clic (que NO van con sudo).
+        # Sin esto el tablero sumaba todas las companias y el clic mostraba
+        # una lista vacia para los deudores de una compania no activa.
+        en_companias = [("company_id", "in", self.env.companies.ids)]
 
-        deudores = Partner.search([("saldo", ">", 0)], order="saldo desc")
-        a_favor = Partner.search([("saldo", "<", 0)])
+        deudores = Partner.search(en_companias + [("saldo", ">", 0)], order="saldo desc")
+        a_favor = Partner.search(en_companias + [("saldo", "<", 0)])
 
         total = sum(deudores.mapped("saldo"))
         tramos_campos = [
