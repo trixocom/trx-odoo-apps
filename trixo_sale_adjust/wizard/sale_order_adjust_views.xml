@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_sale_order_adjust_form" model="ir.ui.view">
+        <field name="name">sale.order.adjust.form</field>
+        <field name="model">sale.order.adjust</field>
+        <field name="arch" type="xml">
+            <form string="Ajustar pedido">
+                <div class="alert alert-info" role="alert">
+                    Cambia la columna <b>Nueva cantidad</b> (o baja la cantidad en la linea del pedido
+                    antes de apretar <b>Ajustar pedido</b>) y mira, linea por linea, que va a pasar antes
+                    de confirmar. Aca solo se <b>reduce</b>; lo que se agrega se carga en las lineas del
+                    pedido: el despacho adicional queda listo para validar y la factura se genera desde aca.
+                    Las lineas de combo se re-evaluan con la receta del surtido: si el combo deja de
+                    aplicar, se desarma (NC de la cabecera, componentes a precio de lista).
+                </div>
+                <div class="alert alert-success" role="alert" invisible="not prefill_notice">
+                    <field name="prefill_notice" nolabel="1" readonly="1"/>
+                </div>
+                <div class="alert alert-warning" role="alert"
+                     invisible="not invoice_added or not invoice_is_fiscal">
+                    La factura por lo agregado sale por un <b>diario fiscal (AFIP/ARCA)</b>: se genera en
+                    <b>borrador</b>. Hay que revisarla y confirmarla para pedir el CAE.
+                </div>
+                <group>
+                    <group>
+                        <field name="order_id"/>
+                        <field name="partner_id"/>
+                        <field name="reason" required="1" placeholder="Ej.: el cliente no se lleva las papas"/>
+                    </group>
+                    <group>
+                        <field name="validate_return" invisible="not has_return"/>
+                        <field name="credit_note_mode" widget="radio" invisible="not has_credit"/>
+                        <field name="invoice_added" invisible="not has_pending_invoice"/>
+                        <field name="has_invoice" invisible="1"/>
+                        <field name="has_pending_invoice" invisible="1"/>
+                        <field name="invoice_is_fiscal" invisible="1"/>
+                        <field name="has_return" invisible="1"/>
+                        <field name="has_credit" invisible="1"/>
+                        <field name="has_changes" invisible="1"/>
+                    </group>
+                </group>
+                <field name="line_ids" nolabel="1" colspan="2">
+                    <list editable="bottom" create="0" delete="0" no_open="1"
+                          decoration-muted="not has_action"
+                          decoration-warning="combo_dissolve"
+                          decoration-info="kind == 'combo_child' and not combo_dissolve">
+                        <field name="sequence" column_invisible="1"/>
+                        <field name="kind" column_invisible="1"/>
+                        <field name="combo_parent_line_id" column_invisible="1"/>
+                        <field name="locked" column_invisible="1"/>
+                        <field name="has_action" column_invisible="1"/>
+                        <field name="combo_dissolve" column_invisible="1"/>
+                        <field name="release_from_combo" column_invisible="1"/>
+                        <field name="sale_line_id" column_invisible="1"/>
+                        <field name="product_id" readonly="1" force_save="1"/>
+                        <field name="uom_id" readonly="1" force_save="1"/>
+                        <field name="price_unit" readonly="1" force_save="1" optional="hide"/>
+                        <field name="ordered_qty" readonly="1" force_save="1"/>
+                        <field name="delivered_qty" readonly="1" force_save="1"/>
+                        <field name="invoiced_qty" readonly="1" force_save="1"/>
+                        <field name="new_qty" readonly="locked" force_save="1"/>
+                        <field name="cancel_qty" readonly="1" force_save="1" optional="hide"/>
+                        <field name="return_qty" readonly="1" force_save="1" optional="hide"/>
+                        <field name="credit_qty" readonly="1" force_save="1" optional="hide"/>
+                        <field name="invoice_qty" readonly="1" force_save="1" optional="hide"/>
+                        <field name="pending_invoice_qty" column_invisible="1" force_save="1"/>
+                        <field name="action_summary" readonly="1" force_save="1"/>
+                    </list>
+                </field>
+                <field name="summary_html" nolabel="1" colspan="2" readonly="1"/>
+                <footer>
+                    <button name="action_apply" type="object" string="Aplicar ajuste"
+                            class="btn-primary" data-hotkey="q" invisible="not has_changes"/>
+                    <button name="action_set_all_delivered" type="object"
+                            string="Todo a lo entregado" class="btn-secondary"
+                            help="Deja todas las lineas en la cantidad ya entregada (cancela lo pendiente de todo el pedido)."/>
+                    <button string="Cancelar" special="cancel" class="btn-secondary" data-hotkey="x"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

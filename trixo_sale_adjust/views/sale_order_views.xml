@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_order_form_trixo_adjust" model="ir.ui.view">
+        <field name="name">sale.order.form.trixo.adjust</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <!-- Boton de cabecera -->
+            <xpath expr="//header" position="inside">
+                <button name="action_open_trixo_adjust" type="object" string="Ajustar pedido"
+                        groups="trixo_sale_adjust.group_sale_adjust"
+                        invisible="state != 'sale' or locked"
+                        help="Reducir cantidades de un pedido confirmado: cancela lo pendiente, genera la devolucion de lo entregado y la nota de credito de lo facturado."/>
+            </xpath>
+            <!-- Boton por linea, al lado de lo entregado (paridad v18 sale_stock_ux) -->
+            <xpath expr="//field[@name='order_line']/list//field[@name='qty_delivered']" position="after">
+                <field name="qty_to_deliver" column_invisible="1"/>
+                <button name="action_trixo_cancel_remaining" type="object" icon="fa-ban"
+                        title="Cancelar cantidades pendientes de entregar"
+                        groups="trixo_sale_adjust.group_sale_adjust"
+                        invisible="parent.state != 'sale' or parent.locked or display_type or qty_to_deliver &lt;= 0"
+                        help="Deja la linea en lo ya entregado y cancela los movimientos pendientes. Si hay facturado de mas, abre el ajuste del pedido para emitir la nota de credito."/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

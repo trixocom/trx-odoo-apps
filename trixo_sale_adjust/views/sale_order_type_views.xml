@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="sot_sale_order_type_form_view_trixo_adjust" model="ir.ui.view">
+        <field name="name">sale.order.type.form.trixo.adjust</field>
+        <field name="model">sale.order.type</field>
+        <field name="inherit_id" ref="sale_order_type.sot_sale_order_type_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='picking_policy']" position="after">
+                <field name="trixo_adjust_validate_return"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
