@@ -1,2 +1,5 @@
 __pycache__/
 *.pyc
+# macOS Finder: archivo de icono de carpeta, no es fuente
+Icon
+.DS_Store
