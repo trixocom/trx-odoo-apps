@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_trx_login_as_user,trx.login.as.user,model_trx_login_as_user,trx_login_as_user.group_login_as_user,1,1,1,0

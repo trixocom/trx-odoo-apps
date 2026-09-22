@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="module_category_trixocom" model="ir.module.category">
+        <field name="name">Trixocom</field>
+        <field name="description">Herramientas de soporte de Trixocom</field>
+        <field name="sequence">90</field>
+    </record>
+
+    <!-- No se asigna a nadie al instalar: se da a mano al personal de soporte. -->
+    <record id="group_login_as_user" model="res.groups">
+        <field name="name">Suplantar usuarios</field>
+        <field name="category_id" ref="module_category_trixocom"/>
+        <field name="comment">Permite iniciar sesion como otro usuario sin su contrasena, para dar soporte. No se asigna automaticamente: ser Administrador de Odoo no alcanza.</field>
+    </record>
+</odoo>

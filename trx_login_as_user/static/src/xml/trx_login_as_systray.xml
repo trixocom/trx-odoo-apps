@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates xml:space="preserve">
+
+    <t t-name="trx_login_as_user.SystrayItem">
+        <div t-if="impersonating" class="o_trx_login_as_item d-flex align-items-center">
+            <button type="button" class="btn btn-warning btn-sm px-2 py-0"
+                    title="Volver a su sesion"
+                    t-on-click="() =&gt; this.onClickBack()">
+                <i class="fa fa-sign-out me-1" role="img" aria-label="Volver a su sesion"/>
+                <span class="d-none d-md-inline">Volver a mi sesion</span>
+            </button>
+        </div>
+        <div t-elif="canSwitch" class="o_trx_login_as_item d-flex align-items-center">
+            <button type="button" class="btn o-dropdown-caret px-2"
+                    title="Iniciar sesion como otro usuario"
+                    t-on-click="() =&gt; this.onClickSwitch()">
+                <i class="fa fa-user-secret" role="img"
+                   aria-label="Iniciar sesion como otro usuario"/>
+            </button>
+        </div>
+    </t>
+
+</templates>
