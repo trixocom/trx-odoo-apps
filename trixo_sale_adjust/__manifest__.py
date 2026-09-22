@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Trixocom Ajuste de Pedidos Confirmados',
-    'version': '19.0.1.2.0',
+    'version': '19.0.1.3.0',
     'category': 'Sales/Sales',
     'summary': 'Cancelar pendientes, devolver y emitir notas de credito sobre '
                'un pedido confirmado desde una sola pantalla',
@@ -53,6 +53,19 @@ de un pedido de venta y el boton "Nota de credito" de las facturas de cliente
 quedan reservados al grupo 'Ver "Devolver" y "Nota de credito" nativos', que por
 defecto no tiene nadie (views/hide_native_buttons.xml). Compras no se tocan.
 El modulo pasa al repo trx-odoo-apps (antes vivia en un repo de cliente).
+
+19.0.1.3.0: canje de embalaje. Cada linea del wizard tiene ademas "Se lleva"
++ "En embalaje": lo que el cliente se lleva del mismo producto en otro
+embalaje a cambio de lo que devuelve (devuelve un bulto, se lleva 2 unidades).
+Se agrega como linea nueva del pedido -una linea no puede estar en dos
+embalajes a la vez-, se despacha y se factura junto con el resto del ajuste,
+al precio vigente de ese embalaje (recargo por suelto incluido) y con el
+descuento de la linea de origen. No se puede llevar mas de lo que se devuelve:
+eso es una venta adicional y va por las lineas del pedido.
+Ademas: el wizard ya no exige editar cantidades antes de abrirlo (es el punto
+de entrada del ajuste), se cierra la edicion pendiente de la celda antes de
+leer las cantidades bajadas, y se preserva el descuento manual de la linea que
+el wizard modifica (el core lo recalculaba a 0).
 
 Combos (modulo de surtidos, dependencia opcional): la cabecera lleva el precio y los
 componentes el stock a $0. Si se toca un componente se re-evalua el combo

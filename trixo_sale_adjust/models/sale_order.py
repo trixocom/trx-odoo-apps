@@ -20,18 +20,11 @@ class SaleOrder(models.Model):
         wizard._populate_lines()
         wizard._apply_requested_quantities(
             self.env.context.get('trixo_adjust_new_qty'))
-        if not wizard.has_changes:
-            # Pedido sin modificar (ni bajas tomadas de las lineas ni nada
-            # agregado pendiente de facturar): se explica el orden correcto.
-            raise UserError(_(
-                'El pedido %s no tiene cambios para ajustar.\n\n'
-                'PRIMERO cambia las cantidades en las lineas del pedido (baja lo que '
-                'el cliente devuelve o no lleva, subi o agrega lo que suma) y '
-                'DESPUES, sin guardar, apreta el boton "Ajustar pedido": se genera la '
-                'devolucion de la mercaderia, la nota de credito y, si agregaste '
-                'productos, el despacho y la factura adicional.',
-                self.name,
-            ))
+        # 19.0.1.3.0: el wizard es el punto de entrada del ajuste, asi que abre
+        # siempre sobre un pedido confirmado. Antes exigia haber modificado las
+        # lineas primero; ahora lo que hay que hacer se carga adentro (bajar
+        # cantidades y, si el cliente cambia de embalaje, "Se lleva"). Que no
+        # haya nada para aplicar lo sigue controlando `action_apply`.
         return wizard._get_action()
 
     def _trixo_adjust_check_order(self):

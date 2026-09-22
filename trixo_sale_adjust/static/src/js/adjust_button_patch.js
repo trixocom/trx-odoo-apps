@@ -10,6 +10,8 @@
  * `_update_line_quantity`) y el boton nunca llega a ejecutarse.
  *
  * Este patch, SOLO para ese boton y SOLO en sale.order:
+ *   0. cierra la edicion pendiente de la celda (`_askChanges`), porque el
+ *      usuario puede apretar el boton sin salir del campo cantidad;
  *   1. toma las cantidades que el usuario bajo en las lineas ya guardadas;
  *   2. las saca del formulario (no se guardan nunca por esta via):
  *        - si era lo unico editado: descarta los cambios, no hay guardado;
@@ -33,6 +35,11 @@ patch(FormController.prototype, {
         if (this.props.resModel !== "sale.order" || clickParams.name !== ADJUST_BUTTON) {
             return super.beforeExecuteActionButton(...arguments);
         }
+        // El usuario puede apretar el boton con una celda todavia en edicion
+        // (bajo la cantidad y no salio del campo). Sin esto, ese valor no esta
+        // en el record: el patch no lo ve, el guardado se lleva la cantidad
+        // tipeada y el core rechaza el pedido antes de abrir el wizard.
+        await this.model._askChanges();
         const root = this.model.root;
         const lines = root.data.order_line?.records || [];
         const reduced = []; // [{ line, resId, original, wanted }]

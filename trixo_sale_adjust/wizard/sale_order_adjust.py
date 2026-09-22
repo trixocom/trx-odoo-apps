@@ -23,7 +23,7 @@ import logging
 from markupsafe import Markup
 
 from odoo import _, api, fields, models
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, ValidationError
 from odoo.tools import float_compare, float_is_zero, float_round
 
 _logger = logging.getLogger(__name__)
@@ -285,7 +285,7 @@ class SaleOrderAdjust(models.TransientModel):
                 wl.has_action = bool(
                     cmp(wl.return_qty, 0) > 0 or cmp(wl.cancel_qty, 0) > 0
                     or cmp(wl.credit_qty, 0) > 0 or cmp(wl.reinvoice_qty, 0) > 0
-                    or cmp(wl.invoice_qty, 0) > 0
+                    or cmp(wl.invoice_qty, 0) > 0 or cmp(wl.swap_qty, 0) > 0
                     or wl.release_from_combo or cmp(wl.target_qty, ordered) != 0
                 )
                 wl.action_summary = wl._build_action_summary()
@@ -304,7 +304,7 @@ class SaleOrderAdjust(models.TransientModel):
             wizard.invoice_is_fiscal = bool(
                 wizard.has_pending_invoice and wizard._added_invoice_is_fiscal())
             if not lines:
-                wizard.summary_html = _('<i>Sin cambios: modifica la columna "Nueva cantidad".</i>')
+                wizard.summary_html = _('<i>Sin cambios: baja la columna "Nueva cantidad" y, si el cliente se lleva otro embalaje a cambio, carga "Se lleva".</i>')
                 continue
             parts = []
             n_ret = sum(1 for l in lines if l.return_qty > 0)
@@ -322,6 +322,10 @@ class SaleOrderAdjust(models.TransientModel):
             if n_combo:
                 parts.append(_('%s combo(s) se desarma(n): NC por la cabecera y componentes '
                                'facturados a precio de lista', n_combo))
+            n_swap = sum(1 for l in lines if l.swap_qty > 0)
+            if n_swap:
+                parts.append(_('%s linea(s) con cambio de embalaje: se factura lo que el '
+                               'cliente se lleva, al precio de lista del embalaje nuevo', n_swap))
             n_inv = sum(1 for l in lines if l.invoice_qty > 0)
             if n_inv:
                 parts.append(_('factura por lo agregado en %s linea(s)%s', n_inv,
@@ -348,7 +352,8 @@ class SaleOrderAdjust(models.TransientModel):
         returns = self._do_returns(ctx_lines)
         self._do_quantities(ctx_lines)
         refunds, refund_errors = self._do_credit_notes(ctx_lines)
-        invoices, invoice_errors = self._do_reinvoice(ctx_lines)
+        swapped = self._do_swaps(ctx_lines)
+        invoices, invoice_errors = self._do_reinvoice(ctx_lines, extra_lines=swapped)
         self._do_reconcile(refunds, invoices)
         self._post_messages(plan, returns, refunds, invoices, refund_errors + invoice_errors)
 
@@ -413,6 +418,36 @@ class SaleOrderAdjust(models.TransientModel):
                 ))
             if wl.locked and wl.kind != 'combo_parent' and float_compare(wl.new_qty, wl.ordered_qty, precision_digits=precision) != 0:
                 raise UserError(_('La linea "%s" no se puede ajustar desde aqui.', name))
+            self._check_swap(wl, name, precision)
+
+    def _check_swap(self, wl, name, precision):
+        """Validaciones del canje de embalaje de una linea."""
+        if float_compare(wl.swap_qty, 0, precision_digits=precision) < 0:
+            raise UserError(_('La cantidad que se lleva de "%s" no puede ser negativa.', name))
+        if not wl.swap_qty:
+            return
+        if not wl.swap_uom_id:
+            raise UserError(_('Elegi el embalaje que el cliente se lleva de "%s".', name))
+        if wl.locked:
+            raise UserError(_('La linea "%s" no admite cambio de embalaje desde aqui.', name))
+        product = wl.sale_line_id.product_id
+        if wl.swap_uom_id not in product.uom_ids:
+            raise UserError(_(
+                '"%s" no se vende en %s. Elegi uno de los embalajes del producto.',
+                name, wl.swap_uom_id.name))
+        # No se puede llevar mas de lo que devuelve: eso seria una venta nueva,
+        # no un canje. Se compara en la unidad base del producto para poder
+        # mezclar embalajes distintos.
+        base = product.uom_id
+        devuelve = wl.sale_line_id.product_uom_id._compute_quantity(
+            max(wl.ordered_qty - wl.new_qty, 0.0), base)
+        lleva = wl.swap_uom_id._compute_quantity(wl.swap_qty, base)
+        if float_compare(lleva, devuelve, precision_digits=precision) > 0:
+            raise UserError(_(
+                'En "%s" el cliente se lleva mas de lo que devuelve (%s vs %s %s). '
+                'Baja mas la "Nueva cantidad", o agrega el producto en las lineas '
+                'del pedido si es una venta adicional.',
+                name, wl._fmt(lleva), wl._fmt(devuelve), base.name or ''))
 
     # --- 1. devoluciones -------------------------------------------------
     def _do_returns(self, plan):
@@ -502,7 +537,15 @@ class SaleOrderAdjust(models.TransientModel):
             if 'product_uom_qty' in vals and float_compare(
                     wl.target_qty, sl.qty_delivered, precision_digits=precision) < 0:
                 ctx['trixo_adjust_skip_delivered_check'] = True
-            sl.with_context(**ctx).write(vals)
+            # `discount` es un campo computado que depende de `product_uom_qty`
+            # (core sale_order_line._compute_discount): al bajar la cantidad se
+            # recalcula desde la lista de precios -que no da descuento- y se
+            # pierde el descuento comercial cargado a mano. No se lo reescribe
+            # despues (eso lo volveria a validar contra el tope del usuario que
+            # esta ajustando, y no es un descuento nuevo): se protege el campo
+            # para que el cambio de cantidad no lo recalcule.
+            with self.env.protecting([sl._fields['discount']], sl):
+                sl.with_context(**ctx).write(vals)
 
     # --- 3. notas de credito --------------------------------------------
     def _do_credit_notes(self, plan):
@@ -603,8 +646,50 @@ class SaleOrderAdjust(models.TransientModel):
             return str(e.args[0]) if e.args else str(e)
         return ''
 
+    # --- 3bis. canje de embalaje ---------------------------------------------
+    def _do_swaps(self, plan):
+        """Lineas nuevas por lo que el cliente se lleva en otro embalaje.
+
+        El precio lo pone la lista vigente para ese embalaje: si el producto
+        tiene recargo por unidad suelta, `sale_packaging_pricing` lo aplica
+        solo al calcularse `price_unit`. El descuento se hereda de la linea de
+        origen (decision de Tito, 21-09-2026) y se valida como cualquier otro:
+        si hay un tope de descuento por usuario, aplica igual que cuando la
+        linea se carga a mano en el pedido.
+
+        El despacho de lo que se lleva lo genera el core al crear la linea.
+        """
+        order = self.order_id
+        created = self.env['sale.order.line']
+        for wl in plan.filtered(lambda l: l.swap_qty > 0 and l.swap_uom_id):
+            sl = wl.sale_line_id
+            vals = {
+                'order_id': order.id,
+                'product_id': sl.product_id.id,
+                'product_uom_id': wl.swap_uom_id.id,
+                'product_uom_qty': wl.swap_qty,
+                'sequence': sl.sequence,
+            }
+            if sl.discount:
+                vals['discount'] = sl.discount
+            try:
+                new = self.env['sale.order.line'].with_context(
+                    skip_surtido_detection=True,
+                ).create(vals)
+            except (UserError, ValidationError) as e:
+                raise UserError(_(
+                    'No se pudo agregar "%s" en %s: %s\n\n'
+                    'La linea nueva hereda el descuento de la linea de origen '
+                    '(%s%%). Si el bloqueo es por el tope de descuento, el ajuste '
+                    'lo tiene que hacer un usuario autorizado.',
+                    sl.product_id.display_name, wl.swap_uom_id.name,
+                    e.args[0] if e.args else str(e), '%.2f' % sl.discount,
+                )) from e
+            created |= new
+        return created
+
     # --- 4. facturas: combos desarmados (re-tasados) + lo agregado -----------
-    def _do_reinvoice(self, plan):
+    def _do_reinvoice(self, plan, extra_lines=None):
         invoices = self.env['account.move']
         errors = []
         order = self.order_id
@@ -612,10 +697,12 @@ class SaleOrderAdjust(models.TransientModel):
         added = plan.filtered(
             lambda l: l.invoice_qty > 0 and not l.release_from_combo
         ).mapped('sale_line_id')
-        to_invoice = (children | added).filtered(lambda l: l.qty_to_invoice > 0)
+        swapped = extra_lines or self.env['sale.order.line']
+        to_invoice = (children | added | swapped).filtered(lambda l: l.qty_to_invoice > 0)
         if not to_invoice:
             return invoices, errors
         has_combo = bool(children & to_invoice)
+        has_swap = bool(swapped & to_invoice)
         invoices = order.with_context(
             trixo_adjust_only_line_ids=to_invoice.ids, skip_surtido_detection=True,
         )._create_invoices()
@@ -623,7 +710,9 @@ class SaleOrderAdjust(models.TransientModel):
             inv.message_post(body=_(
                 'Factura generada por ajuste del pedido %s (%s). Motivo: %s',
                 order.name,
-                _('combo desarmado') if has_combo else _('productos/cantidades agregadas'),
+                _('combo desarmado') if has_combo
+                else (_('cambio de embalaje') if has_swap
+                      else _('productos/cantidades agregadas')),
                 self.reason,
             ))
             if self._journal_is_fiscal(inv.journal_id):
@@ -740,6 +829,22 @@ class SaleOrderAdjustLine(models.TransientModel):
     invoiced_qty = fields.Float(string='Facturado', digits='Product Unit', readonly=True)
     new_qty = fields.Float(string='Nueva cantidad', digits='Product Unit')
 
+    # Canje de embalaje (19.0.1.3.0): lo que el cliente se lleva A CAMBIO de lo
+    # que devuelve, en otro embalaje del mismo producto. No se toca la linea
+    # original (una linea no puede estar en dos embalajes): se factura aparte.
+    allowed_uom_ids = fields.Many2many(
+        'uom.uom', string='Embalajes del producto',
+        compute='_compute_allowed_uom_ids')
+    swap_qty = fields.Float(
+        string='Se lleva', digits='Product Unit',
+        help='Cantidad que el cliente se lleva EN OTRO EMBALAJE a cambio de lo '
+             'que devuelve. Se factura aparte, al precio de la lista vigente '
+             'para ese embalaje (si el producto tiene recargo por suelto, se '
+             'aplica solo) y con el descuento de la linea de origen.')
+    swap_uom_id = fields.Many2one(
+        'uom.uom', string='En embalaje',
+        domain="[('id', 'in', allowed_uom_ids)]")
+
     # plan
     target_qty = fields.Float(digits='Product Unit', readonly=True)
     return_qty = fields.Float(string='Devolver', digits='Product Unit', readonly=True)
@@ -752,6 +857,11 @@ class SaleOrderAdjustLine(models.TransientModel):
     release_from_combo = fields.Boolean(readonly=True)
     has_action = fields.Boolean(readonly=True)
     action_summary = fields.Char(string='Que va a pasar', readonly=True)
+
+    @api.depends('sale_line_id')
+    def _compute_allowed_uom_ids(self):
+        for wl in self:
+            wl.allowed_uom_ids = wl.sale_line_id.product_id.uom_ids
 
     def _fmt(self, qty):
         precision = self.wizard_id._uom_precision()
@@ -780,4 +890,7 @@ class SaleOrderAdjustLine(models.TransientModel):
             parts.append(_('NC por %s %s', self._fmt(self.credit_qty), uom))
         if self.invoice_qty:
             parts.append(_('factura por %s %s (agregado)', self._fmt(self.invoice_qty), uom))
+        if self.swap_qty and self.swap_uom_id:
+            parts.append(_('se lleva %s %s a cambio (se factura aparte a precio de lista)',
+                           self._fmt(self.swap_qty), self.swap_uom_id.name))
         return ' · '.join(parts) if parts else _('Sin cambios')
