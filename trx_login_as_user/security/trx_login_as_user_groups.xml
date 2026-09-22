@@ -6,10 +6,18 @@
         <field name="sequence">90</field>
     </record>
 
+    <!-- Odoo 19: res.groups ya no tiene category_id; la agrupacion en el
+         formulario de usuario pasa por res.groups.privilege. -->
+    <record id="privilege_login_as_user" model="res.groups.privilege">
+        <field name="name">Soporte</field>
+        <field name="category_id" ref="module_category_trixocom"/>
+        <field name="sequence">10</field>
+    </record>
+
     <!-- No se asigna a nadie al instalar: se da a mano al personal de soporte. -->
     <record id="group_login_as_user" model="res.groups">
         <field name="name">Suplantar usuarios</field>
-        <field name="category_id" ref="module_category_trixocom"/>
+        <field name="privilege_id" ref="privilege_login_as_user"/>
         <field name="comment">Permite iniciar sesion como otro usuario sin su contrasena, para dar soporte. No se asigna automaticamente: ser Administrador de Odoo no alcanza.</field>
     </record>
 </odoo>
