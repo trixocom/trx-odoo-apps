@@ -431,7 +431,7 @@ class SaleOrderAdjust(models.TransientModel):
         if wl.locked:
             raise UserError(_('La linea "%s" no admite cambio de embalaje desde aqui.', name))
         product = wl.sale_line_id.product_id
-        if wl.swap_uom_id not in product.uom_ids:
+        if wl.swap_uom_id not in (product.uom_id | product.uom_ids):
             raise UserError(_(
                 '"%s" no se vende en %s. Elegi uno de los embalajes del producto.',
                 name, wl.swap_uom_id.name))
@@ -860,8 +860,13 @@ class SaleOrderAdjustLine(models.TransientModel):
 
     @api.depends('sale_line_id')
     def _compute_allowed_uom_ids(self):
+        # Mismo criterio que el core (sale_order_line._compute_allowed_uom_ids):
+        # `product.uom_ids` son los embalajes ADICIONALES y NO incluye la unidad
+        # base del producto, que es justamente la que el cliente se lleva cuando
+        # devuelve un bulto y se lleva 2 unidades sueltas.
         for wl in self:
-            wl.allowed_uom_ids = wl.sale_line_id.product_id.uom_ids
+            product = wl.sale_line_id.product_id
+            wl.allowed_uom_ids = product.uom_id | product.uom_ids
 
     def _fmt(self, qty):
         precision = self.wizard_id._uom_precision()

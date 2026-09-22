@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Trixocom Ajuste de Pedidos Confirmados',
-    'version': '19.0.1.3.0',
+    'version': '19.0.1.3.1',
     'category': 'Sales/Sales',
     'summary': 'Cancelar pendientes, devolver y emitir notas de credito sobre '
                'un pedido confirmado desde una sola pantalla',
@@ -66,6 +66,9 @@ Ademas: el wizard ya no exige editar cantidades antes de abrirlo (es el punto
 de entrada del ajuste), se cierra la edicion pendiente de la celda antes de
 leer las cantidades bajadas, y se preserva el descuento manual de la linea que
 el wizard modifica (el core lo recalculaba a 0).
+19.0.1.3.1: la lista de embalajes de "En embalaje" incluye la unidad base
+del producto. `product.uom_ids` son solo los embalajes adicionales, asi que
+faltaba justo el caso principal (devuelve un bulto, se lleva 2 unidades).
 
 Combos (modulo de surtidos, dependencia opcional): la cabecera lleva el precio y los
 componentes el stock a $0. Si se toca un componente se re-evalua el combo
