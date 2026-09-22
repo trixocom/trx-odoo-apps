@@ -13,7 +13,7 @@ class SaleOrder(models.Model):
         el cliente web (static/src/js/adjust_button_patch.js) las saca del
         guardado y las manda en el contexto `trixo_adjust_new_qty`
         ({id de linea: nueva cantidad}); el wizard abre con esas cantidades
-        ya cargadas en "Nueva cantidad"."""
+        ya cargadas en "Devuelve"."""
         self.ensure_one()
         self._trixo_adjust_check_order()
         wizard = self.env['sale.order.adjust'].create({'order_id': self.id})

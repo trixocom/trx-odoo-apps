@@ -1,0 +1,10 @@
+/* Trixocom - trixo_sale_adjust
+ *
+ * El wizard "Ajustar pedido" tiene muchas columnas (pedido, entregado,
+ * facturado, devuelve, el canje de embalaje y el detalle de que va a pasar).
+ * La accion ya lo abre en `extra-large`; aca se lo lleva al ancho de la
+ * ventana para que no se corte ninguna columna. Si el navegador no soporta
+ * :has(), el dialogo queda en extra-large igual. */
+.modal:has(.o_trixo_sale_adjust) .modal-dialog.modal-xl {
+    max-width: 96vw;
+}

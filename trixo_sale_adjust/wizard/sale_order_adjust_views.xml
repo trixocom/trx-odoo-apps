@@ -5,14 +5,14 @@
         <field name="name">sale.order.adjust.form</field>
         <field name="model">sale.order.adjust</field>
         <field name="arch" type="xml">
-            <form string="Ajustar pedido">
+            <form string="Ajustar pedido" class="o_trixo_sale_adjust">
                 <div class="alert alert-info" role="alert">
-                    Baja la columna <b>Nueva cantidad</b> en las lineas que el cliente devuelve o no
-                    se lleva. Si a cambio se lleva el mismo producto en <b>otro embalaje</b> (por
-                    ejemplo devuelve un bulto y se lleva 2 unidades), carga esa cantidad en
-                    <b>Se lleva</b> y elegi el embalaje en <b>En embalaje</b>: se agrega como linea
-                    nueva del pedido, se despacha y se factura junto con el ajuste, al precio
-                    vigente de ese embalaje y con el descuento de la linea de origen.
+                    Carga en <b>Devuelve</b> lo que el cliente devuelve o no se lleva; la cantidad
+                    que queda en el pedido se calcula sola. Si a cambio se lleva el mismo producto
+                    en <b>otro embalaje</b> (devuelve un bulto y se lleva 2 unidades), carga esa
+                    cantidad en <b>Se lleva</b> y elegi el embalaje en <b>En embalaje</b>: se agrega
+                    como linea nueva del pedido, se despacha y se factura junto con el ajuste, al
+                    precio vigente de ese embalaje y con el descuento de la linea de origen.
                     Aca solo se <b>reduce</b>: una venta adicional (mas cantidad, o un producto que
                     no estaba) se carga en las lineas del pedido. Mira, linea por linea, que va a
                     pasar antes de confirmar. Las lineas de combo se re-evaluan con la receta del
@@ -64,7 +64,8 @@
                         <field name="ordered_qty" readonly="1" force_save="1"/>
                         <field name="delivered_qty" readonly="1" force_save="1"/>
                         <field name="invoiced_qty" readonly="1" force_save="1"/>
-                        <field name="new_qty" readonly="locked" force_save="1"/>
+                        <field name="returned_qty" readonly="locked" force_save="1"/>
+                        <field name="new_qty" readonly="1" force_save="1" optional="hide"/>
                         <field name="allowed_uom_ids" column_invisible="1"/>
                         <field name="swap_qty" readonly="locked" force_save="1"/>
                         <field name="swap_uom_id" readonly="locked" force_save="1"

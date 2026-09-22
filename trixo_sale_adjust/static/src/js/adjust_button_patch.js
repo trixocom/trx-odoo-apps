@@ -20,7 +20,7 @@
  *          normal persista el resto (el core genera el despacho adicional);
  *   3. pasa las cantidades bajadas al servidor por contexto
  *      (`trixo_adjust_new_qty`) para que el wizard abra con la columna
- *      "Nueva cantidad" ya cargada.
+ *      "Devuelve" ya cargada.
  * La devolucion, la nota de credito y la factura las sigue haciendo el wizard.
  */
 import { patch } from "@web/core/utils/patch";

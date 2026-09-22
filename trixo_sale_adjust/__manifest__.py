@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Trixocom Ajuste de Pedidos Confirmados',
-    'version': '19.0.1.3.1',
+    'version': '19.0.1.4.0',
     'category': 'Sales/Sales',
     'summary': 'Cancelar pendientes, devolver y emitir notas de credito sobre '
                'un pedido confirmado desde una sola pantalla',
@@ -19,7 +19,7 @@ Dos entradas, un solo camino:
   linea en lo entregado. Si no hay nada facturado de mas, actua en un click
   (paridad v18); si hay que emitir nota de credito, abre el wizard.
 * Boton de cabecera "Ajustar pedido": wizard con todas las lineas y una
-  columna "Nueva cantidad". Antes de confirmar muestra, linea por linea,
+  columna "Devuelve". Antes de confirmar muestra, linea por linea,
   que va a pasar (cancela pendiente / devolucion / nota de credito).
 
 Que hace al confirmar, en este orden y en una sola transaccion:
@@ -70,6 +70,15 @@ el wizard modifica (el core lo recalculaba a 0).
 del producto. `product.uom_ids` son solo los embalajes adicionales, asi que
 faltaba justo el caso principal (devuelve un bulto, se lleva 2 unidades).
 
+19.0.1.4.0: la columna "Nueva cantidad" pasa a ser "Devuelve". Antes habia que
+cargar la cantidad que QUEDABA en la linea, una cuenta que el de mostrador no
+tiene por que hacer y que se presta a error (pedido 4, devuelve 1, habia que
+escribir 3). Ahora se carga lo que el cliente devuelve y el resto se calcula
+solo; "Queda" sigue disponible como columna opcional. Consecuencia: desde el
+wizard ya no se puede SUBIR la cantidad -lo agregado va por las lineas del
+pedido, como ya indicaba el cartel-. El dialogo se abre en extra-large y se
+estira al ancho de la ventana para que no se corten las columnas.
+
 Combos (modulo de surtidos, dependencia opcional): la cabecera lleva el precio y los
 componentes el stock a $0. Si se toca un componente se re-evalua el combo
 con la receta del surtido; si deja de aplicar, se desarma: NC por la
@@ -103,6 +112,7 @@ Trixocom - https://www.trixocom.com
     'assets': {
         'web.assets_backend': [
             'trixo_sale_adjust/static/src/js/adjust_button_patch.js',
+            'trixo_sale_adjust/static/src/scss/sale_order_adjust.scss',
         ],
     },
     'post_init_hook': 'post_init_hook',

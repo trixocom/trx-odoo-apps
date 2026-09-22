@@ -103,6 +103,9 @@ class SaleOrderAdjust(models.TransientModel):
             'res_id': self.id,
             'view_mode': 'form',
             'target': 'new',
+            # Muchas columnas (cantidades, canje de embalaje y el detalle de
+            # que va a pasar): con el ancho por defecto se cortan.
+            'context': {'dialog_size': 'extra-large'},
         }
 
     def _populate_lines(self):
@@ -130,13 +133,14 @@ class SaleOrderAdjust(models.TransientModel):
                 'delivered_qty': sl.qty_delivered,
                 'invoiced_qty': sl.qty_invoiced,
                 'new_qty': sl.product_uom_qty,
+                'returned_qty': 0.0,
                 'locked': kind == 'combo_parent' or sl.is_downpayment,
             })
         Line.create(vals_list)
         self._compute_lines_from_new_qty()
 
     def _apply_requested_quantities(self, requested):
-        """Carga en "Nueva cantidad" lo que el usuario bajo en las lineas del
+        """Carga en "Devuelve" lo que el usuario bajo en las lineas del
         pedido antes de apretar "Ajustar pedido" (ver adjust_button_patch.js).
         `requested`: {id de sale.order.line (int o str): cantidad}."""
         self.ensure_one()
@@ -158,7 +162,7 @@ class SaleOrderAdjust(models.TransientModel):
                 continue
             if qty < 0 or float_compare(qty, wl.ordered_qty, precision_digits=precision) >= 0:
                 continue
-            wl.new_qty = qty
+            wl.returned_qty = max(wl.ordered_qty - qty, 0.0)
             taken += 1
         notice = []
         if taken:
@@ -175,12 +179,13 @@ class SaleOrderAdjust(models.TransientModel):
         lineas quedan en lo entregado."""
         self.ensure_one()
         for wl in self.line_ids.filtered(lambda l: not l.locked):
-            wl.new_qty = min(wl.ordered_qty, wl.delivered_qty)
+            wl.returned_qty = max(
+                wl.ordered_qty - min(wl.ordered_qty, wl.delivered_qty), 0.0)
         self._compute_lines_from_new_qty()
         return self._get_action()
 
     # ------------------------------------------------------------------
-    # Plan (preview) — se recalcula con cada cambio de "Nueva cantidad"
+    # Plan (preview) — se recalcula con cada cambio de "Devuelve"
     # ------------------------------------------------------------------
     @api.onchange('line_ids', 'invoice_added')
     def _onchange_line_ids(self):
@@ -225,6 +230,13 @@ class SaleOrderAdjust(models.TransientModel):
         for wizard in self:
             lines = wizard.line_ids
             cmp = lambda a, b: float_compare(a, b, precision_digits=precision)  # noqa: E731
+
+            # 19.0.1.4.0: el usuario carga lo que el cliente DEVUELVE. La
+            # cantidad que queda en la linea es una cuenta, y hacersela hacer
+            # al de mostrador era pedir un error. El resto del wizard sigue
+            # razonando sobre `new_qty`, que ahora se deriva aca.
+            for wl in lines:
+                wl.new_qty = max(wl.ordered_qty - wl.returned_qty, 0.0)
 
             # --- combos: decidir si se desarman -------------------------
             dissolve_parents = set()
@@ -290,7 +302,7 @@ class SaleOrderAdjust(models.TransientModel):
                 )
                 wl.action_summary = wl._build_action_summary()
 
-    @api.depends('line_ids.new_qty', 'line_ids.action_summary', 'credit_note_mode',
+    @api.depends('line_ids.returned_qty', 'line_ids.action_summary', 'credit_note_mode',
                  'validate_return', 'invoice_added')
     def _compute_summary(self):
         for wizard in self:
@@ -304,7 +316,7 @@ class SaleOrderAdjust(models.TransientModel):
             wizard.invoice_is_fiscal = bool(
                 wizard.has_pending_invoice and wizard._added_invoice_is_fiscal())
             if not lines:
-                wizard.summary_html = _('<i>Sin cambios: baja la columna "Nueva cantidad" y, si el cliente se lleva otro embalaje a cambio, carga "Se lleva".</i>')
+                wizard.summary_html = _('<i>Sin cambios: carga en "Devuelve" lo que el cliente devuelve y, si a cambio se lleva otro embalaje, carga "Se lleva".</i>')
                 continue
             parts = []
             n_ret = sum(1 for l in lines if l.return_qty > 0)
@@ -406,17 +418,17 @@ class SaleOrderAdjust(models.TransientModel):
             ))
         for wl in self.line_ids:
             name = wl.sale_line_id.product_id.display_name
-            if float_compare(wl.new_qty, 0, precision_digits=precision) < 0:
-                raise UserError(_('La nueva cantidad de "%s" no puede ser negativa.', name))
-            if wl.kind != 'combo_parent' and float_compare(wl.new_qty, wl.ordered_qty, precision_digits=precision) > 0:
+            if float_compare(wl.returned_qty, 0, precision_digits=precision) < 0:
+                raise UserError(_('Lo que devuelve de "%s" no puede ser negativo.', name))
+            if wl.kind != 'combo_parent' and float_compare(wl.returned_qty, wl.ordered_qty, precision_digits=precision) > 0:
                 raise UserError(_(
-                    'La nueva cantidad de "%s" (%s) supera lo pedido (%s). Para agregar, '
-                    'cerra esta ventana, subi la cantidad (o agrega el producto) en las '
-                    'lineas del pedido y volve a apretar "Ajustar pedido": se genera el '
-                    'despacho adicional y la factura por lo agregado.',
-                    name, wl.new_qty, wl.ordered_qty,
+                    'No se puede devolver %s de "%s": el pedido tiene %s. Si el cliente '
+                    'se lleva MAS, cerra esta ventana, subi la cantidad (o agrega el '
+                    'producto) en las lineas del pedido y volve a apretar "Ajustar '
+                    'pedido": se genera el despacho adicional y la factura por lo agregado.',
+                    wl._fmt(wl.returned_qty), name, wl._fmt(wl.ordered_qty),
                 ))
-            if wl.locked and wl.kind != 'combo_parent' and float_compare(wl.new_qty, wl.ordered_qty, precision_digits=precision) != 0:
+            if wl.locked and wl.kind != 'combo_parent' and float_compare(wl.returned_qty, 0, precision_digits=precision) != 0:
                 raise UserError(_('La linea "%s" no se puede ajustar desde aqui.', name))
             self._check_swap(wl, name, precision)
 
@@ -440,12 +452,12 @@ class SaleOrderAdjust(models.TransientModel):
         # mezclar embalajes distintos.
         base = product.uom_id
         devuelve = wl.sale_line_id.product_uom_id._compute_quantity(
-            max(wl.ordered_qty - wl.new_qty, 0.0), base)
+            max(wl.returned_qty, 0.0), base)
         lleva = wl.swap_uom_id._compute_quantity(wl.swap_qty, base)
         if float_compare(lleva, devuelve, precision_digits=precision) > 0:
             raise UserError(_(
                 'En "%s" el cliente se lleva mas de lo que devuelve (%s vs %s %s). '
-                'Baja mas la "Nueva cantidad", o agrega el producto en las lineas '
+                'Aumenta lo que "Devuelve", o agrega el producto en las lineas '
                 'del pedido si es una venta adicional.',
                 name, wl._fmt(lleva), wl._fmt(devuelve), base.name or ''))
 
@@ -827,7 +839,15 @@ class SaleOrderAdjustLine(models.TransientModel):
     ordered_qty = fields.Float(string='Pedido', digits='Product Unit', readonly=True)
     delivered_qty = fields.Float(string='Entregado', digits='Product Unit', readonly=True)
     invoiced_qty = fields.Float(string='Facturado', digits='Product Unit', readonly=True)
-    new_qty = fields.Float(string='Nueva cantidad', digits='Product Unit')
+    returned_qty = fields.Float(
+        string='Devuelve', digits='Product Unit',
+        help='Cantidad que el cliente devuelve o no se lleva, en el embalaje de '
+             'la linea. Si a cambio se lleva el mismo producto en otro embalaje, '
+             'cargalo en "Se lleva".')
+    new_qty = fields.Float(
+        string='Queda', digits='Product Unit', readonly=True,
+        help='Cantidad que queda en la linea del pedido: lo pedido menos lo que '
+             'el cliente devuelve. Se calcula solo.')
 
     # Canje de embalaje (19.0.1.3.0): lo que el cliente se lleva A CAMBIO de lo
     # que devuelve, en otro embalaje del mismo producto. No se toca la linea

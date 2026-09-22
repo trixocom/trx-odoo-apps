@@ -43,7 +43,7 @@ class SaleOrderLine(models.Model):
             wizard = self.env['sale.order.adjust'].create({'order_id': order.id})
             wizard._populate_lines()
             wline = wizard.line_ids.filtered(lambda w: w.sale_line_id == self)
-            wline.new_qty = target
+            wline.returned_qty = max(wline.ordered_qty - target, 0.0)
             wizard._compute_lines_from_new_qty()
             return wizard._get_action()
         old_qty = self.product_uom_qty
