@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Trixocom Ajuste de Pedidos Confirmados',
-    'version': '19.0.1.5.0',
+    'version': '19.0.1.5.1',
     'category': 'Sales/Sales',
     'summary': 'Cancelar pendientes, devolver y emitir notas de credito sobre '
                'un pedido confirmado desde una sola pantalla',
@@ -102,6 +102,12 @@ Tito 22-09-2026).
   linea de origen.
 * Si lo que se agrega completaria un combo/surtido, el wizard avisa; no lo
   arma (el modulo de surtidos tampoco arma combos en pedidos confirmados).
+19.0.1.5.1: las lineas se congelan recien cuando el pedido tiene una factura
+de cliente vigente (borrador o confirmada), no al confirmar (decision de Tito
+22-09-2026). Caja y oficina agregan productos a pedidos recien confirmados,
+antes de facturar, con el cliente en el mostrador: eso sigue como antes.
+Campo calculado ``trixo_lines_locked`` para la vista; mismo criterio en
+sale.order.write y en "Actualizar precios".
 
 Combos (modulo de surtidos, dependencia opcional): la cabecera lleva el precio y los
 componentes el stock a $0. Si se toca un componente se re-evalua el combo

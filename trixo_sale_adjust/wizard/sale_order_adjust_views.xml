@@ -7,7 +7,7 @@
         <field name="arch" type="xml">
             <form string="Ajustar pedido" class="o_trixo_sale_adjust">
                 <div class="alert alert-info" role="alert">
-                    Todo cambio a un pedido confirmado se hace desde aca. En cada linea carga en
+                    Una vez facturado el pedido, todo cambio se hace desde aca. En cada linea carga en
                     <b>Devuelve</b> lo que el cliente devuelve o no se lleva, y en <b>Se lleva</b> +
                     <b>En embalaje</b> lo que se lleva del mismo producto, en cualquier embalaje (en el
                     mismo embalaje se compensa con lo que devuelve). Los productos que no estaban en el

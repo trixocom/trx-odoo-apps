@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
-from odoo import _, api, models
+from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 
 # Campos de linea que definen QUE se vendio y A CUANTO. En un pedido
-# confirmado no se cambian desde el formulario: todo cambio pasa por el
-# wizard "Ajustar pedido" (19.0.1.5.0, decision de Tito 22-09-2026).
+# confirmado y ya facturado no se cambian desde el formulario: todo cambio
+# pasa por el wizard "Ajustar pedido" (19.0.1.5.0 / 19.0.1.5.1, decisiones de
+# Tito 22-09-2026).
 _TRIXO_LOCKED_LINE_FIELDS = frozenset({
     'product_id', 'product_template_id', 'product_uom_id', 'product_uom_qty',
     'price_unit', 'discount', 'tax_ids', 'tax_id',
@@ -13,6 +14,28 @@ _TRIXO_LOCKED_LINE_FIELDS = frozenset({
 
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
+
+    trixo_lines_locked = fields.Boolean(
+        string='Lineas congeladas',
+        compute='_compute_trixo_lines_locked',
+        help='El pedido esta confirmado y tiene una factura de cliente vigente: '
+             'sus lineas ya no se editan desde el formulario, todo cambio pasa '
+             'por "Ajustar pedido".')
+
+    @api.depends('state', 'order_line.invoice_lines.move_id.state',
+                 'order_line.invoice_lines.move_id.move_type')
+    def _compute_trixo_lines_locked(self):
+        for order in self:
+            order.trixo_lines_locked = (
+                order.state == 'sale' and order._trixo_has_customer_invoice())
+
+    def _trixo_has_customer_invoice(self):
+        """True si el pedido tiene una factura de cliente no cancelada
+        (borrador o confirmada). Se lee con sudo: es solo un control y el
+        usuario de caja puede no tener acceso a todos los diarios."""
+        self.ensure_one()
+        moves = self.sudo().order_line.invoice_lines.move_id
+        return any(m.move_type == 'out_invoice' and m.state != 'cancel' for m in moves)
 
     def action_open_trixo_adjust(self):
         """Boton de cabecera "Ajustar pedido".
@@ -47,6 +70,9 @@ class SaleOrder(models.Model):
 
     # ------------------------------------------------------------------
     # 19.0.1.5.0: lineas congeladas en pedidos confirmados
+    # 19.0.1.5.1: solo desde que el pedido tiene una factura de cliente
+    # vigente. Antes de facturar, caja y oficina siguen agregando productos
+    # a un pedido recien confirmado (cliente en el mostrador).
     # ------------------------------------------------------------------
     @api.model
     def _trixo_line_commands_touch_locked(self, commands):
@@ -65,19 +91,21 @@ class SaleOrder(models.Model):
         return False
 
     def _trixo_lines_locked(self):
-        """Pedidos cuyas lineas no se pueden tocar desde el formulario. Los
+        """Pedidos confirmados y ya facturados, cuyas lineas no se pueden
+        tocar desde el formulario. Los
         procesos del sistema (superusuario) y el propio wizard (contexto
         `trixo_adjust_allow_line_edit`) no se bloquean."""
         if self.env.su or self.env.context.get('trixo_adjust_allow_line_edit'):
             return self.browse()
-        return self.filtered(lambda o: o.state == 'sale')
+        return self.filtered(
+            lambda o: o.state == 'sale' and o._trixo_has_customer_invoice())
 
     def write(self, vals):
         if 'order_line' in vals and self._trixo_line_commands_touch_locked(vals['order_line']):
             locked = self._trixo_lines_locked()
             if locked:
                 raise UserError(_(
-                    'El pedido %s esta confirmado: sus lineas no se modifican. '
+                    'El pedido %s ya esta facturado: sus lineas no se modifican. '
                     'Para devolver, cambiar de embalaje o agregar productos usa el '
                     'boton "Ajustar pedido".', ', '.join(locked.mapped('name')),
                 ))
@@ -87,7 +115,7 @@ class SaleOrder(models.Model):
         locked = self._trixo_lines_locked()
         if locked:
             raise UserError(_(
-                'El pedido %s esta confirmado: los precios de sus lineas no se '
+                'El pedido %s ya esta facturado: los precios de sus lineas no se '
                 'actualizan. Lo que se agregue con "Ajustar pedido" sale siempre '
                 'al precio vigente.', ', '.join(locked.mapped('name')),
             ))

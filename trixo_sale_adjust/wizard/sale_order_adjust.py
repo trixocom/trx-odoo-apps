@@ -21,6 +21,8 @@ Orden de ejecucion (una transaccion):
 
 19.0.1.5.0: en un pedido confirmado las lineas ya no se editan desde el
 formulario (ver sale_order.write): todo cambio pasa por este wizard.
+19.0.1.5.1: el congelamiento rige desde que el pedido tiene una factura de
+cliente vigente; antes se editan como siempre.
 """
 import logging
 from collections import defaultdict
@@ -1081,7 +1083,7 @@ class SaleOrderAdjustLine(models.TransientModel):
 
 class SaleOrderAdjustAdd(models.TransientModel):
     """Producto que se suma al pedido desde el ajuste (19.0.1.5.0): las
-    lineas de un pedido confirmado ya no se editan en el formulario."""
+    lineas de un pedido facturado ya no se editan en el formulario."""
     _name = 'sale.order.adjust.add'
     _description = 'Producto agregado en el ajuste de pedido'
     _order = 'sequence, id'
