@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Trixocom Ajuste de Pedidos Confirmados',
-    'version': '19.0.1.4.0',
+    'version': '19.0.1.5.0',
     'category': 'Sales/Sales',
     'summary': 'Cancelar pendientes, devolver y emitir notas de credito sobre '
                'un pedido confirmado desde una sola pantalla',
@@ -78,6 +78,30 @@ solo; "Queda" sigue disponible como columna opcional. Consecuencia: desde el
 wizard ya no se puede SUBIR la cantidad -lo agregado va por las lineas del
 pedido, como ya indicaba el cartel-. El dialogo se abre en extra-large y se
 estira al ancho de la ventana para que no se corten las columnas.
+
+19.0.1.5.0: todo cambio a un pedido confirmado pasa por el wizard (decision de
+Tito 22-09-2026).
+* Las lineas de un pedido confirmado ya no se editan desde el formulario:
+  readonly en la vista y control del lado servidor en sale.order.write
+  (crear, borrar o cambiar producto, embalaje, cantidad, precio, descuento o
+  impuestos). "Actualizar precios" tampoco corre sobre un pedido confirmado.
+  El superusuario y el propio wizard no se bloquean.
+* "Se lleva" sin tope: sirve para canjear y para vender mas del mismo
+  producto, en cualquier embalaje. En el mismo embalaje de la linea se
+  compensa con lo que devuelve (devuelve 1 bulto, se lleva 3: factura por 2,
+  sin NC).
+* Seccion "Agregar productos" para lo que no estaba en el pedido.
+* Lo que el cliente se lleva se factura SIEMPRE si el pedido ya tenia
+  facturas (sin opcion para no facturar), con el diario de la factura de
+  origen: el de la linea que devuelve para "Se lleva", el de la ultima
+  factura del pedido para un producto agregado. Diario fiscal: queda en
+  borrador para revisar y pedir el CAE. En un pedido nunca facturado lo
+  agregado queda pendiente y se factura con el resto.
+* Precio y descuento de lo nuevo salen de las reglas vigentes (lista de
+  precios, recargo por embalaje): ya no se copia el descuento manual de la
+  linea de origen.
+* Si lo que se agrega completaria un combo/surtido, el wizard avisa; no lo
+  arma (el modulo de surtidos tampoco arma combos en pedidos confirmados).
 
 Combos (modulo de surtidos, dependencia opcional): la cabecera lleva el precio y los
 componentes el stock a $0. Si se toca un componente se re-evalua el combo

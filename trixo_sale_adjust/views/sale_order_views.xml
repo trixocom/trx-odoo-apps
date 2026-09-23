@@ -11,7 +11,7 @@
                 <button name="action_open_trixo_adjust" type="object" string="Ajustar pedido"
                         groups="trixo_sale_adjust.group_sale_adjust"
                         invisible="state != 'sale' or locked"
-                        help="Reducir cantidades de un pedido confirmado: cancela lo pendiente, genera la devolucion de lo entregado y la nota de credito de lo facturado."/>
+                        help="Unico camino para cambiar un pedido confirmado: devolver, cambiar de embalaje o agregar productos. Genera la devolucion, la nota de credito y la factura que correspondan."/>
             </xpath>
             <!-- Boton por linea, al lado de lo entregado (paridad v18 sale_stock_ux) -->
             <xpath expr="//field[@name='order_line']/list//field[@name='qty_delivered']" position="after">
@@ -21,6 +21,23 @@
                         groups="trixo_sale_adjust.group_sale_adjust"
                         invisible="parent.state != 'sale' or parent.locked or display_type or qty_to_deliver &lt;= 0"
                         help="Deja la linea en lo ya entregado y cancela los movimientos pendientes. Si hay facturado de mas, abre el ajuste del pedido para emitir la nota de credito."/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- 19.0.1.5.0: en un pedido confirmado las lineas no se editan desde el
+         formulario (decision de Tito 22-09-2026). Todo cambio pasa por
+         "Ajustar pedido". El control del lado servidor esta en
+         sale.order.write; esta vista solo evita que el usuario lo intente.
+         priority 99: se aplica despues de los modulos que tocan order_line. -->
+    <record id="view_order_form_trixo_adjust_lock_lines" model="ir.ui.view">
+        <field name="name">sale.order.form.trixo.adjust.lock.lines</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="priority">99</field>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='order_line']" position="attributes">
+                <attribute name="readonly" separator=" or " add="state == 'sale'"/>
             </xpath>
         </field>
     </record>

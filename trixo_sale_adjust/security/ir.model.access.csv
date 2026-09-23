@@ -1,3 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_sale_order_adjust,sale.order.adjust,model_sale_order_adjust,group_sale_adjust,1,1,1,1
 access_sale_order_adjust_line,sale.order.adjust.line,model_sale_order_adjust_line,group_sale_adjust,1,1,1,1
+access_sale_order_adjust_add,sale.order.adjust.add,model_sale_order_adjust_add,group_sale_adjust,1,1,1,1

@@ -99,8 +99,7 @@ class SaleOrderLine(models.Model):
                     precision_digits=precision) == -1:
                 raise UserError(_(
                     'No se puede guardar una cantidad menor a la ya entregada. '
-                    'Baja la cantidad en la linea y, sin guardar, apreta el boton '
-                    '"Ajustar pedido": genera la devolucion de la mercaderia y la '
-                    'nota de credito que correspondan.'
+                    'Usa el boton "Ajustar pedido": genera la devolucion de la '
+                    'mercaderia y la nota de credito que correspondan.'
                 ))
         return super()._update_line_quantity(values)

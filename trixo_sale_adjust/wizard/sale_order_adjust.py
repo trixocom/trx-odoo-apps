@@ -8,17 +8,22 @@ Orden de ejecucion (una transaccion):
   2. baja de cantidades (el core cancela los movimientos pendientes)
   3. notas de credito (reversion parcial de la factura original via el
      wizard estandar account.move.reversal)
-  4. facturas: componentes de combos desarmados (re-tasados) y lo AGREGADO
-     al pedido que quedo pendiente de facturar. Diario no fiscal: se
-     confirma en el acto. Diario fiscal (l10n_latam_use_documents): queda
-     en borrador y se avisa.
+  3bis. lineas nuevas: lo que el cliente se lleva ("Se lleva", mismo
+     producto en cualquier embalaje) y los productos agregados ("Agregar
+     productos"). Precio y descuento salen de las reglas vigentes (lista de
+     precios, recargo por embalaje); el despacho lo genera el core.
+  4. facturas: componentes de combos desarmados (re-tasados), lineas
+     nuevas y cualquier pendiente de facturar. Si el pedido ya tenia
+     facturas se factura SIEMPRE, con el diario de la factura de origen.
+     Diario no fiscal: se confirma en el acto. Diario fiscal
+     (l10n_latam_use_documents): queda en borrador y se avisa.
   5. conciliacion NC <-> facturas impagas de la orden
 
-Lo agregado (mas cantidad / productos nuevos) se carga en las lineas del
-pedido: al guardar, el core genera el despacho adicional, que queda listo
-para validar por el circuito normal. El wizard solo reduce y factura.
+19.0.1.5.0: en un pedido confirmado las lineas ya no se editan desde el
+formulario (ver sale_order.write): todo cambio pasa por este wizard.
 """
 import logging
+from collections import defaultdict
 
 from markupsafe import Markup
 
@@ -56,15 +61,15 @@ class SaleOrderAdjust(models.TransientModel):
         ],
         string='Nota de credito', default='post', required=True,
     )
-    invoice_added = fields.Boolean(
-        string='Facturar lo agregado',
-        help='Genera la factura por las cantidades del pedido que todavia no '
-             'estan facturadas (productos o cantidades agregadas). Diario no '
-             'fiscal: se confirma en el acto. Diario fiscal (AFIP/ARCA): queda '
-             'en borrador para revisar y confirmar.',
-    )
+    # 19.0.1.5.0: ya no es una opcion del usuario. Vale True cuando el pedido
+    # ya tiene facturas: entonces todo lo que se agrega o se lleva se factura
+    # en el acto. En un pedido que nunca se facturo, lo agregado queda
+    # pendiente y se factura con el resto por el circuito normal.
+    invoice_added = fields.Boolean(string='Facturar lo agregado', readonly=True)
     prefill_notice = fields.Char(readonly=True)
     line_ids = fields.One2many('sale.order.adjust.line', 'wizard_id', string='Lineas')
+    add_line_ids = fields.One2many('sale.order.adjust.add', 'wizard_id',
+                                   string='Agregar productos')
     summary_html = fields.Html(string='Resumen', compute='_compute_summary', sanitize=False)
     has_changes = fields.Boolean(compute='_compute_summary')
     has_credit = fields.Boolean(compute='_compute_summary')
@@ -72,6 +77,7 @@ class SaleOrderAdjust(models.TransientModel):
     has_invoice = fields.Boolean(compute='_compute_summary')
     has_pending_invoice = fields.Boolean(compute='_compute_summary')
     invoice_is_fiscal = fields.Boolean(compute='_compute_summary')
+    combo_warning = fields.Char(compute='_compute_summary')
 
     # ------------------------------------------------------------------
     # Construccion
@@ -86,9 +92,8 @@ class SaleOrderAdjust(models.TransientModel):
                     sot.trixo_adjust_validate_return if sot else True
                 )
             if 'invoice_added' not in vals and vals.get('order_id'):
-                # Solo por defecto en pedidos que ya se facturaron: en uno que
-                # nunca se facturo, lo pendiente sigue el circuito normal
-                # ("Crear factura") salvo que el usuario tilde la opcion.
+                # Pedido ya facturado: lo que se agrega se factura siempre.
+                # Pedido nunca facturado: sigue el circuito normal.
                 order = self.env['sale.order'].browse(vals['order_id'])
                 vals['invoice_added'] = bool(order.invoice_ids.filtered(
                     lambda m: m.move_type == 'out_invoice' and m.state != 'cancel'))
@@ -187,7 +192,7 @@ class SaleOrderAdjust(models.TransientModel):
     # ------------------------------------------------------------------
     # Plan (preview) — se recalcula con cada cambio de "Devuelve"
     # ------------------------------------------------------------------
-    @api.onchange('line_ids', 'invoice_added')
+    @api.onchange('line_ids', 'add_line_ids')
     def _onchange_line_ids(self):
         self._compute_lines_from_new_qty()
 
@@ -235,8 +240,18 @@ class SaleOrderAdjust(models.TransientModel):
             # cantidad que queda en la linea es una cuenta, y hacersela hacer
             # al de mostrador era pedir un error. El resto del wizard sigue
             # razonando sobre `new_qty`, que ahora se deriva aca.
+            #
+            # 19.0.1.5.0: "Se lleva" en el MISMO embalaje de la linea se
+            # compensa con lo que devuelve (devuelve 1 bulto y se lleva 3 ->
+            # se factura 2, sin NC); en otro embalaje no hay nada que compensar.
             for wl in lines:
-                wl.new_qty = max(wl.ordered_qty - wl.returned_qty, 0.0)
+                ret = max(wl.returned_qty, 0.0)
+                wl.swap_create_qty = max(wl.swap_qty, 0.0) if wl.swap_uom_id else 0.0
+                if wl.swap_create_qty and wl.swap_uom_id == wl.sale_line_id.product_uom_id:
+                    net = min(ret, wl.swap_create_qty)
+                    ret -= net
+                    wl.swap_create_qty -= net
+                wl.new_qty = max(wl.ordered_qty - ret, 0.0)
 
             # --- combos: decidir si se desarman -------------------------
             dissolve_parents = set()
@@ -297,26 +312,30 @@ class SaleOrderAdjust(models.TransientModel):
                 wl.has_action = bool(
                     cmp(wl.return_qty, 0) > 0 or cmp(wl.cancel_qty, 0) > 0
                     or cmp(wl.credit_qty, 0) > 0 or cmp(wl.reinvoice_qty, 0) > 0
-                    or cmp(wl.invoice_qty, 0) > 0 or cmp(wl.swap_qty, 0) > 0
+                    or cmp(wl.invoice_qty, 0) > 0 or cmp(wl.swap_create_qty, 0) > 0
                     or wl.release_from_combo or cmp(wl.target_qty, ordered) != 0
                 )
                 wl.action_summary = wl._build_action_summary()
+            for al in wizard.add_line_ids:
+                al.action_summary = al._build_action_summary()
 
-    @api.depends('line_ids.returned_qty', 'line_ids.action_summary', 'credit_note_mode',
-                 'validate_return', 'invoice_added')
+    @api.depends('line_ids.returned_qty', 'line_ids.swap_qty', 'line_ids.swap_uom_id',
+                 'line_ids.action_summary', 'add_line_ids.product_id', 'add_line_ids.qty',
+                 'add_line_ids.uom_id', 'credit_note_mode', 'validate_return', 'invoice_added')
     def _compute_summary(self):
         for wizard in self:
             lines = wizard.line_ids.filtered('has_action')
-            wizard.has_changes = bool(lines)
+            adds = wizard._valid_add_lines()
+            wizard.has_changes = bool(lines or adds)
             wizard.has_return = any(l.return_qty > 0 for l in lines)
             wizard.has_credit = any(l.credit_qty > 0 for l in lines)
             wizard.has_invoice = any(l.invoice_qty > 0 for l in lines)
             wizard.has_pending_invoice = any(
                 l.pending_invoice_qty > 0 for l in wizard.line_ids)
-            wizard.invoice_is_fiscal = bool(
-                wizard.has_pending_invoice and wizard._added_invoice_is_fiscal())
-            if not lines:
-                wizard.summary_html = _('<i>Sin cambios: carga en "Devuelve" lo que el cliente devuelve y, si a cambio se lleva otro embalaje, carga "Se lleva".</i>')
+            wizard.invoice_is_fiscal = wizard._added_invoice_is_fiscal()
+            wizard.combo_warning = wizard._combo_warning() or False
+            if not lines and not adds:
+                wizard.summary_html = _('<i>Sin cambios: carga en "Devuelve" lo que el cliente devuelve, en "Se lleva" lo que se lleva del mismo producto (en cualquier embalaje) y en "Agregar productos" lo que se suma al pedido.</i>')
                 continue
             parts = []
             n_ret = sum(1 for l in lines if l.return_qty > 0)
@@ -334,15 +353,20 @@ class SaleOrderAdjust(models.TransientModel):
             if n_combo:
                 parts.append(_('%s combo(s) se desarma(n): NC por la cabecera y componentes '
                                'facturados a precio de lista', n_combo))
-            n_swap = sum(1 for l in lines if l.swap_qty > 0)
-            if n_swap:
-                parts.append(_('%s linea(s) con cambio de embalaje: se factura lo que el '
-                               'cliente se lleva, al precio de lista del embalaje nuevo', n_swap))
+            n_new = sum(1 for l in lines if l.swap_create_qty > 0) + len(adds)
+            if n_new:
+                parts.append(_('%s linea(s) nueva(s) en el pedido por lo que el cliente se lleva, '
+                               'al precio vigente', n_new))
             n_inv = sum(1 for l in lines if l.invoice_qty > 0)
-            if n_inv:
-                parts.append(_('factura por lo agregado en %s linea(s)%s', n_inv,
+            if (n_new or n_inv) and wizard.invoice_added:
+                parts.append(_('se factura con el diario de la factura de origen%s',
                                _(' — diario fiscal: queda en BORRADOR para revisar y confirmar')
                                if wizard.invoice_is_fiscal else _(' — se confirma ahora')))
+            elif n_new:
+                parts.append(_('el pedido todavia no se facturo: lo agregado queda pendiente '
+                               'y se factura con el resto'))
+            if wizard.combo_warning:
+                parts.append(wizard.combo_warning)
             wizard.summary_html = '<ul>' + ''.join('<li>%s</li>' % p for p in parts) + '</ul>'
 
     # ------------------------------------------------------------------
@@ -357,17 +381,19 @@ class SaleOrderAdjust(models.TransientModel):
         self._compute_lines_from_new_qty()
         self._check_plan()
         plan = self.line_ids.filtered('has_action')
-        if not plan:
+        adds = self._valid_add_lines()
+        if not plan and not adds:
             raise UserError(_('No hay cambios para aplicar.'))
 
         ctx_lines = plan.with_context(skip_surtido_detection=True)
         returns = self._do_returns(ctx_lines)
         self._do_quantities(ctx_lines)
         refunds, refund_errors = self._do_credit_notes(ctx_lines)
-        swapped = self._do_swaps(ctx_lines)
-        invoices, invoice_errors = self._do_reinvoice(ctx_lines, extra_lines=swapped)
+        new_lines = self._do_additions(ctx_lines, adds)
+        invoices, invoice_errors = self._do_reinvoice(ctx_lines, new_lines=new_lines)
         self._do_reconcile(refunds, invoices)
-        self._post_messages(plan, returns, refunds, invoices, refund_errors + invoice_errors)
+        self._post_messages(plan, returns, refunds, invoices, refund_errors + invoice_errors,
+                            new_lines=new_lines)
 
         errors = refund_errors + invoice_errors
         msg = _('Ajuste aplicado sobre %s.', order.name)
@@ -394,15 +420,101 @@ class SaleOrderAdjust(models.TransientModel):
         }
 
     def _added_invoice_is_fiscal(self):
-        """Diario con el que el pedido facturaria hoy (lo define
-        `_prepare_invoice`: tipo de pedido / diario por defecto)."""
+        """True si algo de lo que se va a facturar en el ajuste sale por un
+        diario fiscal (el de la factura de origen de cada linea)."""
         self.ensure_one()
-        try:
-            journal_id = self.order_id._prepare_invoice().get('journal_id')
-        except UserError:
+        if not self.invoice_added:
             return False
-        journal = self.env['account.journal'].browse(journal_id)
-        return self._journal_is_fiscal(journal)
+        journals = self.env['account.journal']
+        for wl in self.line_ids:
+            if wl.swap_create_qty > 0 or wl.invoice_qty > 0:
+                journals |= self._origin_journal(wl.sale_line_id)
+        if self._valid_add_lines():
+            journals |= self._order_journal()
+        return any(self._journal_is_fiscal(j) for j in journals)
+
+    def _posted_invoices(self, moves):
+        return moves.filtered(
+            lambda m: m.move_type == 'out_invoice' and m.state == 'posted'
+        ).sorted(key=lambda m: (m.invoice_date or fields.Date.today(), m.id))
+
+    def _order_journal(self):
+        """Diario de la ultima factura del pedido (para productos que no
+        estaban en el pedido)."""
+        moves = self._posted_invoices(self.order_id.invoice_ids)
+        return moves[-1:].journal_id
+
+    def _origin_journal(self, sale_line):
+        """Diario de la ultima factura de esa linea; si la linea no se
+        facturo, el de la ultima factura del pedido (decision de Tito
+        22-09-2026: si devuelve algo de una FA-B, lo que se lleva sale en
+        FA-B)."""
+        if not sale_line:
+            return self._order_journal()
+        moves = self._posted_invoices(sale_line.invoice_lines.mapped('move_id'))
+        return moves[-1:].journal_id or self._order_journal()
+
+    def _valid_add_lines(self):
+        return self.add_line_ids.filtered(lambda a: a.product_id and a.qty > 0)
+
+    def _combo_warning(self):
+        """Aviso si con lo que se agrega o se lleva se completaria un combo
+        (surtido). El modulo de surtidos no arma combos sobre pedidos
+        confirmados -desarma y rearma todo el pedido, lo que reescribiria
+        lineas ya facturadas- y el ajuste tampoco: solo avisa (decision de
+        Tito 22-09-2026). Nunca rompe el wizard."""
+        self.ensure_one()
+        order = self.order_id
+        if not hasattr(order, '_get_active_surtidos'):
+            return ''
+        try:
+            extra = [(wl.sale_line_id.product_id, wl.swap_uom_id, wl.swap_create_qty)
+                     for wl in self.line_ids if wl.swap_create_qty > 0 and wl.swap_uom_id]
+            extra += [(a.product_id, a.uom_id, a.qty) for a in self._valid_add_lines()]
+            if not extra:
+                return ''
+            base = [(wl.sale_line_id.product_id, wl.sale_line_id.product_uom_id, wl.new_qty)
+                    for wl in self.line_ids if wl.kind == 'normal']
+            pkg_name = self.env['ir.config_parameter'].sudo().get_param(
+                'stock_packaging_report.packaging_name', default='')
+
+            def bultos(product, uom, qty):
+                # Mismo criterio que sale.order._surtido_line_bultos: solo
+                # cuenta lo cargado en el embalaje por defecto (bulto).
+                if pkg_name:
+                    pkg = (product._trixo_default_packaging_uom()
+                           if hasattr(product, '_trixo_default_packaging_uom') else False)
+                    if not pkg or uom != pkg:
+                        return 0.0
+                return qty
+
+            names = []
+            for surtido in order._get_active_surtidos():
+                p2g = order._build_product_to_group_map(surtido)
+
+                def factor(items, surtido=surtido, p2g=p2g):
+                    totals = defaultdict(float)
+                    for product, uom, qty in items:
+                        gid = p2g.get(product.id)
+                        if gid:
+                            totals[gid] += bultos(product, uom, qty)
+                    factors = []
+                    for group in surtido.group_ids:
+                        if group.required_qty <= 0 or totals[group.id] <= 0:
+                            return 0
+                        factors.append(int(totals[group.id] // group.required_qty))
+                    return min(factors) if factors else 0
+
+                if factor(base + extra) > factor(base):
+                    names.append(surtido.display_name)
+            if not names:
+                return ''
+            return _('ATENCION: con lo que se agrega se completaria el combo %s. El ajuste '
+                     'no arma combos sobre un pedido confirmado: se factura a precio de lista.',
+                     ', '.join(names))
+        except Exception:  # noqa: BLE001 - un aviso nunca debe romper el ajuste
+            _logger.warning('trixo_sale_adjust: no se pudo evaluar combos', exc_info=True)
+            return ''
 
     @api.model
     def _journal_is_fiscal(self, journal):
@@ -423,14 +535,25 @@ class SaleOrderAdjust(models.TransientModel):
             if wl.kind != 'combo_parent' and float_compare(wl.returned_qty, wl.ordered_qty, precision_digits=precision) > 0:
                 raise UserError(_(
                     'No se puede devolver %s de "%s": el pedido tiene %s. Si el cliente '
-                    'se lleva MAS, cerra esta ventana, subi la cantidad (o agrega el '
-                    'producto) en las lineas del pedido y volve a apretar "Ajustar '
-                    'pedido": se genera el despacho adicional y la factura por lo agregado.',
+                    'se lleva MAS, cargalo en "Se lleva" (mismo producto) o en "Agregar '
+                    'productos".',
                     wl._fmt(wl.returned_qty), name, wl._fmt(wl.ordered_qty),
                 ))
             if wl.locked and wl.kind != 'combo_parent' and float_compare(wl.returned_qty, 0, precision_digits=precision) != 0:
                 raise UserError(_('La linea "%s" no se puede ajustar desde aqui.', name))
             self._check_swap(wl, name, precision)
+        for al in self.add_line_ids:
+            if not al.product_id and not al.qty:
+                continue
+            if not al.product_id:
+                raise UserError(_('Elegi el producto a agregar.'))
+            name = al.product_id.display_name
+            if float_compare(al.qty, 0, precision_digits=precision) <= 0:
+                raise UserError(_('Indica cuanto se agrega de "%s".', name))
+            if not al.product_id.sale_ok:
+                raise UserError(_('"%s" no se puede vender.', name))
+            if not al.uom_id or al.uom_id not in (al.product_id.uom_id | al.product_id.uom_ids):
+                raise UserError(_('Elegi uno de los embalajes de "%s".', name))
 
     def _check_swap(self, wl, name, precision):
         """Validaciones del canje de embalaje de una linea."""
@@ -447,19 +570,8 @@ class SaleOrderAdjust(models.TransientModel):
             raise UserError(_(
                 '"%s" no se vende en %s. Elegi uno de los embalajes del producto.',
                 name, wl.swap_uom_id.name))
-        # No se puede llevar mas de lo que devuelve: eso seria una venta nueva,
-        # no un canje. Se compara en la unidad base del producto para poder
-        # mezclar embalajes distintos.
-        base = product.uom_id
-        devuelve = wl.sale_line_id.product_uom_id._compute_quantity(
-            max(wl.returned_qty, 0.0), base)
-        lleva = wl.swap_uom_id._compute_quantity(wl.swap_qty, base)
-        if float_compare(lleva, devuelve, precision_digits=precision) > 0:
-            raise UserError(_(
-                'En "%s" el cliente se lleva mas de lo que devuelve (%s vs %s %s). '
-                'Aumenta lo que "Devuelve", o agrega el producto en las lineas '
-                'del pedido si es una venta adicional.',
-                name, wl._fmt(lleva), wl._fmt(devuelve), base.name or ''))
+        # 19.0.1.5.0: sin tope. "Se lleva" sirve tambien para vender mas del
+        # mismo producto; en el mismo embalaje se compensa con lo que devuelve.
 
     # --- 1. devoluciones -------------------------------------------------
     def _do_returns(self, plan):
@@ -658,92 +770,123 @@ class SaleOrderAdjust(models.TransientModel):
             return str(e.args[0]) if e.args else str(e)
         return ''
 
-    # --- 3bis. canje de embalaje ---------------------------------------------
-    def _do_swaps(self, plan):
-        """Lineas nuevas por lo que el cliente se lleva en otro embalaje.
+    # --- 3bis. lineas nuevas: lo que se lleva y lo que se agrega ----------------
+    def _do_additions(self, plan, adds):
+        """Crea las lineas por lo que el cliente se lleva ("Se lleva", neto de
+        la compensacion en el mismo embalaje) y por los productos agregados.
 
-        El precio lo pone la lista vigente para ese embalaje: si el producto
-        tiene recargo por unidad suelta, `sale_packaging_pricing` lo aplica
-        solo al calcularse `price_unit`. El descuento se hereda de la linea de
-        origen (decision de Tito, 21-09-2026) y se valida como cualquier otro:
-        si hay un tope de descuento por usuario, aplica igual que cuando la
-        linea se carga a mano en el pedido.
+        Precio y descuento salen de las reglas vigentes: lista de precios y,
+        si el producto tiene recargo por embalaje, `sale_packaging_pricing`
+        lo aplica solo. No se copia el descuento manual de la linea de origen
+        (decision de Tito 22-09-2026). El tope de descuento por usuario, si
+        lo hubiera, aplica igual que siempre.
 
-        El despacho de lo que se lleva lo genera el core al crear la linea.
-        """
+        El despacho lo genera el core al crear la linea en un pedido
+        confirmado. Devuelve {linea nueva: linea de origen o vacio}."""
         order = self.order_id
-        created = self.env['sale.order.line']
-        for wl in plan.filtered(lambda l: l.swap_qty > 0 and l.swap_uom_id):
+        Line = self.env['sale.order.line'].with_context(
+            skip_surtido_detection=True, trixo_adjust_allow_line_edit=True,
+        )
+        created = {}
+        for wl in plan.filtered(lambda l: l.swap_create_qty > 0 and l.swap_uom_id):
             sl = wl.sale_line_id
-            vals = {
-                'order_id': order.id,
-                'product_id': sl.product_id.id,
-                'product_uom_id': wl.swap_uom_id.id,
-                'product_uom_qty': wl.swap_qty,
-                'sequence': sl.sequence,
-            }
-            if sl.discount:
-                vals['discount'] = sl.discount
-            try:
-                new = self.env['sale.order.line'].with_context(
-                    skip_surtido_detection=True,
-                ).create(vals)
-            except (UserError, ValidationError) as e:
-                raise UserError(_(
-                    'No se pudo agregar "%s" en %s: %s\n\n'
-                    'La linea nueva hereda el descuento de la linea de origen '
-                    '(%s%%). Si el bloqueo es por el tope de descuento, el ajuste '
-                    'lo tiene que hacer un usuario autorizado.',
-                    sl.product_id.display_name, wl.swap_uom_id.name,
-                    e.args[0] if e.args else str(e), '%.2f' % sl.discount,
-                )) from e
-            created |= new
+            new = self._create_order_line(
+                Line, sl.product_id, wl.swap_uom_id, wl.swap_create_qty, sl.sequence)
+            created[new] = sl
+        seq = max(order.order_line.mapped('sequence') or [10]) + 1
+        for al in adds:
+            new = self._create_order_line(Line, al.product_id, al.uom_id, al.qty, seq)
+            created[new] = self.env['sale.order.line']
+            seq += 1
         return created
 
-    # --- 4. facturas: combos desarmados (re-tasados) + lo agregado -----------
-    def _do_reinvoice(self, plan, extra_lines=None):
+    def _create_order_line(self, Line, product, uom, qty, sequence):
+        try:
+            return Line.create({
+                'order_id': self.order_id.id,
+                'product_id': product.id,
+                'product_uom_id': uom.id,
+                'product_uom_qty': qty,
+                'sequence': sequence,
+            })
+        except (UserError, ValidationError) as e:
+            raise UserError(_(
+                'No se pudo agregar "%s" en %s: %s',
+                product.display_name, uom.name, e.args[0] if e.args else str(e),
+            )) from e
+
+    # --- 4. facturas: combos desarmados, lineas nuevas y pendientes ----------
+    def _do_reinvoice(self, plan, new_lines=None):
+        """Factura lo que corresponda, agrupado por diario de origen: cada
+        linea sale con el diario de la factura de la que viene (una linea
+        nueva de "Se lleva", el de la linea que devuelve; un componente de
+        combo desarmado, el de la cabecera; un producto agregado, el de la
+        ultima factura del pedido)."""
         invoices = self.env['account.move']
         errors = []
         order = self.order_id
+        SOL = self.env['sale.order.line']
+        new_lines = new_lines or {}
+        # la cabecera se lee del wizard: _do_quantities ya desengancho la linea
+        combo_origin = {wl.sale_line_id: wl.combo_parent_line_id
+                        for wl in plan if wl.release_from_combo}
         children = self._retasar_combo_children(plan)
         added = plan.filtered(
             lambda l: l.invoice_qty > 0 and not l.release_from_combo
         ).mapped('sale_line_id')
-        swapped = extra_lines or self.env['sale.order.line']
-        to_invoice = (children | added | swapped).filtered(lambda l: l.qty_to_invoice > 0)
+        created = SOL.concat(*new_lines.keys()) if new_lines else SOL
+        if not self.invoice_added:
+            # Pedido nunca facturado: lo nuevo queda pendiente, con el resto.
+            created = SOL
+        to_invoice = (children | added | created).filtered(lambda l: l.qty_to_invoice > 0)
         if not to_invoice:
             return invoices, errors
-        has_combo = bool(children & to_invoice)
-        has_swap = bool(swapped & to_invoice)
-        invoices = order.with_context(
-            trixo_adjust_only_line_ids=to_invoice.ids, skip_surtido_detection=True,
-        )._create_invoices()
-        for inv in invoices:
-            inv.message_post(body=_(
-                'Factura generada por ajuste del pedido %s (%s). Motivo: %s',
-                order.name,
-                _('combo desarmado') if has_combo
-                else (_('cambio de embalaje') if has_swap
-                      else _('productos/cantidades agregadas')),
-                self.reason,
-            ))
-            if self._journal_is_fiscal(inv.journal_id):
-                # Decision de Tito (17-09-2026): una factura fiscal no se
-                # confirma sola; queda en borrador y se avisa.
-                errors.append(_(
-                    'La factura %s sale por el diario fiscal "%s": quedo en BORRADOR. '
-                    'Revisala y confirmala para pedir el CAE.',
-                    inv.display_name, inv.journal_id.display_name))
-                continue
-            if has_combo and self.credit_note_mode != 'post':
-                # La NC de la cabecera del combo no esta confirmada: la
-                # factura de los componentes la acompania en borrador.
-                errors.append(_('La factura %s quedo en borrador junto con la nota de credito.',
-                                inv.display_name))
-                continue
-            err = self._try_post(inv)
-            if err:
-                errors.append(_('La factura %s quedo en borrador: %s', inv.display_name, err))
+
+        groups = defaultdict(lambda: SOL)
+        for line in to_invoice:
+            if line in combo_origin:
+                origin = combo_origin[line]
+            elif line in new_lines:
+                origin = new_lines[line]
+            else:
+                origin = line
+            journal = self._origin_journal(origin)
+            groups[journal.id or False] |= line
+
+        for journal_id, lines in groups.items():
+            ctx = {'trixo_adjust_only_line_ids': lines.ids, 'skip_surtido_detection': True}
+            if journal_id:
+                ctx['trixo_adjust_journal_id'] = journal_id
+            new_invoices = order.with_context(**ctx)._create_invoices()
+            has_combo = bool(lines & children)
+            has_new = bool(lines & created)
+            for inv in new_invoices:
+                inv.message_post(body=_(
+                    'Factura generada por ajuste del pedido %s (%s). Motivo: %s',
+                    order.name,
+                    _('combo desarmado') if has_combo
+                    else (_('lo que el cliente se lleva') if has_new
+                          else _('productos/cantidades agregadas')),
+                    self.reason,
+                ))
+                if self._journal_is_fiscal(inv.journal_id):
+                    # Decision de Tito (17-09 y 22-09-2026): una factura
+                    # fiscal no se confirma sola; queda en borrador y se avisa.
+                    errors.append(_(
+                        'La factura %s sale por el diario fiscal "%s": quedo en BORRADOR. '
+                        'Revisala y confirmala para pedir el CAE.',
+                        inv.display_name, inv.journal_id.display_name))
+                    continue
+                if has_combo and self.credit_note_mode != 'post':
+                    # La NC de la cabecera del combo no esta confirmada: la
+                    # factura de los componentes la acompania en borrador.
+                    errors.append(_('La factura %s quedo en borrador junto con la nota de credito.',
+                                    inv.display_name))
+                    continue
+                err = self._try_post(inv)
+                if err:
+                    errors.append(_('La factura %s quedo en borrador: %s', inv.display_name, err))
+            invoices |= new_invoices
         return invoices, errors
 
     def _retasar_combo_children(self, plan):
@@ -794,7 +937,7 @@ class SaleOrderAdjust(models.TransientModel):
                 lines.reconcile()
 
     # --- 6. chatter ----------------------------------------------------------
-    def _post_messages(self, plan, returns, refunds, invoices, errors):
+    def _post_messages(self, plan, returns, refunds, invoices, errors, new_lines=None):
         order = self.order_id
         rows = Markup('')
         for wl in plan:
@@ -802,6 +945,12 @@ class SaleOrderAdjust(models.TransientModel):
                 wl.sale_line_id.product_id.display_name, wl._fmt(wl.ordered_qty),
                 wl._fmt(wl.target_qty), wl.sale_line_id.product_uom_id.name or '',
                 wl.action_summary or '',
+            )
+        for line, origin in (new_lines or {}).items():
+            rows += Markup('<li><b>%s</b>: %s %s %s</li>') % (
+                line.product_id.display_name,
+                _('se lleva (canje)') if origin else _('se agrega'),
+                line.product_uom_qty, line.product_uom_id.name or '',
             )
         body = Markup('<p><b>%s</b> (%s). %s: %s</p><ul>%s</ul>') % (
             _('Ajuste de pedido'), self.env.user.name, _('Motivo'), self.reason, rows)
@@ -857,10 +1006,11 @@ class SaleOrderAdjustLine(models.TransientModel):
         compute='_compute_allowed_uom_ids')
     swap_qty = fields.Float(
         string='Se lleva', digits='Product Unit',
-        help='Cantidad que el cliente se lleva EN OTRO EMBALAJE a cambio de lo '
-             'que devuelve. Se factura aparte, al precio de la lista vigente '
-             'para ese embalaje (si el producto tiene recargo por suelto, se '
-             'aplica solo) y con el descuento de la linea de origen.')
+        help='Cantidad que el cliente se lleva del mismo producto, en el embalaje '
+             'que elijas en "En embalaje". Se agrega como linea nueva y se factura '
+             'al precio vigente (con recargo por embalaje si corresponde). En el '
+             'mismo embalaje de la linea se compensa con lo que devuelve.')
+    swap_create_qty = fields.Float(digits='Product Unit', readonly=True)
     swap_uom_id = fields.Many2one(
         'uom.uom', string='En embalaje',
         domain="[('id', 'in', allowed_uom_ids)]")
@@ -916,6 +1066,62 @@ class SaleOrderAdjustLine(models.TransientModel):
         if self.invoice_qty:
             parts.append(_('factura por %s %s (agregado)', self._fmt(self.invoice_qty), uom))
         if self.swap_qty and self.swap_uom_id:
-            parts.append(_('se lleva %s %s a cambio (se factura aparte a precio de lista)',
-                           self._fmt(self.swap_qty), self.swap_uom_id.name))
+            same = self.swap_uom_id == self.sale_line_id.product_uom_id
+            if self.swap_create_qty:
+                parts.append(_('se lleva %s %s%s, a precio vigente%s',
+                               self._fmt(self.swap_create_qty), self.swap_uom_id.name,
+                               _(' mas (neto de lo que devuelve)') if same else '',
+                               '' if self.wizard_id.invoice_added
+                               else _(' (se factura con el pedido)')))
+            elif same:
+                parts.append(_('se lleva %s %s: se descuenta de lo que devuelve',
+                               self._fmt(self.swap_qty), self.swap_uom_id.name))
         return ' · '.join(parts) if parts else _('Sin cambios')
+
+
+class SaleOrderAdjustAdd(models.TransientModel):
+    """Producto que se suma al pedido desde el ajuste (19.0.1.5.0): las
+    lineas de un pedido confirmado ya no se editan en el formulario."""
+    _name = 'sale.order.adjust.add'
+    _description = 'Producto agregado en el ajuste de pedido'
+    _order = 'sequence, id'
+
+    wizard_id = fields.Many2one('sale.order.adjust', required=True, ondelete='cascade')
+    sequence = fields.Integer(default=10)
+    product_id = fields.Many2one(
+        'product.product', string='Producto',
+        domain="[('sale_ok', '=', True)]")
+    allowed_uom_ids = fields.Many2many(
+        'uom.uom', string='Embalajes del producto',
+        compute='_compute_allowed_uom_ids')
+    qty = fields.Float(string='Cantidad', digits='Product Unit', default=1.0)
+    uom_id = fields.Many2one(
+        'uom.uom', string='Embalaje',
+        domain="[('id', 'in', allowed_uom_ids)]")
+    action_summary = fields.Char(string='Que va a pasar', readonly=True)
+
+    @api.depends('product_id')
+    def _compute_allowed_uom_ids(self):
+        for al in self:
+            al.allowed_uom_ids = al.product_id.uom_id | al.product_id.uom_ids
+
+    @api.onchange('product_id')
+    def _onchange_product_id(self):
+        product = self.product_id
+        if not product:
+            self.uom_id = False
+            return
+        default = (product._trixo_default_packaging_uom()
+                   if hasattr(product, '_trixo_default_packaging_uom') else False)
+        self.uom_id = default or product.uom_id
+
+    def _build_action_summary(self):
+        self.ensure_one()
+        if not self.product_id or self.qty <= 0 or not self.uom_id:
+            return ''
+        qty = self.wizard_id.line_ids[:1]._fmt(self.qty) if self.wizard_id.line_ids else self.qty
+        if self.wizard_id.invoice_added:
+            return _('se agrega %s %s a precio vigente, se despacha y se factura',
+                     qty, self.uom_id.name)
+        return _('se agrega %s %s a precio vigente (se factura con el pedido)',
+                 qty, self.uom_id.name)

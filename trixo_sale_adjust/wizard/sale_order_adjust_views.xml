@@ -7,25 +7,25 @@
         <field name="arch" type="xml">
             <form string="Ajustar pedido" class="o_trixo_sale_adjust">
                 <div class="alert alert-info" role="alert">
-                    Carga en <b>Devuelve</b> lo que el cliente devuelve o no se lleva; la cantidad
-                    que queda en el pedido se calcula sola. Si a cambio se lleva el mismo producto
-                    en <b>otro embalaje</b> (devuelve un bulto y se lleva 2 unidades), carga esa
-                    cantidad en <b>Se lleva</b> y elegi el embalaje en <b>En embalaje</b>: se agrega
-                    como linea nueva del pedido, se despacha y se factura junto con el ajuste, al
-                    precio vigente de ese embalaje y con el descuento de la linea de origen.
-                    Aca solo se <b>reduce</b>: una venta adicional (mas cantidad, o un producto que
-                    no estaba) se carga en las lineas del pedido. Mira, linea por linea, que va a
-                    pasar antes de confirmar. Las lineas de combo se re-evaluan con la receta del
-                    surtido: si el combo deja de aplicar, se desarma (NC de la cabecera,
+                    Todo cambio a un pedido confirmado se hace desde aca. En cada linea carga en
+                    <b>Devuelve</b> lo que el cliente devuelve o no se lleva, y en <b>Se lleva</b> +
+                    <b>En embalaje</b> lo que se lleva del mismo producto, en cualquier embalaje (en el
+                    mismo embalaje se compensa con lo que devuelve). Los productos que no estaban en el
+                    pedido van en <b>Agregar productos</b>. Todo lo que el cliente se lleva sale al
+                    precio vigente y se factura con el diario de la factura de origen. Mira, linea por
+                    linea, que va a pasar antes de confirmar. Las lineas de combo se re-evaluan con la
+                    receta del surtido: si el combo deja de aplicar, se desarma (NC de la cabecera,
                     componentes a precio de lista).
                 </div>
                 <div class="alert alert-success" role="alert" invisible="not prefill_notice">
                     <field name="prefill_notice" nolabel="1" readonly="1"/>
                 </div>
-                <div class="alert alert-warning" role="alert"
-                     invisible="not invoice_added or not invoice_is_fiscal">
-                    La factura por lo agregado sale por un <b>diario fiscal (AFIP/ARCA)</b>: se genera en
-                    <b>borrador</b>. Hay que revisarla y confirmarla para pedir el CAE.
+                <div class="alert alert-warning" role="alert" invisible="not invoice_is_fiscal">
+                    Lo que el cliente se lleva se factura por un <b>diario fiscal (AFIP/ARCA)</b>: la
+                    factura se genera en <b>borrador</b>. Hay que revisarla y confirmarla para pedir el CAE.
+                </div>
+                <div class="alert alert-warning" role="alert" invisible="not combo_warning">
+                    <field name="combo_warning" nolabel="1" readonly="1"/>
                 </div>
                 <group>
                     <group>
@@ -36,7 +36,7 @@
                     <group>
                         <field name="validate_return" invisible="not has_return"/>
                         <field name="credit_note_mode" widget="radio" invisible="not has_credit"/>
-                        <field name="invoice_added" invisible="not has_pending_invoice"/>
+                        <field name="invoice_added" invisible="1"/>
                         <field name="has_invoice" invisible="1"/>
                         <field name="has_pending_invoice" invisible="1"/>
                         <field name="invoice_is_fiscal" invisible="1"/>
@@ -75,6 +75,19 @@
                         <field name="credit_qty" readonly="1" force_save="1" optional="hide"/>
                         <field name="invoice_qty" readonly="1" force_save="1" optional="hide"/>
                         <field name="pending_invoice_qty" column_invisible="1" force_save="1"/>
+                        <field name="action_summary" readonly="1" force_save="1"/>
+                    </list>
+                </field>
+                <separator string="Agregar productos"/>
+                <field name="add_line_ids" nolabel="1" colspan="2">
+                    <list editable="bottom">
+                        <field name="sequence" column_invisible="1"/>
+                        <field name="allowed_uom_ids" column_invisible="1"/>
+                        <field name="product_id" required="1"
+                               options="{'no_create': True, 'no_open': True}"/>
+                        <field name="qty"/>
+                        <field name="uom_id" required="1"
+                               options="{'no_create': True, 'no_open': True}"/>
                         <field name="action_summary" readonly="1" force_save="1"/>
                     </list>
                 </field>
