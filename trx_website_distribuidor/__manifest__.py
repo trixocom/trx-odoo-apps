@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     "name": "Distribuidores en la tienda web",
-    "version": "19.0.1.0.0",
+    "version": "19.0.1.0.1",
     "summary": "Portal de distribuidores: catálogo completo, stock visible, "
                "pedido sin stock, retiro y pago en el local, y aviso de cada "
                "pedido por push y WhatsApp.",

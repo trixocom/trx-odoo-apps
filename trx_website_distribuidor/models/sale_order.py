@@ -162,3 +162,13 @@ class SaleOrder(models.Model):
             except Exception as err:  # noqa: BLE001
                 log.append("WhatsApp %s ERROR: %s" % (dest, err))
         return log
+
+
+class SaleOrderLine(models.Model):
+    _inherit = "sale.order.line"
+
+    def _get_max_available_qty(self):
+        # Sin tope de cantidad en el carrito del distribuidor.
+        if self.env.user._trx_es_distribuidor():
+            return None
+        return super()._get_max_available_qty()
