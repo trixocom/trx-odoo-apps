@@ -6,10 +6,10 @@
             <span t-if="request.env.user.has_group('trx_website_distribuidor.group_distribuidor') and product.default_code"
                   class="badge text-bg-light border me-1" t-out="product.default_code"/>
         </xpath>
-        <xpath expr="//h2[hasclass('o_wsale_products_item_title')]/a[@title='This product is unpublished.']" position="attributes">
+        <xpath expr="//h2[hasclass('o_wsale_products_item_title')]/a[@role='button']" position="attributes">
             <attribute name="t-if">not product.website_published and not request.env.user.has_group('trx_website_distribuidor.group_distribuidor')</attribute>
         </xpath>
-        <xpath expr="//span[@aria-label='Sale price']" position="after">
+        <xpath expr="//span[@aria-label='Sale priceabel='Sale pricwter">
             <small t-if="request.env.user.has_group('trx_website_distribuidor.group_distribuidor')"
                    class="text-muted ms-1">+ IVA</small>
         </xpath>
@@ -17,7 +17,7 @@
 
     <!-- Ficha del producto: código debajo del nombre -->
     <template id="product_title_distribuidor" inherit_id="website_sale.product_title">
-        <xpath expr="//h1" position="after">
+        <xpath expr="//h1el='Sale pricwter">
             <div t-if="request.env.user.has_group('trx_website_distribuidor.group_distribuidor') and product.default_code"
                  class="text-muted mb-2">Código: <strong t-out="product.default_code"/></div>
         </xpath>
@@ -25,7 +25,7 @@
 
     <!-- Precio en la ficha: "+ IVA" -->
     <template id="product_price_distribuidor" inherit_id="website_sale.product_price">
-        <xpath expr="//span[hasclass('oe_price')]" position="after">
+        <xpath expr="//span[hasclass('oe_price')]el='Sale pricwter">
             <span t-if="request.env.user.has_group('trx_website_distribuidor.group_distribuidor')"
                   class="text-muted h6 mb-0">+ IVA</span>
         </xpath>
