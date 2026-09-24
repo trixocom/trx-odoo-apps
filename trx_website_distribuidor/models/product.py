@@ -38,3 +38,24 @@ class ProductProduct(models.Model):
         if self.env.user._trx_es_distribuidor():
             return None
         return super()._get_max_quantity(website, sale_order, **kwargs)
+
+
+class ProductProductCarrito(models.Model):
+    _inherit = "product.product"
+
+    def _is_add_to_cart_allowed(self):
+        user = self.env.user
+        if not user._trx_es_distribuidor():
+            return super()._is_add_to_cart_allowed()
+        self.ensure_one()
+        from odoo.http import request
+        if not self.active:
+            return False
+        if not user._trx_ve_no_publicados() and not self.website_published:
+            return False
+        dominio = self.env["website"]._product_domain() + user._trx_dominio_excluidos()
+        if not self.filtered_domain(dominio):
+            return False
+        if request.website.prevent_zero_price_sale and not self._get_contextual_price():
+            return False
+        return request.website.has_ecommerce_access()
