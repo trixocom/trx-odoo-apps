@@ -53,7 +53,8 @@ class ProductProductCarrito(models.Model):
             return False
         if not user._trx_ve_no_publicados() and not self.website_published:
             return False
-        dominio = self.env["website"]._product_domain() + user._trx_dominio_excluidos()
+        from odoo.fields import Domain
+        dominio = Domain.AND([self.env["website"]._product_domain(), user._trx_dominio_excluidos()])
         if not self.filtered_domain(dominio):
             return False
         if request.website.prevent_zero_price_sale and not self._get_contextual_price():

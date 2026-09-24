@@ -1,4 +1,5 @@
 from odoo import models
+from odoo.fields import Domain
 
 P = "trx_website_distribuidor."
 
@@ -21,12 +22,12 @@ class ResUsers(models.Model):
         return [int(x) for x in raw.replace(" ", "").split(",") if x.isdigit()]
 
     def _trx_dominio_excluidos(self):
-        """Productos que el distribuidor NO ve (categorías internas y marcas)."""
-        domain = []
+        """Productos que el distribuidor NO ve (categorías internas con sus hijas y marcas)."""
+        domain = Domain.TRUE
         categs = self._trx_ids_param("excluir_categorias")
         if categs:
-            domain.append(("categ_id", "not child_of", categs))
+            domain &= ~Domain("categ_id", "child_of", categs)
         marcas = self._trx_ids_param("excluir_marcas")
         if marcas and "product_brand_id" in self.env["product.template"]._fields:
-            domain += ["|", ("product_brand_id", "=", False), ("product_brand_id", "not in", marcas)]
+            domain &= Domain("product_brand_id", "=", False) | Domain("product_brand_id", "not in", marcas)
         return domain
