@@ -55,5 +55,4 @@ class Website(models.Model):
             ])
         else:
             base = super().sale_product_domain()
-        excl = user._trx_dominio_excluidos()
-        return Domain.AND([base, excl]) if excl else base
+        return Domain.AND([base, user._trx_dominio_excluidos()])
