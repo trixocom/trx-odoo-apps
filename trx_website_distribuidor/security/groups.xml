@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="group_distribuidor" model="res.groups">
+        <field name="name">Distribuidor (portal)</field>
+        <field name="comment">Usuario portal con catálogo completo, stock visible y pedido sin stock en la tienda web.</field>
+    </record>
+</odoo>

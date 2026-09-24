@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!-- Se suma (OR) a la regla "Public product template" de website_sale.
+         Desactivar esta regla = el distribuidor vuelve a ver solo lo publicado. -->
+    <record id="rule_distribuidor_product_template" model="ir.rule">
+        <field name="name">Distribuidor: ve todos los productos vendibles</field>
+        <field name="model_id" ref="product.model_product_template"/>
+        <field name="domain_force">[('sale_ok', '=', True)]</field>
+        <field name="groups" eval="[Command.link(ref('group_distribuidor'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+    <record id="rule_distribuidor_public_category" model="ir.rule">
+        <field name="name">Distribuidor: ve todas las categorías de la tienda</field>
+        <field name="model_id" ref="website_sale.model_product_public_category"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[Command.link(ref('group_distribuidor'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+</odoo>
