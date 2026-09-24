@@ -5,6 +5,8 @@ Portal de distribuidores para la tienda web.
 - **Grupo** `Distribuidor (portal)`: se agrega a usuarios portal.
 - **Catálogo completo**: regla `Distribuidor: ve todos los productos vendibles`. Desactivarla = solo publicados.
 - **Precios sin IVA** para el distribuidor (el resto ve lo configurado en el sitio).
+- **Códigos de producto** en la tarjeta, la ficha y el carrito; "+ IVA" junto al precio.
+- **Exclusiones**: categorías internas y marcas que el distribuidor no ve (parámetros `excluir_categorias` y `excluir_marcas`, ids separados por coma).
 - **Stock**: el distribuidor ve siempre la cantidad disponible y puede pedir sin stock.
 - **Retiro y pago en el local** (Click & Collect nativo): el método de entrega *en tienda* solo aparece para distribuidores; el pago en el local confirma el pedido.
 - **Aviso de pedido** (cron `Distribuidores: avisar pedidos web`, se dispara al instante):

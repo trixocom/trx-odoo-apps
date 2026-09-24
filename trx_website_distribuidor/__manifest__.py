@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     "name": "Distribuidores en la tienda web",
-    "version": "19.0.1.1.0",
+    "version": "19.0.1.2.0",
     "summary": "Portal de distribuidores: catálogo completo, stock visible, "
                "pedido sin stock, retiro y pago en el local, y aviso de cada "
                "pedido por push y WhatsApp.",
@@ -25,6 +25,7 @@ Distribuidores en la tienda web
         "security/ir_rules.xml",
         "data/ir_config_parameter.xml",
         "data/ir_cron.xml",
+        "views/templates.xml",
     ],
     "installable": True,
     "application": False,

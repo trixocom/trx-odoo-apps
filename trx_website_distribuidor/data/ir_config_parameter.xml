@@ -15,4 +15,13 @@
         <field name="key">trx_website_distribuidor.avisar_todos_web</field>
         <field name="value">False</field>
     </record>
+    <!-- Categorías internas (ids, con sus hijas) y marcas (ids) que el distribuidor NO ve -->
+    <record id="param_excluir_categorias" model="ir.config_parameter">
+        <field name="key">trx_website_distribuidor.excluir_categorias</field>
+        <field name="value"> </field>
+    </record>
+    <record id="param_excluir_marcas" model="ir.config_parameter">
+        <field name="key">trx_website_distribuidor.excluir_marcas</field>
+        <field name="value"> </field>
+    </record>
 </odoo>
