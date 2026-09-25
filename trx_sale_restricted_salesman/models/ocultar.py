@@ -58,7 +58,9 @@ class OcultarCamposMixin(models.AbstractModel):
     def _get_view(self, view_id=None, view_type="form", **options):
         arch, view = super()._get_view(view_id, view_type, **options)
         if restringido(self):
-            nombres = self._trx_ocultos()
+            # por nombre, sin filtrar por modelo: la vista puede traer sub-vistas de
+            # otro modelo (p.ej. las líneas dentro del formulario del pedido)
+            nombres = list(self._trx_campos_ocultos)
             if nombres:
                 cond = " or ".join("@name='%s'" % n for n in nombres)
                 for node in arch.xpath("//field[%s]" % cond):
