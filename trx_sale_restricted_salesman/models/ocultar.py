@@ -67,6 +67,9 @@ class OcultarCamposMixin(models.AbstractModel):
                     node.set("invisible", "1")
                     node.set("column_invisible", "1")
                     node.attrib.pop("optional", None)
+                    padre = node.getparent()
+                    if padre is not None and padre.tag == "div" and view_type == "form" and len(padre.xpath(".//field")) <= 2:
+                        padre.set("invisible", "1")
                 cond_label = " or ".join("@for='%s'" % n for n in nombres)
                 for node in arch.xpath("//label[%s]" % cond_label):
                     node.set("invisible", "1")
