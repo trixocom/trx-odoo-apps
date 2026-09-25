@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="group_restricted_salesman" model="res.groups">
+        <field name="name">Vendedor restringido</field>
+        <field name="comment">Solo ve los clientes que creó o tiene asignados como vendedor, sus pedidos y facturas; sin conversaciones ajenas (Discuss/WhatsApp) ni datos de proveedores.</field>
+    </record>
+
+    <!-- Reglas GLOBALES condicionales: fuera del grupo el dominio es [(1,'=',1)]. -->
+    <record id="rule_partner" model="ir.rule">
+        <field name="name">Vendedor restringido: solo sus clientes</field>
+        <field name="model_id" ref="base.model_res_partner"/>
+        <field name="global" eval="True"/>
+        <field name="domain_force">[(1, '=', 1)] if not user.has_group('trx_sale_restricted_salesman.group_restricted_salesman') else ['|', '|', '|', '|', '|', ('user_id', '=', user.id), ('create_uid', '=', user.id), ('commercial_partner_id.user_id', '=', user.id), ('commercial_partner_id.create_uid', '=', user.id), ('user_ids.share', '=', False), ('id', 'in', user.company_ids.partner_id.ids)]</field>
+    </record>
+    <record id="rule_sale_order" model="ir.rule">
+        <field name="name">Vendedor restringido: solo sus pedidos</field>
+        <field name="model_id" ref="sale.model_sale_order"/>
+        <field name="global" eval="True"/>
+        <field name="domain_force">[(1, '=', 1)] if not user.has_group('trx_sale_restricted_salesman.group_restricted_salesman') else ['|', ('user_id', '=', user.id), ('create_uid', '=', user.id)]</field>
+    </record>
+    <record id="rule_sale_order_line" model="ir.rule">
+        <field name="name">Vendedor restringido: solo las líneas de sus pedidos</field>
+        <field name="model_id" ref="sale.model_sale_order_line"/>
+        <field name="global" eval="True"/>
+        <field name="domain_force">[(1, '=', 1)] if not user.has_group('trx_sale_restricted_salesman.group_restricted_salesman') else ['|', ('order_id.user_id', '=', user.id), ('order_id.create_uid', '=', user.id)]</field>
+    </record>
+    <record id="rule_account_move" model="ir.rule">
+        <field name="name">Vendedor restringido: solo sus facturas de venta</field>
+        <field name="model_id" ref="account.model_account_move"/>
+        <field name="global" eval="True"/>
+        <field name="domain_force">[(1, '=', 1)] if not user.has_group('trx_sale_restricted_salesman.group_restricted_salesman') else ['&amp;', ('move_type', 'in', ('out_invoice', 'out_refund')), '|', ('invoice_user_id', '=', user.id), ('create_uid', '=', user.id)]</field>
+    </record>
+    <record id="rule_discuss_channel" model="ir.rule">
+        <field name="name">Vendedor restringido: solo canales de los que es miembro</field>
+        <field name="model_id" ref="mail.model_discuss_channel"/>
+        <field name="global" eval="True"/>
+        <field name="domain_force">[(1, '=', 1)] if not user.has_group('trx_sale_restricted_salesman.group_restricted_salesman') else ['|', ('is_member', '=', True), ('parent_channel_id.is_member', '=', True)]</field>
+    </record>
+    <record id="rule_discuss_channel_member" model="ir.rule">
+        <field name="name">Vendedor restringido: miembros solo de sus canales</field>
+        <field name="model_id" ref="mail.model_discuss_channel_member"/>
+        <field name="global" eval="True"/>
+        <field name="domain_force">[(1, '=', 1)] if not user.has_group('trx_sale_restricted_salesman.group_restricted_salesman') else ['|', ('is_self', '=', True), ('channel_id.is_member', '=', True)]</field>
+    </record>
+    <record id="rule_product_supplierinfo" model="ir.rule">
+        <field name="name">Vendedor restringido: sin datos de proveedores</field>
+        <field name="model_id" ref="product.model_product_supplierinfo"/>
+        <field name="global" eval="True"/>
+        <field name="domain_force">[(1, '=', 1)] if not user.has_group('trx_sale_restricted_salesman.group_restricted_salesman') else [(0, '=', 1)]</field>
+    </record>
+    <record id="rule_product_pricelist" model="ir.rule">
+        <field name="name">Vendedor restringido: solo su lista de precios</field>
+        <field name="model_id" ref="product.model_product_pricelist"/>
+        <field name="global" eval="True"/>
+        <field name="domain_force">[(1, '=', 1)] if not user.has_group('trx_sale_restricted_salesman.group_restricted_salesman') else [('id', 'in', user.sudo().partner_id.property_product_pricelist.ids)]</field>
+    </record>
+    <record id="rule_product_pricelist_item" model="ir.rule">
+        <field name="name">Vendedor restringido: sin reglas de listas de precios</field>
+        <field name="model_id" ref="product.model_product_pricelist_item"/>
+        <field name="global" eval="True"/>
+        <field name="domain_force">[(1, '=', 1)] if not user.has_group('trx_sale_restricted_salesman.group_restricted_salesman') else [(0, '=', 1)]</field>
+    </record>
+</odoo>
