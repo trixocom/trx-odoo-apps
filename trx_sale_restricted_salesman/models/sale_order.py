@@ -17,6 +17,12 @@ class SaleOrder(models.Model):
 
     trx_vendedor_restringido = fields.Boolean(compute="_compute_trx_vendedor_restringido")
 
+    def _compute_margin(self):
+        # margen (sale_margin): el vendedor restringido no lo puede leer; se calcula como sistema
+        if self.env.user._trx_es_vendedor_restringido() and not self.env.su:
+            return super(SaleOrder, self.sudo())._compute_margin()
+        return super()._compute_margin()
+
     @api.depends_context("uid")
     def _compute_trx_vendedor_restringido(self):
         valor = self.env.user._trx_es_vendedor_restringido()
@@ -54,6 +60,11 @@ class SaleOrderLine(models.Model):
 
     def _check_field_access(self, field, operation):
         return check_field_access_negado(self, super()._check_field_access, field, operation)
+
+    def _compute_margin(self):
+        if self.env.user._trx_es_vendedor_restringido() and not self.env.su:
+            return super(SaleOrderLine, self.sudo())._compute_margin()
+        return super()._compute_margin()
 
     def _compute_purchase_price(self):
         # sale_margin lee el costo del producto: para el vendedor restringido,

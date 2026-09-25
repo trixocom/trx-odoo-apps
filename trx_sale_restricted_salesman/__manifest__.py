@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     "name": "Vendedor restringido",
-    "version": "19.0.1.0.1",
+    "version": "19.0.1.0.2",
     "summary": "Vendedores que solo ven sus propios clientes, pedidos y facturas, "
                "sin acceso a conversaciones ajenas, proveedores, costos ni listas de precios.",
     "description": """
