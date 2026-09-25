@@ -11,9 +11,9 @@ class ProductoPrecioVendedorMixin(models.AbstractModel):
     _name = "trx.producto.precio.vendedor.mixin"
     _description = "Precio de la lista del vendedor restringido"
 
-    trx_precio_vendedor = fields.Monetary(
+    trx_precio_vendedor = fields.Float(
         string="Su precio", compute="_compute_trx_precio_vendedor",
-        currency_field="currency_id",
+        digits="Product Price",
         help="Precio de la lista de precios fijada en la ficha del vendedor (sin impuestos).")
 
     @api.depends_context("uid", "company")
