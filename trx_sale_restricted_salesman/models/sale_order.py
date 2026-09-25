@@ -1,5 +1,7 @@
 from odoo import api, fields, models
 
+from .product import check_field_access_negado
+
 GRUPOS_COSTO = "base.group_user,!trx_sale_restricted_salesman.group_restricted_salesman"
 
 
@@ -9,6 +11,9 @@ class SaleOrder(models.Model):
     # margen del pedido (sale_margin): nunca visible para el vendedor restringido
     margin = fields.Monetary(groups=GRUPOS_COSTO)
     margin_percent = fields.Float(groups=GRUPOS_COSTO)
+
+    def _check_field_access(self, field, operation):
+        return check_field_access_negado(self, super()._check_field_access, field, operation)
 
     trx_vendedor_restringido = fields.Boolean(compute="_compute_trx_vendedor_restringido")
 
@@ -46,6 +51,9 @@ class SaleOrderLine(models.Model):
     purchase_price = fields.Float(groups=GRUPOS_COSTO)
     margin = fields.Float(groups=GRUPOS_COSTO)
     margin_percent = fields.Float(groups=GRUPOS_COSTO)
+
+    def _check_field_access(self, field, operation):
+        return check_field_access_negado(self, super()._check_field_access, field, operation)
 
     def _compute_purchase_price(self):
         # sale_margin lee el costo del producto: para el vendedor restringido,
