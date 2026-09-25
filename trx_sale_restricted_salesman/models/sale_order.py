@@ -17,6 +17,13 @@ class SaleOrder(models.Model):
 
     trx_vendedor_restringido = fields.Boolean(compute="_compute_trx_vendedor_restringido")
 
+    def _add_precomputed_values(self, vals_list):
+        # Odoo precalcula al crear los campos "precompute" (margen incluido) con el
+        # usuario actual; el vendedor restringido no los puede leer: como sistema.
+        if self.env.user._trx_es_vendedor_restringido() and not self.env.su:
+            return super(SaleOrder, self.sudo())._add_precomputed_values(vals_list)
+        return super()._add_precomputed_values(vals_list)
+
     def _compute_margin(self):
         # margen (sale_margin): el vendedor restringido no lo puede leer; se calcula como sistema
         if self.env.user._trx_es_vendedor_restringido() and not self.env.su:
@@ -60,6 +67,11 @@ class SaleOrderLine(models.Model):
 
     def _check_field_access(self, field, operation):
         return check_field_access_negado(self, super()._check_field_access, field, operation)
+
+    def _add_precomputed_values(self, vals_list):
+        if self.env.user._trx_es_vendedor_restringido() and not self.env.su:
+            return super(SaleOrderLine, self.sudo())._add_precomputed_values(vals_list)
+        return super()._add_precomputed_values(vals_list)
 
     def _compute_margin(self):
         if self.env.user._trx_es_vendedor_restringido() and not self.env.su:
