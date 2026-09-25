@@ -13,6 +13,8 @@ Portal de distribuidores para la tienda web.
   mensaje en el pedido a todos los usuarios internos (bandeja/email + push nativo),
   push de `trx_web_push` si está instalado y WhatsApp vía `trixo_whatsapp`.
 
+**Vendedor externo** (grupo interno): solo ve los clientes que creó o tiene asignados como vendedor (y sus contactos), y solo sus pedidos y facturas de venta. Reglas globales condicionales: al resto de los usuarios no les cambia nada.
+
 Parámetros (`ir.config_parameter`):
 
 | Clave | Uso |

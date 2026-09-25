@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     "name": "Distribuidores en la tienda web",
-    "version": "19.0.1.2.4",
+    "version": "19.0.1.3.0",
     "summary": "Portal de distribuidores: catálogo completo, stock visible, "
                "pedido sin stock, retiro y pago en el local, y aviso de cada "
                "pedido por push y WhatsApp.",
@@ -19,10 +19,11 @@ Distribuidores en la tienda web
     "website": "https://www.trixocom.com",
     "license": "LGPL-3",
     "category": "Website/Website",
-    "depends": ["website_sale_stock", "website_sale_collect", "mail"],
+    "depends": ["website_sale_stock", "website_sale_collect", "mail", "account"],
     "data": [
         "security/groups.xml",
         "security/ir_rules.xml",
+        "security/vendedor_externo.xml",
         "data/ir_config_parameter.xml",
         "data/ir_cron.xml",
         "views/templates.xml",
