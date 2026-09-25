@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     "name": "Vendedor restringido",
-    "version": "19.0.1.1.1",
+    "version": "19.0.1.2.0",
     "summary": "Vendedores que solo ven sus propios clientes, pedidos y facturas, "
                "sin acceso a conversaciones ajenas, proveedores, costos ni listas de precios.",
     "description": """
@@ -18,7 +18,8 @@ externos, distribuidores que levantan pedidos, etc.). Un usuario del grupo:
 - no ve proveedores de productos ni sus precios de compra;
 - nunca ve el costo de los productos ni el costo/margen de los pedidos;
 - no ve las listas de precios ni cómo están armadas: sus pedidos usan la
-  lista fijada en su propia ficha (partner) y no la puede cambiar.
+  lista fijada en su propia ficha (partner) y no la puede cambiar;
+- en productos ve "Su precio" (el de su lista) en lugar del precio público.
 
 Se implementa con reglas **globales condicionales**: para cualquier usuario
 que no esté en el grupo el dominio es ``[(1, '=', 1)]``, así que al resto no

@@ -10,6 +10,7 @@ Grupo **Vendedor restringido** para usuarios internos de ventas. Un usuario del 
 | Discuss / WhatsApp | Solo los canales de los que es miembro |
 | Proveedores de productos | Nada |
 | Costo de productos / costo y margen del pedido | Nunca (los cálculos lo leen como sistema) |
+| Precio en productos | "Su precio" (el de su lista) en lugar del precio público, en ficha, lista y tarjetas |
 | Listas de precios | Solo la fijada en su propia ficha de contacto; no ve las reglas ni puede cambiar la lista del pedido |
 
 Reglas **globales condicionales**: para los usuarios fuera del grupo el dominio es `[(1, '=', 1)]`; no cambia nada.
