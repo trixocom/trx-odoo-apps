@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_picking_form_trx_force" model="ir.ui.view">
+        <field name="name">stock.picking.form.trx.force.request</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock_ux.view_picking_form"/>
+        <field name="priority">120</field>
+        <field name="arch" type="xml">
+            <!-- El "Forzar disponibilidad" libre de stock_ux desaparece para todos. -->
+            <button name="new_force_availability" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </button>
+            <button name="new_force_availability" position="after">
+                <field name="trx_force_needed" invisible="1"/>
+                <field name="trx_force_pending_id" invisible="1"/>
+                <field name="trx_force_approved" invisible="1"/>
+                <button name="action_trx_force_request" type="object" class="btn-warning"
+                        string="Solicitar forzar stock"
+                        invisible="not trx_force_needed or trx_force_pending_id or trx_force_approved or state not in ('confirmed', 'waiting', 'assigned')"/>
+                <button name="action_trx_force_request" type="object" class="btn-secondary"
+                        string="Forzado solicitado: ver"
+                        invisible="not trx_force_pending_id"/>
+            </button>
+            <xpath expr="//sheet" position="inside">
+                <widget name="web_ribbon" title="Forzado aprobado" bg_color="text-bg-warning"
+                        invisible="not trx_force_approved"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
