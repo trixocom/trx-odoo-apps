@@ -21,6 +21,8 @@ from odoo.addons.trx_pos_price_sync.models.pos_price_sync import _register_for_s
 # de transito se incluyen por si el deposito del PdV los considera.
 STOCK_USAGES = ("internal", "transit")
 
+QTY_FIELDS = ["qty_available", "free_qty", "virtual_available", "incoming_qty", "outgoing_qty"]
+
 
 class StockQuant(models.Model):
     _inherit = "stock.quant"
@@ -29,6 +31,11 @@ class StockQuant(models.Model):
         quants = self.filtered(lambda q: q.location_id.usage in STOCK_USAGES)
         templates = quants.product_id.product_tmpl_id.filtered("available_in_pos")
         if templates:
+            # Las cantidades son computadas no almacenadas: si algo las leyo antes
+            # en esta transaccion (validar un picking lee qty_available) quedan
+            # en cache con el valor previo y el POS recibiria el stock viejo.
+            self.env["product.product"].invalidate_model(QTY_FIELDS)
+            self.env["product.template"].invalidate_model(QTY_FIELDS + ["trx_pos_qty"])
             _register_for_sync(self.env, "product.template", templates.ids)
 
     @api.model_create_multi
