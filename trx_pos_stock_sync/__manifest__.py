@@ -1,6 +1,6 @@
 {
     'name': 'POS - Sincronizacion de stock en vivo',
-    'version': '19.0.1.0.1',
+    'version': '19.0.1.0.2',
     'category': 'Sales/Point of Sale',
     'summary': 'Empuja los cambios de stock del backend a todas las sesiones '
                'POS abiertas, en vivo via bus, sin tocar Actualizar datos ni '
