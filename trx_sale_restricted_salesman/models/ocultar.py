@@ -8,7 +8,7 @@ entera. En cambio, para el vendedor restringido:
 - la vista cacheada se distingue para él (la clave de caché de Odoo no incluye
   al usuario).
 """
-from odoo import models
+from odoo import api, models
 
 
 def restringido(model):
@@ -47,10 +47,14 @@ class OcultarCamposMixin(models.AbstractModel):
                         item[key] = 0.0
         return res
 
+    @api.model
+    @api.readonly
     def formatted_read_group(self, domain, groupby=(), aggregates=(), having=(), offset=0, limit=None, order=None):
         res = super().formatted_read_group(domain, groupby, aggregates, having, offset, limit, order)
         return self._trx_anular_grupos(res) if restringido(self) else res
 
+    @api.model
+    @api.readonly
     def formatted_read_grouping_sets(self, domain, grouping_sets, aggregates=(), *, order=None):
         res = super().formatted_read_grouping_sets(domain, grouping_sets, aggregates, order=order)
         return self._trx_anular_grupos(res) if restringido(self) else res
