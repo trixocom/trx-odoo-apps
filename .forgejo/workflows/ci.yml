@@ -1,0 +1,45 @@
+# CI minimo para repos de modulos Odoo (Trixocom): sintaxis Python, XML bien formado,
+# manifests parseables y chequeos OCA (pre-commit si el repo lo trae).
+name: ci
+on:
+  pull_request:
+  push:
+    branches: [main, "19.0", "18.0", test]
+jobs:
+  lint:
+    runs-on: docker   # imagen node:20-bookworm del runner (Debian: python3 incluido)
+    steps:
+      - uses: https://code.forgejo.org/actions/checkout@v4
+      - name: Deps
+        run: apt-get -qq update >/dev/null && apt-get -qq -y install python3-pip >/dev/null && pip3 install -q --break-system-packages ruff
+      - name: Python compila
+        run: python3 -m compileall -q . >/dev/null
+      - name: Ruff (errores de sintaxis y nombres indefinidos)
+        run: ruff check --select E9,F63,F7,F82 --output-format concise . || true
+      - name: XML bien formado y manifests
+        run: |
+          python3 - <<'PY'
+          import ast, os, sys, xml.etree.ElementTree as ET
+          bad = 0
+          for root, dirs, files in os.walk("."):
+              dirs[:] = [d for d in dirs if d not in (".git", "node_modules", "__pycache__")]
+              for f in files:
+                  p = os.path.join(root, f)
+                  if f.endswith(".xml"):
+                      try: ET.parse(p)
+                      except ET.ParseError as e: print(f"XML invalido: {p}: {e}"); bad += 1
+                  elif f == "__manifest__.py":
+                      try:
+                          d = ast.literal_eval(open(p, encoding="utf-8").read())
+                          assert isinstance(d, dict) and d.get("name") and d.get("version"), "falta name/version"
+                      except Exception as e: print(f"Manifest invalido: {p}: {e}"); bad += 1
+          print("OK" if not bad else f"{bad} problema(s)")
+          sys.exit(1 if bad else 0)
+          PY
+      - name: pre-commit (si el repo lo define)
+        run: |
+          if [ -f .pre-commit-config.yaml ]; then
+            pip3 install -q --break-system-packages pre-commit && pre-commit run --all-files --show-diff-on-failure
+          else
+            echo "sin .pre-commit-config.yaml; omitido"
+          fi
