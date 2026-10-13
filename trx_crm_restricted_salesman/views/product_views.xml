@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Tilde "Visible para vendedores restringidos" en el producto: sólo lo ve
+         y lo cambia un administrador de Ventas. -->
+    <record id="product_template_form_view_restricted_salesman" model="ir.ui.view">
+        <field name="name">product.template.form.restricted.salesman</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view"/>
+        <field name="arch" type="xml">
+            <div name="options" position="inside">
+                <span class="d-inline-flex" groups="sales_team.group_sale_manager">
+                    <field name="trx_restricted_visible"/>
+                    <label for="trx_restricted_visible"/>
+                </span>
+            </div>
+        </field>
+    </record>
+
+    <record id="product_template_search_view_restricted_salesman" model="ir.ui.view">
+        <field name="name">product.template.search.restricted.salesman</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_search_view"/>
+        <field name="arch" type="xml">
+            <filter name="filter_to_sell" position="after">
+                <filter string="Visible para vendedores restringidos"
+                        name="filter_trx_restricted_visible"
+                        domain="[('trx_restricted_visible', '=', True)]"
+                        groups="sales_team.group_sale_manager"/>
+            </filter>
+        </field>
+    </record>
+
+    <record id="product_pricelist_view_restricted_salesman" model="ir.ui.view">
+        <field name="name">product.pricelist.form.restricted.salesman</field>
+        <field name="model">product.pricelist</field>
+        <field name="inherit_id" ref="product.product_pricelist_view"/>
+        <field name="arch" type="xml">
+            <group name="pricelist_settings" position="inside">
+                <field name="trx_restricted_visible"
+                       groups="sales_team.group_sale_manager"/>
+            </group>
+        </field>
+    </record>
+</odoo>

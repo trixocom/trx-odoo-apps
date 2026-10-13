@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_groups_privilege_restricted_salesman" model="res.groups.privilege">
+        <field name="name">Vendedor restringido</field>
+        <field name="sequence">2</field>
+        <field name="category_id" ref="base.module_category_sales"/>
+    </record>
+
+    <record id="group_restricted_salesman" model="res.groups">
+        <field name="name">Vendedor restringido (solo CRM)</field>
+        <field name="sequence">10</field>
+        <field name="privilege_id" ref="res_groups_privilege_restricted_salesman"/>
+        <field name="implied_ids" eval="[(4, ref('sales_team.group_sale_salesman'))]"/>
+        <field name="comment">Sólo ve la app CRM, sus propios leads, clientes y cotizaciones, y los productos y listas de precios marcados como visibles para vendedores restringidos. Sin costos ni acceso a la configuración de WhatsApp.</field>
+    </record>
+</odoo>

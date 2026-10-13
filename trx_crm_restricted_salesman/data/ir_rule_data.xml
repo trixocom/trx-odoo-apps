@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Crea/actualiza las reglas globales condicionadas al grupo (ver
+         models/ir_rule.py). Se ejecuta en cada instalación/actualización del
+         módulo; las reglas quedan con xmlid de este módulo, así que se borran
+         al desinstalarlo. -->
+    <function model="ir.rule" name="_trx_restricted_salesman_sync_rules"/>
+</odoo>
